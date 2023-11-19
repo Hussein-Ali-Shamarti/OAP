@@ -42,14 +42,20 @@ public class MainView extends JFrame {
         setVisible(true);
     }
 
+    
+
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel();
-        // Add components to display company name and logo
-        // Replace the placeholders with actual components for company name and logo
-        topPanel.add(new JLabel("Company Name"));
-        topPanel.add(new JLabel("Logo"));
+        JLabel companyNameField = new JLabel("Model Perfect");
+
+        topPanel.add(companyNameField);
+
+    
+    
         return topPanel;
     }
+
+    
 
     private JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel();
