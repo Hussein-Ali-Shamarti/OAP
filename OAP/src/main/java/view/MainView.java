@@ -122,7 +122,7 @@ public class MainView extends JFrame {
         return rightPanel;
     }
 
-    private ActionListener createActionListener(final String action) {   // på alle strings ville eclipse ha final btw Ole
+    private ActionListener createActionListener(final String action) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -132,9 +132,7 @@ public class MainView extends JFrame {
         };
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainView());
-    }
+    
 }
 
 class SidePanel extends JPanel {
