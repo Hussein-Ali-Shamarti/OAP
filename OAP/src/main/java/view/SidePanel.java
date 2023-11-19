@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SidePanel extends JPanel {
-    private static final long serialVersionUID = 1L; // forstå hvorfor denne må legges til
+    private static final long serialVersionUID = 1L;
 	private ViewWindow viewWindow;
 
     public SidePanel(ViewWindow viewWindow) {
