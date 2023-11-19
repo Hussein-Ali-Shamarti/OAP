@@ -18,24 +18,12 @@ public class ViewWindow extends JPanel {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        // Example tables with sample data
-        JTable productsTable = new JTable(
-                new Object[][]{{1, "Product 1", 10.0}, {2, "Product 2", 20.0}},
-                new Object[]{"ProductNr", "ProductName", "Price"}
-        );
-        JTable ordersTable = new JTable(
-                new Object[][]{{1, "Order 1", "In Progress"}, {2, "Order 2", "Delivered"}},
-                new Object[]{"OrderNr", "OrderName", "Status"}
-        );
-        JTable customersTable = new JTable(
-                new Object[][]{{1, "Customer 1", "Address 1"}, {2, "Customer 2", "Address 2"}},
-                new Object[]{"CustomerNr", "CustomerName", "Address"}
-        );
-        JTable employeesTable = new JTable(
-                new Object[][]{{1, "Employee 1", "Role 1"}, {2, "Employee 2", "Role 2"}},
-                new Object[]{"EmployeeNr", "EmployeeName", "Role"}
-        );
+        JTable productsTable = new JTable();
+        JTable ordersTable = new JTable();
+        JTable customersTable = new JTable();
+        JTable employeesTable = new JTable();
 
+        
         cardPanel.add(new JScrollPane(productsTable), "Products");
         cardPanel.add(createOrderPanel(ordersTable), "Orders");
         cardPanel.add(new JScrollPane(customersTable), "Customers");
