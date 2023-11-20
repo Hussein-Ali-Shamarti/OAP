@@ -1,4 +1,4 @@
-package OAP.src.main.java.App;
+package App;
 
 import javax.swing.SwingUtilities;
 
