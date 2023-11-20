@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +12,10 @@ public class MainView extends JFrame {
     private static final long serialVersionUID = 1L; // why is this added
 	private ViewWindow viewWindow;
     private SidePanel sidePanel;
+    private ProductView productView;
+    private EmployeeView employeeView;
+    private OrderView orderView;
+    private CustomerView customerView;
 
     public MainView() {
         initializeUI();
