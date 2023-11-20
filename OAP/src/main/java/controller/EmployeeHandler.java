@@ -14,17 +14,12 @@ import java.sql.SQLException;
 import database.DataBaseConnection;
 
 public class EmployeeHandler {
-    private DataBaseConnection dbConnection;
-
-    public EmployeeHandler() {
-        dbConnection = new DataBaseConnection();
-    }
-
+    
+ 
     public boolean addEmployee(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
-        try {
-            dbConnection.open(); // Open the database connection
+      
 
-            try (Connection connection = dbConnection.getConnection();
+            try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
                         "INSERT INTO " + tableName + " (employeeNr, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
@@ -43,19 +38,15 @@ public class EmployeeHandler {
 
                 return affectedRows > 0;
             }
-        } catch (SQLException e) {
+         catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            dbConnection.close(); // Close the database connection in a finally block
-        }
+        } 
     }
 
     public boolean editEmployeeInDatabase(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
-        try {
-            dbConnection.open(); // Open the database connection
-
-            try (Connection connection = dbConnection.getConnection();
+       
+            try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
                         "UPDATE " + tableName + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, password = ?, email = ?, canCheckDeliveryStatus = ?, postalCode = ?, roles = ? WHERE employeeNr = ?")) {
 
@@ -74,19 +65,16 @@ public class EmployeeHandler {
 
                 return affectedRows > 0; 
             }
-        } catch (SQLException e) {
+         catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            dbConnection.close(); // Close the database connection in a finally block
-        }
+        } 
     }
 
     public boolean removeEmployeeFromDatabase(String tableName, int employeeNr) {
-        try {
-            dbConnection.open(); // Open the database connection
+       
 
-            try (Connection connection = dbConnection.getConnection();
+            try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + tableName + " WHERE employeeNr = ?")) {
                 pstm.setInt(1, employeeNr);
 
@@ -94,11 +82,9 @@ public class EmployeeHandler {
 
                 return affectedRows > 0;
             }
-        } catch (SQLException e) {
+         catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            dbConnection.close(); // Close the database connection in a finally block
-        }
+        } 
     }
 }

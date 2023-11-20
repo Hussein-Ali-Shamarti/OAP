@@ -15,7 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import connection.DataBaseConnection;
+import database.DataBaseConnection;
 import model.Order;
 
 
