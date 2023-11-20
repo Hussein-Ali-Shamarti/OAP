@@ -378,17 +378,6 @@ public class OrderView extends JPanel {
             }
         }
 
-        public static void main(String[] args) {
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    new OrderView();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-            });
-            
-        }
 }
     
     
