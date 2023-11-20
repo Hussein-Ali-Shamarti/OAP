@@ -1,6 +1,8 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import controller.DeliveryHandler;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,8 @@ public class ViewWindow extends JPanel {
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private DeliveryHandler deliveryHandler; // Add a DeliveryHandler member
-
+   
+    
     public ViewWindow() {
         this.deliveryHandler = new DeliveryHandler(); // Initialize the DeliveryHandler
         initializeUI();
