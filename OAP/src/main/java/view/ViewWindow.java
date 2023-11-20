@@ -40,18 +40,20 @@ public class ViewWindow extends JPanel {
         JPanel orderPanel = new JPanel(new BorderLayout());
         orderPanel.add(new JScrollPane(ordersTable), BorderLayout.CENTER);
 
-        JButton checkDeliveryButton = new JButton("Check Delivery Status");
-        JButton checkPaymentButton = new JButton("Check Payment Status");
+        // Create a label to display the delivery status message
+        JLabel deliveryStatusLabel = new JLabel(" ");
+        deliveryStatusLabel.setHorizontalAlignment(JLabel.CENTER);
 
+        JButton checkDeliveryButton = new JButton("Check Delivery Status");
         checkDeliveryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String orderNumberStr = JOptionPane.showInputDialog(ViewWindow.this, "Enter Order Number:", "Check Delivery Status", JOptionPane.QUESTION_MESSAGE);
-                if (orderNumberStr != null && !orderNumberStr.trim().isEmpty()) {
+                String orderNrStr = JOptionPane.showInputDialog(ViewWindow.this, "Enter Order Number:", "Check Delivery Status", JOptionPane.QUESTION_MESSAGE);
+                if (orderNrStr != null && !orderNrStr.trim().isEmpty()) {
                     try {
-                        int orderNumber = Integer.parseInt(orderNumberStr.trim());
-                        String status = deliveryHandler.checkShipmentStatus(orderNumber);
-                        JOptionPane.showMessageDialog(ViewWindow.this, "Order " + orderNumber + " Status: " + status);
+                        int orderNr = Integer.parseInt(orderNrStr.trim());
+                        String status = deliveryHandler.checkShipmentStatus(orderNr);
+                        deliveryStatusLabel.setText("Order " + orderNr + " Status: " + status);
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(ViewWindow.this, "Invalid order number format");
                     }
@@ -59,19 +61,18 @@ public class ViewWindow extends JPanel {
             }
         });
 
+        JButton checkPaymentButton = new JButton("Check Payment Status");
+        // ... add action listener for checkPaymentButton
 
-        checkPaymentButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(ViewWindow.this, "Check Payment Status Button Clicked");
-            }
-        });
-
+        // Panel to hold buttons and status label
+        JPanel bottomPanel = new JPanel(new BorderLayout());
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(checkDeliveryButton);
         buttonPanel.add(checkPaymentButton);
+        bottomPanel.add(buttonPanel, BorderLayout.NORTH);
+        bottomPanel.add(deliveryStatusLabel, BorderLayout.CENTER);
 
-        orderPanel.add(buttonPanel, BorderLayout.SOUTH);
+        orderPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         return orderPanel;
     }
