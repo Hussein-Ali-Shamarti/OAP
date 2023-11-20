@@ -13,15 +13,9 @@ package controller;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-
 import java.sql.SQLException;
+import database.DataBaseConnection;
 
-
-import javax.swing.SwingUtilities;
-
-import connection.DataBaseConnection;
-import model.Customer;
-import model.Order;
 
 
 public class CustomerHandler {
