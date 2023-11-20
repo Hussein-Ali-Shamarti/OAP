@@ -5,7 +5,7 @@ import controller.DeliveryHandler;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+
 
 public class ViewWindow extends JPanel {
     private static final long serialVersionUID = 1L;
