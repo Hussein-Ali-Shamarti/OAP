@@ -18,7 +18,8 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class OrderView extends JPanel {
-    private JTable table;
+    private static final long serialVersionUID = 1L;
+	private JTable table;
     private DefaultTableModel tableModel;
     private JTextField textField;
     private OrderHandler oh = new OrderHandler();
@@ -38,7 +39,9 @@ public class OrderView extends JPanel {
     private void setupTable() {
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -52,7 +55,9 @@ public class OrderView extends JPanel {
 
     private void customizeTableAppearance() {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 ((JComponent) component).setBorder(new EmptyBorder(5, 10, 5, 10));
