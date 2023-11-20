@@ -48,6 +48,8 @@ public class MainView extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+        
+        
     }
 
     
