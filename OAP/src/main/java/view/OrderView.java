@@ -352,43 +352,32 @@ public class OrderView extends JPanel {
 
 
 
-        // Method to fetch and display orders from the database
-        private void fetchAndDisplayOrders() {
-        	tableModel.setRowCount(0);
-            try (Connection conn = DriverManager.getConnection(dbURL, user, password);
-                 Statement statement = conn.createStatement()) {
+ // Method to fetch and display orders from the database
+    private void fetchAndDisplayOrders() {
+        tableModel.setRowCount(0);
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             Statement statement = conn.createStatement()) {
 
-                String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate ,status, comments, customerNumber FROM orders";
-                ResultSet resultSet = statement.executeQuery(sql);
+            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
+            ResultSet resultSet = statement.executeQuery(sql);
 
-                while (resultSet.next()) {
-                    Object[] row = {
-                        resultSet.getString("OrderNumber"),
-                        resultSet.getString("orderDate"),
-                        resultSet.getString("requiredDate"),
-                        resultSet.getString("shippedDate"),
-                        resultSet.getString("status"),
-                        resultSet.getString("comments"),
-                        resultSet.getString("customerNumber")
-                    };
-                    tableModel.addRow(row);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getString("OrderNumber"),
+                    resultSet.getString("orderDate"),
+                    resultSet.getString("requiredDate"),
+                    resultSet.getString("shippedDate"),
+                    resultSet.getString("status"),
+                    resultSet.getString("comments"),
+                    resultSet.getString("customerNumber")
+                };
+                tableModel.addRow(row);
             }
+        } catch (SQLException e) {
+            // Show the error in a dialog box instead of printing stack trace
+            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        public static void main(String[] args) {
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    new OrderView();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-            });
-            
-        }
+    }
 }
     
     
