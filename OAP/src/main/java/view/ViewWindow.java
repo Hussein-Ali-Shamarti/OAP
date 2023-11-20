@@ -46,12 +46,12 @@ public class ViewWindow extends JPanel {
         checkDeliveryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String orderNrStr = JOptionPane.showInputDialog(ViewWindow.this, "Enter Order Number:", "Check Delivery Status", JOptionPane.QUESTION_MESSAGE);
-                if (orderNrStr != null && !orderNrStr.trim().isEmpty()) {
+                String orderNumberStr = JOptionPane.showInputDialog(ViewWindow.this, "Enter Order Number:", "Check Delivery Status", JOptionPane.QUESTION_MESSAGE);
+                if (orderNumberStr != null && !orderNumberStr.trim().isEmpty()) {
                     try {
-                        int orderNr = Integer.parseInt(orderNrStr.trim());
-                        String status = deliveryHandler.checkShipmentStatus(orderNr);
-                        JOptionPane.showMessageDialog(ViewWindow.this, "Order " + orderNr + " Status: " + status);
+                        int orderNumber = Integer.parseInt(orderNumberStr.trim());
+                        String status = deliveryHandler.checkShipmentStatus(orderNumber);
+                        JOptionPane.showMessageDialog(ViewWindow.this, "Order " + orderNumber + " Status: " + status);
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(ViewWindow.this, "Invalid order number format");
                     }

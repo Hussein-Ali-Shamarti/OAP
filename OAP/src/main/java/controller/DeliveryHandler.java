@@ -26,10 +26,10 @@ public class DeliveryHandler {
      * @param orderNr The unique order number for the shipment.
      * @return The status of the shipment (e.g., "Shipped", "In Process", "On Hold", "Cancelled", "Disputed").
      */
-    public String checkShipmentStatus(int orderNr) {
+    public String checkShipmentStatus(int orderNumber) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement("SELECT status FROM orders WHERE ordernr = ?")) {
-            pstmt.setInt(1, orderNr);
+             PreparedStatement pstmt = connection.prepareStatement("SELECT status FROM orders WHERE orderNumber = ?")) {
+            pstmt.setInt(1, orderNumber);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
