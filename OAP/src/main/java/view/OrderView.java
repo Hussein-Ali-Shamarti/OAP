@@ -5,64 +5,39 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import controller.OrderHandler;
 import model.Order;
+import database.DataBaseConnection; // Import your DataBaseConnection class
 
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-
 public class OrderView extends JPanel {
-   // private JFrame frame;
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField textField;
-
-    // Database connection details
-    private final String dbURL = "jdbc:mysql://127.0.0.1:3306/classicmodels";
-    private final String user = "student";
-    private final String password = "student";
-	private OrderHandler oh = new OrderHandler();
-
+    private OrderHandler oh = new OrderHandler();
 
     public OrderView() {
         initializeUI();
         fetchAndDisplayOrders();
     }
-    /**
-	 * @wbp.parser.entryPoint
-	 */
-    // Method to initialize the user interface
-    private void initializeUI() {
-       /* frame = new JFrame("Order Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.setSize(1000, 600);
-*/
-    	  this.setLayout(new BorderLayout());
-          this.setSize(1000, 600); 
-        // Create and add the table to the frame
-        setupTable();
-        // Create and add control panel with buttons
-        setupControlPanel();
-        // Create and add bottom panel for reports
-//        setupBottomPanel();
 
-       // frame.setVisible(true);
+    private void initializeUI() {
+        this.setLayout(new BorderLayout());
+        this.setSize(1000, 600);
+        setupTable();
+        setupControlPanel();
     }
 
-    // Method to set up the table
-    private void setupTable() { 
-        String[] columnNames = {"Order Number ", "Order Date", "requiredDate", "shippedDate", "Status", "comments", "Customer Number"};
+    private void setupTable() {
+        String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
-            private static final long serialVersionUID = 1L; // serialVersionUID added here
-
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -72,24 +47,19 @@ public class OrderView extends JPanel {
         table = new JTable(tableModel);
         customizeTableAppearance();
         JScrollPane scrollPane = new JScrollPane(table);
-        //frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    // Method to customize table appearance
     private void customizeTableAppearance() {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
-            private static final long serialVersionUID = 1L; // serialVersionUID added here
-
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                ((JComponent) component).setBorder(new EmptyBorder(5, 10, 5, 10)); // Adjust padding
-
+                ((JComponent) component).setBorder(new EmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    component.setBackground(new Color(0x5f0c8e)); // Selected row color
+                    component.setBackground(new Color(0x5f0c8e));
                 } else {
-                    component.setBackground(row % 2 == 0 ? new Color(0xFFFFFF) : new Color(0xF0F0F0)); // Zebra stripes
+                    component.setBackground(row % 2 == 0 ? new Color(0xFFFFFF) : new Color(0xF0F0F0));
                 }
                 return component;
             }
@@ -103,17 +73,15 @@ public class OrderView extends JPanel {
         }
     }
 
-    // Method to set up control panel with buttons
     private void setupControlPanel() {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        // Add buttons to control panel
-        String[] buttonTitles = {"Search", "Add", "Edit", "Delete", "back"};
+        String[] buttonTitles = {"Search", "Add", "Edit", "Delete", "Back"};
         for (String title : buttonTitles) {
             JButton button = new JButton(title);
-            button.addActionListener(this::onButtonClick); // Simplified action listener
+            button.addActionListener(this::onButtonClick);
             controlPanel.add(button);
         }
 
@@ -121,37 +89,16 @@ public class OrderView extends JPanel {
         textField.setBackground(new Color(246, 248, 250));
         controlPanel.add(textField);
 
-       // frame.getContentPane().add(controlPanel, BorderLayout.NORTH);
         this.add(controlPanel, BorderLayout.NORTH);
     }
 
- 
-
-    // Method to set up bottom panel for reports
-   /* private void setupBottomPanel() {
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        bottomPanel.setBackground(new Color(90, 23, 139));
-
-        String[] reportTitles = {"Monthly Report", "Yearly Report"};
-        for (String title : reportTitles) {
-            JButton button = new JButton(title);
-            bottomPanel.add(button);
-        }
-
-        //frame.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-        this.add(bottomPanel, BorderLayout.SOUTH);
-    }*/
-    // Method to handle button clicks
     private void onButtonClick(ActionEvent e) {
-    
         String command = e.getActionCommand();
-
         switch (command) {
             case "Search":
                 searchOrders();
                 break;
-            case "Add":            	
+            case "Add":
                 addOrder();
                 break;
             case "Edit":
@@ -160,10 +107,8 @@ public class OrderView extends JPanel {
             case "Delete":
                 deleteOrder();
                 break;
-       
             default:
-//                JOptionPane.showMessageDialog(frame, "Unknown action: " + command);
-            	JOptionPane.showMessageDialog(this, "Unknown action: " + command);
+                JOptionPane.showMessageDialog(this, "Unknown action: " + command);
                 break;
         }
     }
@@ -355,12 +300,10 @@ public class OrderView extends JPanel {
  // Method to fetch and display orders from the database
     private void fetchAndDisplayOrders() {
         tableModel.setRowCount(0);
-        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+        try (Connection conn = DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
-
             String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
             ResultSet resultSet = statement.executeQuery(sql);
-
             while (resultSet.next()) {
                 Object[] row = {
                     resultSet.getString("OrderNumber"),
@@ -374,7 +317,6 @@ public class OrderView extends JPanel {
                 tableModel.addRow(row);
             }
         } catch (SQLException e) {
-            // Show the error in a dialog box instead of printing stack trace
             JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
