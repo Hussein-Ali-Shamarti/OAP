@@ -21,8 +21,8 @@ public class DataBaseConnection {
         return user;
     }
 
+
     public static String getPassword() {
         return password;
     }
 }
-
