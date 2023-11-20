@@ -1,16 +1,20 @@
 package view;
 
 import javax.swing.*;
+import controller.DeliveryHandler;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class ViewWindow extends JPanel {
-    private static final long serialVersionUID = 1L; // forstå hvorfor denne må legges inn
-	private CardLayout cardLayout;
+    private static final long serialVersionUID = 1L;
+    private CardLayout cardLayout;
     private JPanel cardPanel;
+    private DeliveryHandler deliveryHandler; // Add a DeliveryHandler member
 
     public ViewWindow() {
+        this.deliveryHandler = new DeliveryHandler(); // Initialize the DeliveryHandler
         initializeUI();
     }
 
@@ -23,7 +27,6 @@ public class ViewWindow extends JPanel {
         JTable customersTable = new JTable();
         JTable employeesTable = new JTable();
 
-        
         cardPanel.add(new JScrollPane(productsTable), "Products");
         cardPanel.add(createOrderPanel(ordersTable), "Orders");
         cardPanel.add(new JScrollPane(customersTable), "Customers");
@@ -37,22 +40,29 @@ public class ViewWindow extends JPanel {
         JPanel orderPanel = new JPanel(new BorderLayout());
         orderPanel.add(new JScrollPane(ordersTable), BorderLayout.CENTER);
 
-        // Add "Check Delivery Status" and "Check Payment Status" buttons
         JButton checkDeliveryButton = new JButton("Check Delivery Status");
         JButton checkPaymentButton = new JButton("Check Payment Status");
 
         checkDeliveryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement check delivery status functionality
-                JOptionPane.showMessageDialog(ViewWindow.this, "Check Delivery Status Button Clicked");
+                String orderNrStr = JOptionPane.showInputDialog(ViewWindow.this, "Enter Order Number:", "Check Delivery Status", JOptionPane.QUESTION_MESSAGE);
+                if (orderNrStr != null && !orderNrStr.trim().isEmpty()) {
+                    try {
+                        int orderNr = Integer.parseInt(orderNrStr.trim());
+                        String status = deliveryHandler.checkShipmentStatus(orderNr);
+                        JOptionPane.showMessageDialog(ViewWindow.this, "Order " + orderNr + " Status: " + status);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(ViewWindow.this, "Invalid order number format");
+                    }
+                }
             }
         });
+
 
         checkPaymentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement check payment status functionality
                 JOptionPane.showMessageDialog(ViewWindow.this, "Check Payment Status Button Clicked");
             }
         });
@@ -65,6 +75,8 @@ public class ViewWindow extends JPanel {
 
         return orderPanel;
     }
+
+    
 
     public CardLayout getCardLayout() {
         return cardLayout;

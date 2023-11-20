@@ -23,7 +23,6 @@ public class DeliveryHandler {
 
     /**
      * Checks the status of a shipment based on the order number.
-     * 
      * @param orderNr The unique order number for the shipment.
      * @return The status of the shipment (e.g., "Shipped", "In Process", "On Hold", "Cancelled", "Disputed").
      */

@@ -6,9 +6,6 @@
  */
 package model;
 
-import java.util.*;
-
-import database.DataBaseConnection;
 
 public abstract class Address {
     protected String addressLine2;

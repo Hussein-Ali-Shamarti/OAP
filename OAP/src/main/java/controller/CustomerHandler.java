@@ -48,7 +48,7 @@ public class CustomerHandler {
             pstm.setInt(4, salesRepEmployeeNr);
             pstm.setBigDecimal(5, creditLimit);
             pstm.setInt(6, customerNr);
-
+            
             int affectedRows = pstm.executeUpdate();
 
             return affectedRows > 0;
