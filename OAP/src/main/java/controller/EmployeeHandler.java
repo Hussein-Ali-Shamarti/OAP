@@ -5,8 +5,7 @@
  * @author Albert
  * @version 09.11.2023
  */
- 
-package controller;
+ package controller;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +20,7 @@ public class EmployeeHandler {
         dbConnection = new DataBaseConnection();
     }
 
-    public boolean addEmployeeToDatabase(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
+    public boolean addEmployee(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
         try {
             dbConnection.open(); // Open the database connection
 
@@ -56,7 +55,7 @@ public class EmployeeHandler {
         try {
             dbConnection.open(); // Open the database connection
 
-            try (Connection connection = DataBaseConnection.open();
+            try (Connection connection = dbConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
                         "UPDATE " + tableName + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, password = ?, email = ?, canCheckDeliveryStatus = ?, postalCode = ?, roles = ? WHERE employeeNr = ?")) {
 
@@ -73,7 +72,7 @@ public class EmployeeHandler {
 
                 int affectedRows = pstm.executeUpdate();
 
-//                return affectedRows > 0; 
+                return affectedRows > 0; 
             }
         } catch (SQLException e) {
             e.printStackTrace();
