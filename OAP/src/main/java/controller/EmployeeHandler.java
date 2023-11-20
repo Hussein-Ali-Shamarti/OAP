@@ -7,11 +7,15 @@
  */
  package controller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+ import java.sql.Connection;
+ import java.sql.PreparedStatement;
+ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.util.ArrayList;
+ import java.util.*;
+ import database.DataBaseConnection;
+ import model.Employee; 
 
-import database.DataBaseConnection;
 
 public class EmployeeHandler {
     
@@ -87,4 +91,35 @@ public class EmployeeHandler {
             return false;
         } 
     }
+    
+    public List<Employee> displayAll() {
+        List<Employee> employees = new ArrayList<>();
+        String sql = "SELECT * FROM employees"; // Assuming your table is named 'employees'
+        
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Employee employee = new Employee(
+                    rs.getInt("employeeNumber"), // Make sure these column names match your database
+                    rs.getString("firstName"),
+                    rs.getString("lastName"),
+                    rs.getString("jobTitle"),
+                    rs.getString("email"),
+                    rs.getString("role"),
+                    rs.getInt("reportsTo"),
+                    rs.getString("extension"),
+                    rs.getInt("officeCode"),
+                    rs.getString("territory")
+                );
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception or rethrow as a runtime exception
+        }
+        return employees;
+    }
+
 }
