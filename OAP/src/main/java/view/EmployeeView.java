@@ -94,11 +94,9 @@ public class EmployeeView extends JFrame {
             JTextField lastNameField = new JTextField(10);
             JTextField roleField = new JTextField(10);
             JTextField jobTitleField = new JTextField(10);
-            JPasswordField passwordField = new JPasswordField(10);
             JTextField emailField = new JTextField(10);
             JCheckBox canCheckDeliveryStatusBox = new JCheckBox();
             JTextField postalCodeField = new JTextField(5);
-            JTextField rolesField = new JTextField(10);
 
             JPanel panel = new JPanel(new GridLayout(0, 1));
             panel.add(new JLabel("Employee Number:"));
