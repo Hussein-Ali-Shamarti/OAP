@@ -127,12 +127,11 @@ public class EmployeeView extends JFrame {
                     String role = roleField.getText();
                     String jobTitle = jobTitleField.getText();
                     String email = emailField.getText();
-                    boolean status = canCheckDeliveryStatusBox.isSelected();
                     String postalCode = postalCodeField.getText();
                    
 
                     EmployeeHandler handler = new EmployeeHandler();
-                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, email, status, postalCode);
+                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, email, postalCode);
 
                     if (success) {
                         JOptionPane.showMessageDialog(EmployeeView.this, "Employee added successfully!");
