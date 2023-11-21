@@ -1,5 +1,5 @@
 package view;
-
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -8,10 +8,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import controller.OrderHandler;
-import model.Order;
+import model.Order; 
 import database.DataBaseConnection;
 
 public class OrderView extends JFrame {
@@ -58,7 +59,12 @@ public class OrderView extends JFrame {
         // Define table model and setup
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -91,58 +97,65 @@ public class OrderView extends JFrame {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
-    private void setupControlPanel() {
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
-        controlPanel.setBackground(new Color(90, 23, 139));
+     private void setupControlPanel() {
+    	    JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    	    controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
+    	    controlPanel.setBackground(new Color(90, 23, 139));
 
-        String[] buttonTitles = {"Search", "Add", "Edit", "Delete", "Back"};
-        for (String title : buttonTitles) {
-            JButton button = new JButton(title);
-            button.addActionListener(this::onButtonClick);
-            controlPanel.add(button);
-        }
+    	    // Instead of using a loop for all buttons, create each button individually
+    	    // This allows for specific ActionListeners for each button
 
-        textField = new JTextField(10);
-        textField.setBackground(new Color(246, 248, 250));
-        controlPanel.add(textField);
+    	    // Search Button
+    	    JButton searchButton = createButton("Search", e -> searchOrders());
+    	    controlPanel.add(searchButton);
 
-        this.add(controlPanel, BorderLayout.NORTH);
+    	    // Add Button
+    	    JButton addButton = createButton("Add", new addButtonListener());
+    	    controlPanel.add(addButton);
+
+    	    // Edit Button
+    	    JButton editButton = createButton("Edit", new UpdateButtonListener());
+    	    controlPanel.add(editButton);
+
+    	    // Delete Button
+    	    JButton deleteButton = createButton("Delete", e -> deleteOrder());
+    	    controlPanel.add(deleteButton);
+
+    	    // Back Button
+    	    JButton backButton = createButton("Back", e -> dispose()); // Assuming you want to close the window
+    	    controlPanel.add(backButton);
+
+    	    textField = new JTextField(10);
+    	    textField.setBackground(new Color(246, 248, 250));
+    	    controlPanel.add(textField);
+
+    	    this.add(controlPanel, BorderLayout.NORTH);
+    	}
+
+
+    private void searchOrders() {
+        String searchText = textField.getText(); 
+        List<Order> orders = oh.searchOrders(searchText); 
+        updateTableData(orders); 
     }
 
-    private void onButtonClick(ActionEvent e) {
-        String command = e.getActionCommand();
-        switch (command) {
-            case "Search":
-                searchOrders();
-                break;
-            case "Add":
-                addOrder();
-                break;
-            case "Edit":
-                editOrder();
-                break;
-            case "Delete":
-                deleteOrder();
-                break;
-            default:
-                JOptionPane.showMessageDialog(this, "Unknown action: " + command);
-                break;
+
+    private void updateTableData(List<Order> orders) {
+        tableModel.setRowCount(0);
+        for (Order order : orders) {
+            tableModel.addRow(new Object[]{
+                order.getOrderNumber(),
+                order.getOrderDate(),
+                order.getRequiredDate(),
+                order.getShippedDate(),
+                order.getStatus(),
+                order.getComments(),
+                order.getCustomerNumber()
+            });
         }
     }
 
 
-      private void searchOrders() {
-        String searchText = textField.getText();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
-
-        if (searchText.trim().length() == 0) {
-            sorter.setRowFilter(null);
-        } else {
-            sorter.setRowFilter(RowFilter.regexFilter(searchText));
-        }
-    }
 
     private void addOrder() {
         // Create a dialog to enter the order data
@@ -314,31 +327,6 @@ public class OrderView extends JFrame {
     }
 
 
- // Method to fetch and display orders from the database
-    private void fetchAndDisplayOrders() {
-        tableModel.setRowCount(0);
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                Object[] row = {
-                    resultSet.getString("OrderNumber"),
-                    resultSet.getString("orderDate"),
-                    resultSet.getString("requiredDate"),
-                    resultSet.getString("shippedDate"),
-                    resultSet.getString("status"),
-                    resultSet.getString("comments"),
-                    resultSet.getString("customerNumber")
-                };
-                tableModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK); // White text color
@@ -348,7 +336,31 @@ public class OrderView extends JFrame {
         return button;
     }
 
-    private class AddButtonListener implements ActionListener {
+ // Method to fetch and display orders from the database
+    void fetchAndDisplayOrders() {
+       tableModel.setRowCount(0);
+       try (Connection conn = database.DataBaseConnection.getConnection();
+            Statement statement = conn.createStatement()) {
+           String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
+           ResultSet resultSet = statement.executeQuery(sql);
+           while (resultSet.next()) {
+               Object[] row = {
+                       resultSet.getString("OrderNumber"),
+                       resultSet.getString("orderDate"),
+                       resultSet.getString("requiredDate"),
+                       resultSet.getString("shippedDate"),
+                       resultSet.getString("status"),
+                       resultSet.getString("comments"),
+                       resultSet.getString("customerNumber")
+               };
+               tableModel.addRow(row);
+           }
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+       }
+   }
+    
+    private class addButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Create a dialog to enter the order data
@@ -395,34 +407,31 @@ public class OrderView extends JFrame {
 
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    // Parse and validate inputs
+                    // Parse inputs and validate
                     int orderNumber = Integer.parseInt(fieldOrderNumber.getText());
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    Date orderDate = dateFormat.parse(fieldOrderDate.getText());
-                    Date requiredDate = dateFormat.parse(fieldRequiredDate.getText());
-                    Date shippedDate = fieldShippedDate.getText().isEmpty() ? null : dateFormat.parse(fieldShippedDate.getText()); // Handle nullable date
+                    Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldOrderDate.getText());
+                    Date requiredDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldRequiredDate.getText());
+                    Date shippedDate = fieldShippedDate.getText().isEmpty() ? null : new SimpleDateFormat("yyyy-MM-dd").parse(fieldShippedDate.getText());
                     String status = fieldStatus.getText();
                     String comments = fieldComments.getText();
                     int customerNumber = Integer.parseInt(fieldCustomerNumber.getText());
 
                     // Create a new order object
-                    Order newOrder = new Order(orderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                    Order newOrder = new Order(orderNumber, new java.sql.Date(requiredDate.getTime()), shippedDate != null ? new java.sql.Date(shippedDate.getTime()) : null, status, comments, customerNumber, new java.sql.Date(orderDate.getTime()));
 
-                    // Add the order to the database using OrderHandler
+                    // Add the order to the database
                     boolean success = oh.addOrder(newOrder);
-
                     if (success) {
-                        JOptionPane.showMessageDialog(OrderView.this, "Order added successfully.");
-                        // Optionally, refresh the table to show new data
+                    	JOptionPane.showMessageDialog(OrderView.this, "Order added successfully.");
+                        fetchAndDisplayOrders();
                     } else {
-                        JOptionPane.showMessageDialog(OrderView.this, "Failed to add order.");
+                    	JOptionPane.showMessageDialog(OrderView.this, "Failed to add order.");
                     }
                 } catch (NumberFormatException | ParseException ex) {
-                    JOptionPane.showMessageDialog(OrderView.this, "Invalid input: " + ((JOptionPane) ex).getMessage());
+                	JOptionPane.showMessageDialog(OrderView.this, "Invalid input: " + ex.getMessage());
                 }
             }
         }
-    
 
 
         private class UpdateButtonListener implements ActionListener {
@@ -540,13 +549,14 @@ public class OrderView extends JFrame {
             }
 
 
-    // Action listener for "Search" button
-    private class SearchButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Search button pressed");
+      // Action listener for "Search" button
+         private class SearchButtonListener implements ActionListener {
+          @Override
+            public void actionPerformed(ActionEvent e) {
+            searchOrders();
+            }
         }
-    }
+
 
     // Action listener for "Check Delivery Status" button
     private class DeliveryButtonListener implements ActionListener {
@@ -564,5 +574,6 @@ public class OrderView extends JFrame {
         }
     }
 
-}
+        }
+    }
 }
