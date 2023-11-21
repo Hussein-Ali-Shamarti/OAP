@@ -7,12 +7,7 @@ import java.awt.event.ActionListener;
 
 public class CustomerView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public CustomerView(ActionListener customersListener) {
+    public CustomerView(ActionListener customersListener) {
         // Set title
         super("Customer Management");
 

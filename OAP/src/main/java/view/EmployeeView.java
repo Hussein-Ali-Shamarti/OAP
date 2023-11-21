@@ -7,12 +7,7 @@ import java.awt.event.ActionListener;
 
 public class EmployeeView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public EmployeeView() {
+    public EmployeeView() {
         // Set title
         super("Employee View");
 
