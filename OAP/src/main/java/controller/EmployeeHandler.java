@@ -100,7 +100,7 @@ public class EmployeeHandler {
        
 
             try (Connection connection = DataBaseConnection.getConnection();
-                 PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNr = ?")) {
+                 PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNumber = ?")) {
                 pstm.setInt(1, employeeNumber);
 
                 int affectedRows = pstm.executeUpdate();
