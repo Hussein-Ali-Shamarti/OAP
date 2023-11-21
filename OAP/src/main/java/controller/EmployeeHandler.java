@@ -60,7 +60,7 @@ public class EmployeeHandler {
             pstm.setString(5, officeCode);
             pstm.setInt(6, reportsTo);
             pstm.setString(7, jobTitle);
-            pstm.setInt(8, employeeNumber);  // Assuming employeeNr is the identifier
+            pstm.setInt(8, employeeNumber);  
 
             int affectedRows = pstm.executeUpdate();
             return affectedRows > 0; 
