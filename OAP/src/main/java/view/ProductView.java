@@ -1,6 +1,5 @@
 package view;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -21,32 +20,37 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import controller.ProductHandler;
-import model.Products;
 
 public class ProductView extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
-
+    private JTable table;
     public ProductView() {
-        // Set title
         super("Product Management");
 
-        // Set layout for the frame
         setLayout(new BorderLayout());
+        initializeUI();
+        fetchAndDisplayProducts();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        pack(); // Adjusts the frame to fit the components
+        setVisible(true); // Make sure the frame is visible
+    }
 
-        // Create title panel with purple background and white font
+    private void initializeUI() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(84, 11, 131)); // Purple background color
+        titlePanel.setBackground(new Color(84, 11, 131));
         JLabel titleLabel = new JLabel("Product Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(Color.WHITE); // White font color
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
+<<<<<<< Updated upstream
         // Create buttons with listeners
         JButton addButton = createButton("Add New", new AddButtonListener());
 //        JButton updateButton = createButton("Update", new UpdateButtonListener());
@@ -68,9 +72,13 @@ public class ProductView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
 
         // Add components to the frame
+=======
+        setupTable();
+        setupControlPanel();
+
+>>>>>>> Stashed changes
         add(titlePanel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.SOUTH);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Set frame properties
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -78,22 +86,58 @@ public class ProductView extends JFrame {
         setLocationRelativeTo(null); // Center on screen
     }
 
+    private void setupTable() {
+        String[] columnNames = {"Product Code", "Product Name", "Product Scale", "Product Vendor",
+                "Product Description", "Quantity In Stock", "Buy Price", "MSRP"};
+        tableModel = new DefaultTableModel(null, columnNames) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        table = new JTable(tableModel);
+        //customizeTableAppearance();//
+    }
+
+    private void setupControlPanel() {
+        JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+        controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
+        controlPanel.setBackground(new Color(90, 23, 139));
+
+        JButton searchButton = createButton("Search", e -> searchProducts());
+        JButton addButton = createButton("Add", new AddButtonListener());
+        JButton editButton = createButton("Edit", new UpdateButtonListener());
+        JButton deleteButton = createButton("Delete", e -> deleteProduct());
+
+        controlPanel.add(searchButton);
+        controlPanel.add(addButton);
+        controlPanel.add(editButton);
+        controlPanel.add(deleteButton);
+
+        JPanel buttonPanelHolder = new JPanel(new BorderLayout());
+        buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
+        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); // Add space
+        this.add(buttonPanelHolder, BorderLayout.SOUTH);
+    }
+
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK); // White text color
-        button.setBackground(new Color(84, 11, 131)); // Purple background color
-        button.setFocusPainted(false); // Remove focus highlighting for better appearance
-        button.addActionListener(listener); // Add the listener
+        button.setForeground(Color.BLACK);
+        button.setBackground(new Color(84, 11, 131));
+        button.setFocusPainted(false);
+        button.addActionListener(listener);
         return button;
     }
-    
-    // Method to fetch and display products from the database
+
     void fetchAndDisplayProducts() {
-        tableModel.setRowCount(0); // Use DefaultTableModel to set row count
+        tableModel.setRowCount(0);
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
             String sql = "SELECT productCode, productName, productScale, productVendor, " +
-                         "productDescription, quantityInStock, buyPrice, msrp FROM products";
+                    "productDescription, quantityInStock, buyPrice, msrp FROM products";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Object[] row = {
@@ -102,7 +146,7 @@ public class ProductView extends JFrame {
                         resultSet.getString("productScale"),
                         resultSet.getString("productVendor"),
                         resultSet.getString("productDescription"),
-                        resultSet.getInt("quantityInStock"),  // Assuming quantityInStock is an integer
+                        resultSet.getInt("quantityInStock"),
                         resultSet.getDouble("buyPrice"),
                         resultSet.getDouble("msrp")
                 };
@@ -112,73 +156,14 @@ public class ProductView extends JFrame {
             JOptionPane.showMessageDialog(this, "Error fetching product data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
 
-    // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JTextField productNameField = new JTextField(10);
-            JTextField productScaleField = new JTextField(10);
-            JTextField productVendorField = new JTextField(10);
-            JTextField productDescriptionField = new JTextField(10);
-            JTextField quantityInStockField = new JTextField(10);
-            JTextField buyPriceField = new JTextField(10);
-            JTextField msrpField = new JTextField(10);
-
-            JPanel panel = new JPanel(new GridLayout(0, 1));
-            panel.add(new JLabel("Product Name:"));
-            panel.add(productNameField);
-            panel.add(new JLabel("Product Scale:"));
-            panel.add(productScaleField);
-            panel.add(new JLabel("Product Vendor:"));
-            panel.add(productVendorField);
-            panel.add(new JLabel("Product Description:"));
-            panel.add(productDescriptionField);
-            panel.add(new JLabel("Quantity In Stock:"));
-            panel.add(quantityInStockField);
-            panel.add(new JLabel("Buy Price:"));
-            panel.add(buyPriceField);
-            panel.add(new JLabel("MSRP:"));
-            panel.add(msrpField);
-
-            int result = JOptionPane.showConfirmDialog(null, panel,
-                    "Enter Product Details", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    String productName = productNameField.getText();
-                    String productScale = productScaleField.getText();
-                    String productVendor = productVendorField.getText();
-                    String productDescription = productDescriptionField.getText();
-                    int quantityInStock = Integer.parseInt(quantityInStockField.getText());
-                    double buyPrice = Double.parseDouble(buyPriceField.getText());
-                    double msrp = Double.parseDouble(msrpField.getText());
-
-                    // Create a Product object with the user input
-                    Products newProduct = new Products(productName, productScale, productVendor, productDescription, productDescription, quantityInStock, buyPrice, msrp);
-
-                    // Use ProductHandler to add the product
-                    ProductHandler productHandler = new ProductHandler();
-                    boolean success = productHandler.addProduct(newProduct);
-
-                    if (success) {
-                        JOptionPane.showMessageDialog(ProductView.this, "Product added successfully!");
-                        // Refresh the table or update the view if needed
-                        fetchAndDisplayProducts();
-                    } else {
-                        JOptionPane.showMessageDialog(ProductView.this, "Failed to add product.");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(ProductView.this, "Invalid number format in Stock, Price, or MSRP fields.");
-                }
-            }
+            JOptionPane.showMessageDialog(ProductView.this, "Add button pressed");
         }
+    }
 
-		
-		
-    
-
-    // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -186,20 +171,11 @@ public class ProductView extends JFrame {
         }
     }
 
-    // Action listener for "Delete" button
-    private class DeleteButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Delete button pressed");
-        }
+    private void searchProducts() {
+        // Implement search functionality
     }
 
-    // Action listener for "Search" button
-    private class SearchButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Search button pressed");
-        }
+    private void deleteProduct() {
+        // Implement delete functionality
     }
-}
 }
