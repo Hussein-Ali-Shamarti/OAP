@@ -13,7 +13,7 @@ package model;
 public class Employee {
 
      //Private data fields
-     private int employeeNr;
+     private int employeeNumber;
      private String firstName;
      private String lastName;
      private String jobTitle;
@@ -24,8 +24,8 @@ public class Employee {
    
 
      //Constructor for employee class with parameters.
-     public Employee(int employeeNr, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
-         this.employeeNr = employeeNr;
+     public Employee(int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+         this.employeeNumber = employeeNumber;
          this.firstName = firstName;
          this.lastName = lastName;
          this.jobTitle = jobTitle;
@@ -39,8 +39,8 @@ public class Employee {
 
       // Getter and setter methods, Some of them don't need to be changed, like firstname, and for those, we only have a getter method.
       //We have a setter method for the fields that can be changed later, such as password.  
-     public int getEmployeeNr() {
-        return employeeNr;
+     public int getEmployeeNumber() {
+        return employeeNumber;
     }
 
 

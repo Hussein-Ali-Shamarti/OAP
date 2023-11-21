@@ -37,7 +37,7 @@ public class EmployeeHandler {
                 pstm.setString(8, jobTitle);
               
     
-
+                
                 int affectedRows = pstm.executeUpdate();
 
                 return affectedRows > 0;
@@ -72,6 +72,27 @@ public class EmployeeHandler {
             e.printStackTrace();
             return false;
         } 
+    }
+    
+    public Employee fetchEmployeeData(int employeeNumber) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM employees WHERE employeeNumber = ?")) {
+            
+            pstmt.setInt(1, employeeNumber);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new Employee(
+                    rs.getInt("employeeNumber"),
+                    rs.getString("firstName"),
+                    rs.getString("lastName"),
+                   
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if employee is not found or an error occurs
     }
 
     public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
