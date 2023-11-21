@@ -95,8 +95,7 @@ public class EmployeeView extends JFrame {
             JTextField roleField = new JTextField(10);
             JTextField jobTitleField = new JTextField(10);
             JTextField emailField = new JTextField(10);
-            JCheckBox canCheckDeliveryStatusBox = new JCheckBox();
-            JTextField postalCodeField = new JTextField(5);
+            JTextField officeCodeField = new JTextField(5);
 
             JPanel panel = new JPanel(new GridLayout(0, 1));
             panel.add(new JLabel("Employee Number:"));
@@ -111,10 +110,8 @@ public class EmployeeView extends JFrame {
             panel.add(jobTitleField);
             panel.add(new JLabel("Email:"));
             panel.add(emailField);
-            panel.add(new JLabel("Can Check Delivery Status:"));
-            panel.add(canCheckDeliveryStatusBox);
-            panel.add(new JLabel("Postal Code:"));
-            panel.add(postalCodeField);
+            panel.add(new JLabel("office Code:"));
+            panel.add(officeCodeField);
     
 
             int result = JOptionPane.showConfirmDialog(null, panel, 
@@ -127,7 +124,7 @@ public class EmployeeView extends JFrame {
                     String role = roleField.getText();
                     String jobTitle = jobTitleField.getText();
                     String email = emailField.getText();
-                    String officeCode = postalCodeField.getText();
+                    String officeCode = officeCodeField.getText();
                    
 
                     EmployeeHandler handler = new EmployeeHandler();

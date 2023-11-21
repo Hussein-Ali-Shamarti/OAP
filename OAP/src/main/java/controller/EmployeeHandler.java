@@ -25,7 +25,7 @@ public class EmployeeHandler {
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "INSERT INTO " + employee + " (employeeNumber, firstName, lastName, role, jobTitle, email, postalCode) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                        "INSERT INTO " + employee + " (employeeNumber, firstName, lastName, role, jobTitle, email, officeCode) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 
                 pstm.setInt(1, employeeNumber);
                 pstm.setString(2, firstName);
@@ -50,7 +50,7 @@ public class EmployeeHandler {
        
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "UPDATE " + employee + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, email = ?, postalCode = ?, WHERE employeeNr = ?")) {
+                        "UPDATE " + employee + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, email = ?, officeCode = ?, WHERE employeeNr = ?")) {
 
             	 pstm.setInt(1, employeeNumber);
                  pstm.setString(2, firstName);
