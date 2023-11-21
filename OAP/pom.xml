@@ -26,11 +26,7 @@
       <scope>test</scope>
     </dependency>
     
-    <dependency>
-    	<groupId>com.OBJ2100</groupId>
-    	<artifactId>ExampleApp</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    </dependency>
+   
   </dependencies>
 
   <build>
