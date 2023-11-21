@@ -1,50 +1,41 @@
 /**
- * 
  * File: Employee.java
- * Description: This is an entity class for "Employee" and encapsulates the basic information of a employee.
- * This class represents information about a employee's attributes, such as employee number, firstname, lastname , jobtitle, password, email, role, and ...
+ * Description: This is an entity class for "Employee" and encapsulates the basic information of an employee.
+ * This class represents information about an employee's attributes, such as employee number, firstname, lastname,
+ * job title, email, role, and more.
  * @author Marziyeh
  * @version 09.11.2023
-*/ 
+ */ 
 package model;
-
-
 
 public class Employee {
 
-     //Private data fields
-     private int employeeNr;
-     private String firstName;
-     private String lastName;
-     private String jobTitle;
-     private String email;
-     private String role;
-     private int reportsTo;
-     private String extension;
-     private int officeCode;
-     private String territory;
+    // Private data fields
+    private int employeeNumber;
+    private String firstName;
+    private String lastName;
+    private String jobTitle;
+    private String email;
+    private int reportsTo;
+    private String extension;
+    private String officeCode;
 
-     //Constructor for employee class with parameters.
-     public Employee(int employeeNr, String firstName, String lastName, String jobTitle, String email, String role, int reportsTo, String extension, int officeCode, String territory) {
-         this.employeeNr = employeeNr;
-         this.firstName = firstName;
-         this.lastName = lastName;
-         this.jobTitle = jobTitle;
-         this.email = email;
-         this.role = role;
-         this.reportsTo = reportsTo;
-         this.extension = extension;
-         this.officeCode = officeCode;
-         this.territory = territory;
-      }
-
-
-      // Getter and setter methods, Some of them don't need to be changed, like firstname, and for those, we only have a getter method.
-      //We have a setter method for the fields that can be changed later, such as password.  
-     public int getEmployeeNr() {
-        return employeeNr;
+    // Constructor for employee class with parameters
+    public Employee(int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+        this.employeeNumber = employeeNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.jobTitle = jobTitle;
+        this.email = email;
+        this.reportsTo = reportsTo;
+        this.extension = extension;
+        this.officeCode = officeCode;
     }
 
+    // Getter and Setter methods
+    public int getEmployeeNumber() {
+        return employeeNumber;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -53,15 +44,6 @@ public class Employee {
     public String getLastName() {
         return lastName;
     }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
 
     public String getJobTitle() {
         return jobTitle;
@@ -75,12 +57,16 @@ public class Employee {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getReportsTo() {
         return reportsTo;
     }
 
     public void setReportsTo(int reportsTo) {
-        this.reportsTo= reportsTo;
+        this.reportsTo = reportsTo;
     }
 
     public String getExtension() {
@@ -91,19 +77,11 @@ public class Employee {
         this.extension = extension;
     }
 
-    public int getOfficeCode() {
+    public String getOfficeCode() {
         return officeCode;
     }
 
-    public void setOfficeCode(int officeCode) {
+    public void setOfficeCode(String officeCode) {
         this.officeCode = officeCode;
-    }
-
-    public String getTerritory() {
-        return territory;
-    }
-
-    public void setTerritory(String territory) {
-        this.territory = territory;
     }
 }

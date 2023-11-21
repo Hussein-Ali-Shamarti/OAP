@@ -20,22 +20,24 @@
 public class EmployeeHandler {
     
  
-    public boolean addEmployee(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String officeCode) {
+    public boolean addEmployee(String employees, int employeeNumber, String firstName, String lastName,String extension, String email, String officeCode, int reportsTo, String jobTitle) {
       
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "INSERT INTO " + employee + " (employeeNumber, firstName, lastName, role, jobTitle, email, officeCode) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                        "INSERT INTO " + employees + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 
                 pstm.setInt(1, employeeNumber);
                 pstm.setString(2, firstName);
                 pstm.setString(3, lastName);
-                pstm.setString(4, role);
-                pstm.setString(5, jobTitle);
-                pstm.setString(6, email);
-                pstm.setString(7, officeCode);
+                pstm.setString(4, extension);
+                pstm.setString(5, email);
+                pstm.setString(6, officeCode);
+                pstm.setInt(7, reportsTo);
+                pstm.setString(8, jobTitle);
+              
     
-
+                
                 int affectedRows = pstm.executeUpdate();
 
                 return affectedRows > 0;
@@ -46,19 +48,20 @@ public class EmployeeHandler {
         } 
     }
 
-    public boolean editEmployeeInDatabase(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String officeCode) {
+    public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName,String extension, String email, String officeCode, int reportsTo, String jobTitle) {
        
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "UPDATE " + employee + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, email = ?, officeCode = ?, WHERE employeeNr = ?")) {
+                        "UPDATE " + employees + " SET firstName = ?, lastName = ?, role = ?, extension =?, email = ?, officeCode = ?, reportsTo = ?, jobtitle = ?,  WHERE employeeNr = ?")) {
 
-            	 pstm.setInt(1, employeeNumber);
-                 pstm.setString(2, firstName);
-                 pstm.setString(3, lastName);
-                 pstm.setString(4, role);
-                 pstm.setString(5, jobTitle);
-                 pstm.setString(6, email);
-                 pstm.setString(7, officeCode);
+            	pstm.setInt(1, employeeNumber);
+                pstm.setString(2, firstName);
+                pstm.setString(3, lastName);
+                pstm.setString(4, extension);
+                pstm.setString(5, email);
+                pstm.setString(6, officeCode);
+                pstm.setInt(7, reportsTo);
+                pstm.setString(8, jobTitle);
      
 
                 int affectedRows = pstm.executeUpdate();
@@ -70,12 +73,37 @@ public class EmployeeHandler {
             return false;
         } 
     }
+    
+    public Employee fetchEmployeeData(int employeeNumber) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM employees WHERE employeeNumber = ?")) {
+            
+            pstmt.setInt(1, employeeNumber);
+            ResultSet rs = pstmt.executeQuery();
 
-    public boolean removeEmployeeFromDatabase(String tableName, int employeeNumber) {
+            if (rs.next()) {
+                return new Employee(
+                    rs.getInt("employeeNumber"),
+                    rs.getString("firstName"),
+                    rs.getString("lastName"),
+                    rs.getString("extension"),
+                    rs.getString("email"),
+                    rs.getString("officeCode"),
+                    rs.getInt("reportsTo"),
+                    rs.getString("jobTitle")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if employee is not found or an error occurs
+    }
+
+    public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
        
 
             try (Connection connection = DataBaseConnection.getConnection();
-                 PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + tableName + " WHERE employeeNr = ?")) {
+                 PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNumberr = ?")) {
                 pstm.setInt(1, employeeNumber);
 
                 int affectedRows = pstm.executeUpdate();
@@ -105,9 +133,7 @@ public class EmployeeHandler {
                     rs.getString("email"),
                     rs.getString("role"),
                     rs.getInt("reportsTo"),
-                    rs.getString("extension"),
-                    rs.getInt("officeCode"),
-                    rs.getString("territory")
+                    rs.getString("extension")
                 );
                 employees.add(employee);
             }
