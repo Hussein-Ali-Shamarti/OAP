@@ -327,8 +327,6 @@ public class OrderView extends JFrame {
     }
 
 
-
-
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK); // White text color
@@ -361,6 +359,7 @@ public class OrderView extends JFrame {
            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
        }
    }
+    
     private class addButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
