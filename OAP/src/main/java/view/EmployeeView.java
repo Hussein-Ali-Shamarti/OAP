@@ -4,17 +4,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import controller.EmployeeHandler;
+import database.DataBaseConnection;
 
 public class EmployeeView extends JFrame {
 
-    /**
-	 * 
-	 */
+    
+	
 	private static final long serialVersionUID = 1L;
+
 
 	public EmployeeView() {
         // Set title
         super("Employee View");
+        
+        
 
         // Set layout for the frame
         setLayout(new BorderLayout());
@@ -36,6 +40,7 @@ public class EmployeeView extends JFrame {
         JButton updateButton = createButton("Update", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
         JButton searchButton = createButton("Search", new SearchButtonListener());
+        
 
         // Create JPanel for buttons
         JPanel buttonPanel = new JPanel();
@@ -76,14 +81,67 @@ public class EmployeeView extends JFrame {
         button.addActionListener(listener); // Add the listener
         return button;
     }
+    
+ 
+    
 
     // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(EmployeeView.this, "Add New button pressed");
+            JTextField employeeNumberField = new JTextField(5);
+            JTextField firstNameField = new JTextField(10);
+            JTextField lastNameField = new JTextField(10);
+            JTextField roleField = new JTextField(10);
+            JTextField jobTitleField = new JTextField(10);
+            JTextField emailField = new JTextField(10);
+            JTextField officeCodeField = new JTextField(5);
+
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            panel.add(new JLabel("Employee Number:"));
+            panel.add(employeeNumberField);
+            panel.add(new JLabel("First Name:"));
+            panel.add(firstNameField);
+            panel.add(new JLabel("Last Name:"));
+            panel.add(lastNameField);
+            panel.add(new JLabel("Role:"));
+            panel.add(roleField);
+            panel.add(new JLabel("Job Title:"));
+            panel.add(jobTitleField);
+            panel.add(new JLabel("Email:"));
+            panel.add(emailField);
+            panel.add(new JLabel("office Code:"));
+            panel.add(officeCodeField);
+    
+
+            int result = JOptionPane.showConfirmDialog(null, panel, 
+                   "Enter Employee Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    int employeeNumber = Integer.parseInt(employeeNumberField.getText());
+                    String firstName = firstNameField.getText();
+                    String lastName = lastNameField.getText();
+                    String role = roleField.getText();
+                    String jobTitle = jobTitleField.getText();
+                    String email = emailField.getText();
+                    String officeCode = officeCodeField.getText();
+                   
+
+                    EmployeeHandler handler = new EmployeeHandler();
+                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, email, officeCode);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(EmployeeView.this, "Employee added successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(EmployeeView.this, "Failed to add employee.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(EmployeeView.this, "Invalid number format in Employee Number field.");
+                }
+            }
         }
     }
+
 
     // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
