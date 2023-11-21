@@ -114,7 +114,7 @@ public class OrderView extends JFrame {
     	    controlPanel.add(addButton);
 
     	    // Edit Button
-    	    JButton editButton = createButton("Edit", e -> editOrder());
+    	    JButton editButton = createButton("Edit", new UpdateButtonListener());
     	    controlPanel.add(editButton);
 
     	    // Delete Button
