@@ -49,17 +49,17 @@ public class ProductView extends JFrame {
 
         // Create buttons with listeners
         JButton addButton = createButton("Add New", new AddButtonListener());
-        JButton updateButton = createButton("Update", new UpdateButtonListener());
-        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-        JButton searchButton = createButton("Search", new SearchButtonListener());
+//        JButton updateButton = createButton("Update", new UpdateButtonListener());
+//        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+//        JButton searchButton = createButton("Search", new SearchButtonListener());
 
         // Create JPanel for buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1, 4, 10, 10));
         buttonPanel.add(addButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(searchButton);
+//        buttonPanel.add(updateButton);
+//        buttonPanel.add(deleteButton);
+//        buttonPanel.add(searchButton);
 
         // Create JTable and JScrollPane
         String[] columnNames = {"Column 1", "Column 2", "Column 3"}; // Replace with actual column names
