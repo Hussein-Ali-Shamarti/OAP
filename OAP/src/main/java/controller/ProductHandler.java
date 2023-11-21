@@ -1,46 +1,43 @@
 package controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import com.mysql.cj.xdevapi.Statement;
+import javax.swing.table.DefaultTableModel;
 
 import database.DataBaseConnection;
 
 public class ProductHandler {
-	
-	
+    private DefaultTableModel tableModel;
+    private DataBaseConnection DataBaseConnection;
 
-	// Method to fetch and display orders from the database
-    private void fetchAndDisplayOrders() {
-    	
-    
-		tableModel.setRowCount(0);
-        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+    // Constructor to initialize the tableModel and database connection
+    public ProductHandler(DefaultTableModel tableModel, DataBaseConnection dbConnection) {
+        this.tableModel = tableModel;
+        this.setDataBaseConnection(dbConnection);
+    }
+
+    // Method to fetch and display products from the database
+    public void fetchAndDisplayProducts() {
+        tableModel.setRowCount(0);
+        try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
 
-            String sql = "SELECT orderNumber, orderDate, requiredDate, shippedDate ,status, comments, customerNumber FROM orders";
+            String sql = "SELECT productCode, productName, productScale, productVendor, productDescription, quantityInStock, buyPrice, msrp FROM products";
             ResultSet resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
                 Object[] row = {
                     resultSet.getString("productCode"),
-                    resultSet.getString("customerName"),
+                    resultSet.getString("productName"),
                     resultSet.getString("productScale"),
                     resultSet.getString("productVendor"),
                     resultSet.getString("productDescription"),
                     resultSet.getString("quantityInStock"),
-                    resultSet.getString("buyPrice")
-                    
-                    this.productCode = productCode;
-                    this.productName = productName;
-                    this.productScale = productScale;
-                    this.productVendor = productVendor;
-                    this.productDescription = productDescription;
-                    this.quantityInStock = quantityInStock;
-                    this.buyPrice = buyPrice;
-                    this.msrp = msrp;
+                    resultSet.getString("buyPrice"),
+                    resultSet.getString("msrp")
                 };
                 tableModel.addRow(row);
             }
@@ -49,9 +46,11 @@ public class ProductHandler {
         }
     }
 
-   
+	public DataBaseConnection getDataBaseConnection() {
+		return DataBaseConnection;
+	}
 
-    
+	public void setDataBaseConnection(DataBaseConnection dataBaseConnection) {
+		DataBaseConnection = dataBaseConnection;
+	}
 }
-
-
