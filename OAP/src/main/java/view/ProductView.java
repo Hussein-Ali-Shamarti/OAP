@@ -50,7 +50,7 @@ public class ProductView extends JFrame {
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
-<<<<<<< Updated upstream
+
         // Create buttons with listeners
         JButton addButton = createButton("Add New", new AddButtonListener());
 //        JButton updateButton = createButton("Update", new UpdateButtonListener());
@@ -72,11 +72,11 @@ public class ProductView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
 
         // Add components to the frame
-=======
+
         setupTable();
         setupControlPanel();
 
->>>>>>> Stashed changes
+
         add(titlePanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
