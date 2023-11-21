@@ -1,9 +1,13 @@
 package view;
 
 import javax.swing.*;
+
+import controller.CustomerHandler;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 
 public class CustomerView extends JFrame {
 
@@ -82,9 +86,53 @@ public class CustomerView extends JFrame {
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(CustomerView.this, "Add New button pressed");
+            JTextField customerNumberField = new JTextField(10);
+            JTextField companyNameField = new JTextField(10);
+            JTextField contactLastNameField = new JTextField(10);
+            JTextField contactFirstNameField = new JTextField(10);
+            JTextField salesRepEmployeeNumberField = new JTextField(10);
+            JTextField creditLimitField = new JTextField(10);
+
+            JPanel panel = new JPanel(new GridLayout(0, 2));
+            panel.add(new JLabel("Customer Number:"));
+            panel.add(customerNumberField);
+            panel.add(new JLabel("Company Name:"));
+            panel.add(companyNameField);
+            panel.add(new JLabel("Contact Last Name:"));
+            panel.add(contactLastNameField);
+            panel.add(new JLabel("Contact First Name:"));
+            panel.add(contactFirstNameField);
+            panel.add(new JLabel("Sales Rep Employee Number:"));
+            panel.add(salesRepEmployeeNumberField);
+            panel.add(new JLabel("Credit Limit:"));
+            panel.add(creditLimitField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, 
+                    "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    int customerNr = Integer.parseInt(customerNumberField.getText());
+                    String companyName = companyNameField.getText();
+                    String contactLastName = contactLastNameField.getText();
+                    String contactFirstName = contactFirstNameField.getText();
+                    int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+                    BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
+
+                    boolean success = CustomerHandler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, salesRepEmployeeNr, creditLimit);
+                    if (success) {
+                        JOptionPane.showMessageDialog(CustomerView.this, "Customer added successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(CustomerView.this, "Failed to add customer.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Invalid input format.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Error: " + ex.getMessage());
+                }
+            }
         }
     }
+
 
     // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
