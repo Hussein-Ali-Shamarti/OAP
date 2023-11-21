@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 
 public class EmployeeView extends JFrame {
 
-    public EmployeeView() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public EmployeeView() {
         // Set title
         super("Employee View");
 
@@ -65,7 +70,7 @@ public class EmployeeView extends JFrame {
 
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.WHITE); // White text color
+        button.setForeground(Color.BLACK); // White text color
         button.setBackground(new Color(84, 11, 131)); // Purple background color
         button.setFocusPainted(false); // Remove focus highlighting for better appearance
         button.addActionListener(listener); // Add the listener
