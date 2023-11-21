@@ -17,7 +17,7 @@ public class MainView extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public MainView() {
-        // Set title and size
+        // Set title anxd size
         super("Model Perfect");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,7 +30,7 @@ public class MainView extends JFrame {
         mainPanel.setBackground(Color.WHITE);
 
         // Add logo (replace with your own implementation)
-        ImageIcon companyLogo = new ImageIcon("Model Perfect.png");
+        ImageIcon companyLogo = new ImageIcon("images/Model Perfect.png");
         JLabel logoLabel = new JLabel(companyLogo);
         mainPanel.add(logoLabel);
 
@@ -103,10 +103,5 @@ private static class EmployeesListener implements ActionListener {
     }
 }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView();
-            mainView.setVisible(true);
-        });
-    }
+   
 }
