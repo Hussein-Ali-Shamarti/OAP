@@ -425,21 +425,120 @@ public class OrderView extends JFrame {
     
 
 
-    // Action listener for "Update" button
-    private class UpdateButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Update button pressed");
-        }
-    }
+        private class UpdateButtonListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(OrderView.this, "No order selected for update.");
+                    return;
+                }
 
-    // Action listener for "Delete" button
-    private class DeleteButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Delete button pressed");
-        }
-    }
+                // Extract existing order details from the selected row
+                int orderNumber = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+                String currentOrderDate = tableModel.getValueAt(selectedRow, 1).toString();
+                String currentRequiredDate = tableModel.getValueAt(selectedRow, 2).toString();
+                String currentShippedDate = tableModel.getValueAt(selectedRow, 3).toString();
+                String currentStatus = tableModel.getValueAt(selectedRow, 4).toString();
+                String currentComments = tableModel.getValueAt(selectedRow, 5).toString();
+                String currentCustomerNumber = tableModel.getValueAt(selectedRow, 6).toString();
+
+                // Create a dialog to enter updated order data
+                JPanel panel = new JPanel(new GridLayout(0, 2)); // 2 columns layout
+
+                // Define labels and fields for each order attribute
+                JLabel labelOrderDate = new JLabel("Order Date (yyyy-mm-dd):");
+                JTextField fieldOrderDate = new JTextField(currentOrderDate);
+                panel.add(labelOrderDate);
+                panel.add(fieldOrderDate);
+
+                JLabel labelRequiredDate = new JLabel("Required Date (yyyy-mm-dd):");
+                JTextField fieldRequiredDate = new JTextField(currentRequiredDate);
+                panel.add(labelRequiredDate);
+                panel.add(fieldRequiredDate);
+
+                JLabel labelShippedDate = new JLabel("Shipped Date (yyyy-mm-dd):");
+                JTextField fieldShippedDate = new JTextField(currentShippedDate);
+                panel.add(labelShippedDate);
+                panel.add(fieldShippedDate);
+
+                JLabel labelStatus = new JLabel("Status:");
+                JTextField fieldStatus = new JTextField(currentStatus);
+                panel.add(labelStatus);
+                panel.add(fieldStatus);
+
+                JLabel labelComments = new JLabel("Comments:");
+                JTextField fieldComments = new JTextField(currentComments);
+                panel.add(labelComments);
+                panel.add(fieldComments);
+
+                JLabel labelCustomerNumber = new JLabel("Customer Number:");
+                JTextField fieldCustomerNumber = new JTextField(currentCustomerNumber);
+                panel.add(labelCustomerNumber);
+                panel.add(fieldCustomerNumber);
+
+                // Display the dialog
+                int result = JOptionPane.showConfirmDialog(OrderView.this, panel, "Update Order", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        // Parse and validate inputs
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date orderDate = dateFormat.parse(fieldOrderDate.getText());
+                        Date requiredDate = dateFormat.parse(fieldRequiredDate.getText());
+                        Date shippedDate = fieldShippedDate.getText().isEmpty() ? null : dateFormat.parse(fieldShippedDate.getText());
+                        String status = fieldStatus.getText();
+                        String comments = fieldComments.getText();
+                        int customerNumber = Integer.parseInt(fieldCustomerNumber.getText());
+
+                        // Create an updated order object
+                        Order updatedOrder = new Order(orderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+
+                        // Update the order in the database using OrderHandler
+                        boolean success = oh.editOrder(updatedOrder, orderNumber);
+
+                        if (success) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Order updated successfully.");
+                            // Optionally, refresh the table to show updated data
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Failed to update order.");
+                        }
+                    } catch (NumberFormatException | ParseException ex) {
+                        JOptionPane.showMessageDialog(OrderView.this, "Invalid input: " + ex.getMessage());
+                    }
+                }
+            }
+        
+
+
+            private class DeleteButtonListener implements ActionListener {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow == -1) {
+                        JOptionPane.showMessageDialog(OrderView.this, "No order selected for deletion.");
+                        return;
+                    }
+
+                    // Extract the order number from the selected row
+                    int orderNumber = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+
+                    // Confirm deletion
+                    int confirm = JOptionPane.showConfirmDialog(OrderView.this, "Are you sure you want to delete this order?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        boolean success = oh.deleteOrder(orderNumber);
+
+                        if (success) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Order deleted successfully.");
+                            // Optionally, refresh the table to remove the deleted row
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Failed to delete order.");
+                        }
+                    }
+                }
+            }
+
 
     // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
@@ -465,4 +564,5 @@ public class OrderView extends JFrame {
         }
     }
 
+}
 }

@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,11 @@ public class Order {
         this.orderDetailsList = new ArrayList<>();
     }
 
-    public int getOrderNumber() {
+    public Order(ResultSet rs) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getOrderNumber() {
         return this.orderNumber;
     }
 
