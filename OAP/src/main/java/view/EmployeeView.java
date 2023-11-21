@@ -229,13 +229,42 @@ public class EmployeeView extends JFrame {
 
     
 
-    // Action listener for "Delete" button
     private class DeleteButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(EmployeeView.this, "Delete button pressed");
+            String employeeNumberStr = JOptionPane.showInputDialog(EmployeeView.this, "Enter Employee Number to delete:");
+            if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
+                try {
+                    int employeeNumber = Integer.parseInt(employeeNumberStr);
+
+                    EmployeeHandler handler = new EmployeeHandler();
+                    Employee employee = handler.fetchEmployeeData(employeeNumber);
+
+                    if (employee != null) {
+                        int confirm = JOptionPane.showConfirmDialog(EmployeeView.this, 
+                            "Are you sure you want to delete this employee?\n" +
+                            "Employee Nr: " + employee.getEmployeeNumber() + "\n" +
+                            "Name: " + employee.getFirstName() + " " + employee.getLastName(), 
+                            "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            boolean success = handler.removeEmployeeFromDatabase("employees", employeeNumber);
+                            if (success) {
+                                JOptionPane.showMessageDialog(EmployeeView.this, "Employee deleted successfully.");
+                            } else {
+                                JOptionPane.showMessageDialog(EmployeeView.this, "Failed to delete employee.");
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(EmployeeView.this, "Employee not found.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(EmployeeView.this, "Invalid employee number format.");
+                }
+            }
         }
     }
+
 
     // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
