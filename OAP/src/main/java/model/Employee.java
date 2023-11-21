@@ -1,48 +1,41 @@
 /**
- * 
  * File: Employee.java
- * Description: This is an entity class for "Employee" and encapsulates the basic information of a employee.
- * This class represents information about a employee's attributes, such as employee number, firstname, lastname , jobtitle, password, email, role, and ...
+ * Description: This is an entity class for "Employee" and encapsulates the basic information of an employee.
+ * This class represents information about an employee's attributes, such as employee number, firstname, lastname,
+ * job title, email, role, and more.
  * @author Marziyeh
  * @version 09.11.2023
-*/ 
+ */ 
 package model;
-
-
 
 public class Employee {
 
-     //Private data fields
-     private int employeeNumber;
-     private String firstName;
-     private String lastName;
-     private String jobTitle;
-     private String email;
-     private int reportsTo;
-     private String extension;
-     private String officeCode;
-   
+    // Private data fields
+    private int employeeNumber;
+    private String firstName;
+    private String lastName;
+    private String jobTitle;
+    private String email;
+    private int reportsTo;
+    private String extension;
+    private String officeCode;
 
-     //Constructor for employee class with parameters.
-     public Employee(int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
-         this.employeeNumber = employeeNumber;
-         this.firstName = firstName;
-         this.lastName = lastName;
-         this.jobTitle = jobTitle;
-         this.email = email;
-         this.reportsTo = reportsTo;
-         this.extension = extension;
-         this.officeCode = officeCode;
-       
-      }
-
-
-      // Getter and setter methods, Some of them don't need to be changed, like firstname, and for those, we only have a getter method.
-      //We have a setter method for the fields that can be changed later, such as password.  
-     public int getEmployeeNumber() {
-        return employeeNumber;
+    // Constructor for employee class with parameters
+    public Employee(int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+        this.employeeNumber = employeeNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.jobTitle = jobTitle;
+        this.email = email;
+        this.reportsTo = reportsTo;
+        this.extension = extension;
+        this.officeCode = officeCode;
     }
 
+    // Getter and Setter methods
+    public int getEmployeeNumber() {
+        return employeeNumber;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -51,6 +44,7 @@ public class Employee {
     public String getLastName() {
         return lastName;
     }
+
     public String getJobTitle() {
         return jobTitle;
     }
@@ -63,12 +57,16 @@ public class Employee {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getReportsTo() {
         return reportsTo;
     }
 
     public void setReportsTo(int reportsTo) {
-        this.reportsTo= reportsTo;
+        this.reportsTo = reportsTo;
     }
 
     public String getExtension() {
@@ -86,6 +84,4 @@ public class Employee {
     public void setOfficeCode(String officeCode) {
         this.officeCode = officeCode;
     }
-
-  
 }

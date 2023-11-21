@@ -86,7 +86,11 @@ public class EmployeeHandler {
                     rs.getInt("employeeNumber"),
                     rs.getString("firstName"),
                     rs.getString("lastName"),
-                   
+                    rs.getString("extension"),
+                    rs.getString("email"),
+                    rs.getString("officeCode"),
+                    rs.getInt("reportsTo"),
+                    rs.getString("jobTitle")
                 );
             }
         } catch (SQLException e) {
