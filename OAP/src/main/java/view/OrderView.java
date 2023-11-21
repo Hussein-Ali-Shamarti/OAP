@@ -131,18 +131,19 @@ public class OrderView extends JFrame {
         }
     }
 
-
-      private void searchOrders() {
+    private void searchOrders() {
         String searchText = textField.getText();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
+        List<Order> orders = oh.searchOrders(searchText);
+        updateTableData(orders);
+    }
 
-        if (searchText.trim().length() == 0) {
-            sorter.setRowFilter(null);
-        } else {
-            sorter.setRowFilter(RowFilter.regexFilter(searchText));
+    private void updateTableData(List<Order> orders) {
+        tableModel.setRowCount(0);
+        for (Order order : orders) {
+            tableModel.addRow(new Object[]{ /* Add order details here */ });
         }
     }
+
 
     private void addOrder() {
         // Create a dialog to enter the order data
@@ -540,13 +541,14 @@ public class OrderView extends JFrame {
             }
 
 
-    // Action listener for "Search" button
-    private class SearchButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Search button pressed");
+      // Action listener for "Search" button
+         private class SearchButtonListener implements ActionListener {
+          @Override
+            public void actionPerformed(ActionEvent e) {
+            searchOrders();
+            }
         }
-    }
+
 
     // Action listener for "Check Delivery Status" button
     private class DeliveryButtonListener implements ActionListener {
