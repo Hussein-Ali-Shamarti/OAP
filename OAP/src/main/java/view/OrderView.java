@@ -348,13 +348,82 @@ public class OrderView extends JFrame {
         return button;
     }
 
-     // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Add New button pressed");
+            // Create a dialog to enter the order data
+            JPanel panel = new JPanel(new GridLayout(0, 2)); // 2 columns layout
+
+            // Define labels and fields for each order attribute
+            JLabel labelOrderNumber = new JLabel("Order Number:");
+            JTextField fieldOrderNumber = new JTextField();
+            panel.add(labelOrderNumber);
+            panel.add(fieldOrderNumber);
+
+            JLabel labelOrderDate = new JLabel("Order Date (yyyy-mm-dd):");
+            JTextField fieldOrderDate = new JTextField();
+            panel.add(labelOrderDate);
+            panel.add(fieldOrderDate);
+
+            JLabel labelRequiredDate = new JLabel("Required Date (yyyy-mm-dd):");
+            JTextField fieldRequiredDate = new JTextField();
+            panel.add(labelRequiredDate);
+            panel.add(fieldRequiredDate);
+
+            JLabel labelShippedDate = new JLabel("Shipped Date (yyyy-mm-dd):");
+            JTextField fieldShippedDate = new JTextField();
+            panel.add(labelShippedDate);
+            panel.add(fieldShippedDate);
+
+            JLabel labelStatus = new JLabel("Status:");
+            JTextField fieldStatus = new JTextField();
+            panel.add(labelStatus);
+            panel.add(fieldStatus);
+
+            JLabel labelComments = new JLabel("Comments:");
+            JTextField fieldComments = new JTextField();
+            panel.add(labelComments);
+            panel.add(fieldComments);
+
+            JLabel labelCustomerNumber = new JLabel("Customer Number:");
+            JTextField fieldCustomerNumber = new JTextField();
+            panel.add(labelCustomerNumber);
+            panel.add(fieldCustomerNumber);
+
+            // Display the dialog
+            int result = JOptionPane.showConfirmDialog(OrderView.this, panel, "Add New Order", JOptionPane.OK_CANCEL_OPTION);
+
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    // Parse and validate inputs
+                    int orderNumber = Integer.parseInt(fieldOrderNumber.getText());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date orderDate = dateFormat.parse(fieldOrderDate.getText());
+                    Date requiredDate = dateFormat.parse(fieldRequiredDate.getText());
+                    Date shippedDate = fieldShippedDate.getText().isEmpty() ? null : dateFormat.parse(fieldShippedDate.getText()); // Handle nullable date
+                    String status = fieldStatus.getText();
+                    String comments = fieldComments.getText();
+                    int customerNumber = Integer.parseInt(fieldCustomerNumber.getText());
+
+                    // Create a new order object
+                    Order newOrder = new Order(orderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+
+                    // Add the order to the database using OrderHandler
+                    boolean success = oh.addOrder(newOrder);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(OrderView.this, "Order added successfully.");
+                        // Optionally, refresh the table to show new data
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "Failed to add order.");
+                    }
+                } catch (NumberFormatException | ParseException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid input: " + ((JOptionPane) ex).getMessage());
+                }
+            }
         }
-    }
+    
+
 
     // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
