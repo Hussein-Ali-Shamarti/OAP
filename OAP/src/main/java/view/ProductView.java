@@ -1,21 +1,37 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import database.DataBaseConnection;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 import controller.ProductHandler;
+import model.Products;
 
 public class ProductView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private DefaultTableModel tableModel;
 
-	public ProductView() {
+    public ProductView() {
         // Set title
         super("Product Management");
 
@@ -70,49 +86,97 @@ public class ProductView extends JFrame {
         button.addActionListener(listener); // Add the listener
         return button;
     }
+    
+    // Method to fetch and display products from the database
+    void fetchAndDisplayProducts() {
+        tableModel.setRowCount(0); // Use DefaultTableModel to set row count
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String sql = "SELECT productCode, productName, productScale, productVendor, " +
+                         "productDescription, quantityInStock, buyPrice, msrp FROM products";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                Object[] row = {
+                        resultSet.getString("productCode"),
+                        resultSet.getString("productName"),
+                        resultSet.getString("productScale"),
+                        resultSet.getString("productVendor"),
+                        resultSet.getString("productDescription"),
+                        resultSet.getInt("quantityInStock"),  // Assuming quantityInStock is an integer
+                        resultSet.getDouble("buyPrice"),
+                        resultSet.getDouble("msrp")
+                };
+                tableModel.addRow(row);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error fetching product data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
 
- // Action listener for "Add New" button
+    // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextField productNameField = new JTextField(10);
+            JTextField productScaleField = new JTextField(10);
+            JTextField productVendorField = new JTextField(10);
             JTextField productDescriptionField = new JTextField(10);
-            JTextField productPriceField = new JTextField(10);
-            JTextField productStockField = new JTextField(10);
+            JTextField quantityInStockField = new JTextField(10);
+            JTextField buyPriceField = new JTextField(10);
+            JTextField msrpField = new JTextField(10);
 
             JPanel panel = new JPanel(new GridLayout(0, 1));
             panel.add(new JLabel("Product Name:"));
             panel.add(productNameField);
+            panel.add(new JLabel("Product Scale:"));
+            panel.add(productScaleField);
+            panel.add(new JLabel("Product Vendor:"));
+            panel.add(productVendorField);
             panel.add(new JLabel("Product Description:"));
             panel.add(productDescriptionField);
-            panel.add(new JLabel("Product Price:"));
-            panel.add(productPriceField);
-            panel.add(new JLabel("Product Stock:"));
-            panel.add(productStockField);
+            panel.add(new JLabel("Quantity In Stock:"));
+            panel.add(quantityInStockField);
+            panel.add(new JLabel("Buy Price:"));
+            panel.add(buyPriceField);
+            panel.add(new JLabel("MSRP:"));
+            panel.add(msrpField);
 
             int result = JOptionPane.showConfirmDialog(null, panel,
                     "Enter Product Details", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     String productName = productNameField.getText();
+                    String productScale = productScaleField.getText();
+                    String productVendor = productVendorField.getText();
                     String productDescription = productDescriptionField.getText();
-                    double productPrice = Double.parseDouble(productPriceField.getText());
-                    int productStock = Integer.parseInt(productStockField.getText());
+                    int quantityInStock = Integer.parseInt(quantityInStockField.getText());
+                    double buyPrice = Double.parseDouble(buyPriceField.getText());
+                    double msrp = Double.parseDouble(msrpField.getText());
 
+                    // Create a Product object with the user input
+                    Products newProduct = new Products(productName, productScale, productVendor, productDescription, productDescription, quantityInStock, buyPrice, msrp);
+
+                    // Use ProductHandler to add the product
                     ProductHandler productHandler = new ProductHandler();
-                    boolean success = productHandler.addProduct(null);
+                    boolean success = productHandler.addProduct(newProduct);
 
                     if (success) {
                         JOptionPane.showMessageDialog(ProductView.this, "Product added successfully!");
+                        // Refresh the table or update the view if needed
+                        fetchAndDisplayProducts();
                     } else {
                         JOptionPane.showMessageDialog(ProductView.this, "Failed to add product.");
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(ProductView.this, "Invalid number format in Price or Stock fields.");
+                    JOptionPane.showMessageDialog(ProductView.this, "Invalid number format in Stock, Price, or MSRP fields.");
                 }
             }
         }
-    }
+
+		
+		
+    
 
     // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
@@ -137,5 +201,5 @@ public class ProductView extends JFrame {
             JOptionPane.showMessageDialog(ProductView.this, "Search button pressed");
         }
     }
-
-    }
+}
+}

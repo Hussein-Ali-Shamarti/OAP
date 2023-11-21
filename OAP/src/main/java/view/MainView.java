@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import view.OrderView;
+import view.CustomerView;
+import view.ProductView;
 public class MainView extends JFrame {
 
     /**
@@ -62,17 +64,19 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Static inner class for "Products" button in MainMenu
-    private static class ProductsListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Open ProductView when "Products" button is pressed
-            SwingUtilities.invokeLater(() -> {
-                // Create ProductView and set it visible
-                new ProductView().setVisible(true);
-            });
-        }
-    }
+	// Static inner class for "Products" button in MainMenu
+	private static class ProductsListener implements ActionListener {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        // Open ProductView when "Products" button is pressed
+	        SwingUtilities.invokeLater(() -> {
+	            // Create ProductView and set it visible
+	            ProductView productView = new ProductView();
+	            productView.setVisible(true);
+	            productView.fetchAndDisplayProducts(); // Call the fetchAndDisplayProducts method
+	        });
+	    }
+	}
 
     private static class OrderListener implements ActionListener {
         @Override
@@ -93,6 +97,7 @@ public class MainView extends JFrame {
             // Open CustomerView when "Customers" button is pressed
             SwingUtilities.invokeLater(() -> {
                 new CustomerView(null).setVisible(true);
+               
             });
         }
     }
