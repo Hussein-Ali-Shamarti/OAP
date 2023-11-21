@@ -48,31 +48,28 @@ public class EmployeeHandler {
         } 
     }
 
-    public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName,String extension, String email, String officeCode, int reportsTo, String jobTitle) {
-       
-            try (Connection connection = DataBaseConnection.getConnection();
-                 PreparedStatement pstm = connection.prepareStatement(
-                        "UPDATE " + employees + " SET firstName = ?, lastName = ?, role = ?, extension =?, email = ?, officeCode = ?, reportsTo = ?, jobtitle = ?,  WHERE employeeNr = ?")) {
+    public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(
+                    "UPDATE " + employees + " SET firstName = ?, lastName = ?, extension = ?, email = ?, officeCode = ?, reportsTo = ?, jobTitle = ? WHERE employeeNr = ?")) {
 
-            	pstm.setInt(1, employeeNumber);
-                pstm.setString(2, firstName);
-                pstm.setString(3, lastName);
-                pstm.setString(4, extension);
-                pstm.setString(5, email);
-                pstm.setString(6, officeCode);
-                pstm.setInt(7, reportsTo);
-                pstm.setString(8, jobTitle);
-     
+            pstm.setString(1, firstName);
+            pstm.setString(2, lastName);
+            pstm.setString(3, extension);
+            pstm.setString(4, email);
+            pstm.setString(5, officeCode);
+            pstm.setInt(6, reportsTo);
+            pstm.setString(7, jobTitle);
+            pstm.setInt(8, employeeNumber);  // Assuming employeeNr is the identifier
 
-                int affectedRows = pstm.executeUpdate();
-
-                return affectedRows > 0; 
-            }
-         catch (SQLException e) {
+            int affectedRows = pstm.executeUpdate();
+            return affectedRows > 0; 
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } 
+        }
     }
+
     
     public Employee fetchEmployeeData(int employeeNumber) {
         try (Connection connection = DataBaseConnection.getConnection();
