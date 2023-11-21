@@ -20,7 +20,7 @@
 public class EmployeeHandler {
     
  
-    public boolean addEmployee(String tableName, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
+    public boolean addEmployee(String tableName, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean status, String postalCode, String roles) {
       
 
             try (Connection connection = DataBaseConnection.getConnection();
@@ -34,7 +34,7 @@ public class EmployeeHandler {
                 pstm.setString(5, jobTitle);
                 pstm.setString(6, password);
                 pstm.setString(7, email);
-                pstm.setBoolean(8, canCheckDeliveryStatus);
+                pstm.setBoolean(8, status);
                 pstm.setString(9, postalCode);
                 pstm.setString(10, roles);
 
