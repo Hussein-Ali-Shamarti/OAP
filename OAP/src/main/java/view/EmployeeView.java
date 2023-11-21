@@ -153,77 +153,77 @@ public class EmployeeView extends JFrame {
 
     	// update button
 
-    private class UpdateButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String employeeNumberStr = JOptionPane.showInputDialog(EmployeeView.this, "Enter Employee Number to edit:");
-            if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
-                try {
-                    int employeeNumber = Integer.parseInt(employeeNumberStr);
-
-                    EmployeeHandler handler = new EmployeeHandler();
-                    Employee employee = handler.fetchEmployeeData(employeeNumber);
-
-                    if (employee != null) {
-                        displayEditForm(employee);
-                    } else {
-                        JOptionPane.showMessageDialog(EmployeeView.this, "Employee not found.");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(EmployeeView.this, "Invalid employee number format.");
-                }
-            }
-        }
-    }
-
-    
-    private void displayEditForm(Employee employee) {
-    	JTextField firstNameField = new JTextField(10);
-        JTextField lastNameField = new JTextField(10);
-        JTextField extensionField = new JTextField(10);
-        JTextField emailField = new JTextField(10);
-        JTextField officeCodeField = new JTextField(5);
-        JTextField reportsToField = new JTextField(10);
-        JTextField jobTitleField = new JTextField(10);
-        // Add fields for other attributes like extension, email, etc.
-
-        JPanel panel = new JPanel(new GridLayout(0, 2));
-        panel.add(new JLabel("First Name:"));
-        panel.add(firstNameField);
-        panel.add(new JLabel("Last Name:"));
-        panel.add(lastNameField);
-        panel.add(new JLabel("Extension:"));
-        panel.add(extensionField);
-        panel.add(new Label("Email:"));
-        panel.add(emailField);
-        panel.add(new JLabel("Office Code:"));
-        panel.add(officeCodeField);
-        panel.add(new JLabel("Reports to:"));
-        panel.add(reportsToField);
-        panel.add(new JLabel("jobTitle:"));
-        panel.add(jobTitleField);
-       
-
-        int result = JOptionPane.showConfirmDialog(null, panel, "Edit Employee Details", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-        	   String firstName = firstNameField.getText();
-               String lastName = lastNameField.getText();
-               String extension = extensionField.getText();
-               String email = emailField.getText();
-               String officeCode = officeCodeField.getText();
-               int reportsTo = Integer.parseInt(reportsToField.getText());
-               String jobTitle = jobTitleField.getText();
-
-            EmployeeHandler handler = new EmployeeHandler();
-            boolean success = handler.editEmployeeInDatabase("employees", employee.getEmployeeNumber(), firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
-
-            if (success) {
-                JOptionPane.showMessageDialog(EmployeeView.this, "Employee updated successfully!");
-            } else {
-                JOptionPane.showMessageDialog(EmployeeView.this, "Failed to update employee.");
-            }
-        }
-    }
+//    private class UpdateButtonListener implements ActionListener {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            String employeeNumberStr = JOptionPane.showInputDialog(EmployeeView.this, "Enter Employee Number to edit:");
+//            if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
+//                try {
+//                    int employeeNumber = Integer.parseInt(employeeNumberStr);
+//
+//                    EmployeeHandler handler = new EmployeeHandler();
+//                    Employee employee = handler.fetchEmployeeData(employeeNumber);
+//
+//                    if (employee != null) {
+//                        displayEditForm(employee);
+//                    } else {
+//                        JOptionPane.showMessageDialog(EmployeeView.this, "Employee not found.");
+//                    }
+//                } catch (NumberFormatException ex) {
+//                    JOptionPane.showMessageDialog(EmployeeView.this, "Invalid employee number format.");
+//                }
+//            }
+//        }
+//    }
+//
+//    
+//    private void displayEditForm(Employee employee) {
+//    	JTextField firstNameField = new JTextField(10);
+//        JTextField lastNameField = new JTextField(10);
+//        JTextField extensionField = new JTextField(10);
+//        JTextField emailField = new JTextField(10);
+//        JTextField officeCodeField = new JTextField(5);
+//        JTextField reportsToField = new JTextField(10);
+//        JTextField jobTitleField = new JTextField(10);
+//        // Add fields for other attributes like extension, email, etc.
+//
+//        JPanel panel = new JPanel(new GridLayout(0, 2));
+//        panel.add(new JLabel("First Name:"));
+//        panel.add(firstNameField);
+//        panel.add(new JLabel("Last Name:"));
+//        panel.add(lastNameField);
+//        panel.add(new JLabel("Extension:"));
+//        panel.add(extensionField);
+//        panel.add(new Label("Email:"));
+//        panel.add(emailField);
+//        panel.add(new JLabel("Office Code:"));
+//        panel.add(officeCodeField);
+//        panel.add(new JLabel("Reports to:"));
+//        panel.add(reportsToField);
+//        panel.add(new JLabel("jobTitle:"));
+//        panel.add(jobTitleField);
+//       
+//
+//        int result = JOptionPane.showConfirmDialog(null, panel, "Edit Employee Details", JOptionPane.OK_CANCEL_OPTION);
+//        if (result == JOptionPane.OK_OPTION) {
+//        	   String firstName = firstNameField.getText();
+//               String lastName = lastNameField.getText();
+//               String extension = extensionField.getText();
+//               String email = emailField.getText();
+//               String officeCode = officeCodeField.getText();
+//               int reportsTo = Integer.parseInt(reportsToField.getText());
+//               String jobTitle = jobTitleField.getText();
+//
+//            EmployeeHandler handler = new EmployeeHandler();
+//            boolean success = handler.editEmployeeInDatabase("employees", employee.getEmployeeNumber(), firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
+//
+//            if (success) {
+//                JOptionPane.showMessageDialog(EmployeeView.this, "Employee updated successfully!");
+//            } else {
+//                JOptionPane.showMessageDialog(EmployeeView.this, "Failed to update employee.");
+//            }
+//        }
+//    }
 
     
     

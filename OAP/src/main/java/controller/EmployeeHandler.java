@@ -74,30 +74,30 @@ public class EmployeeHandler {
         } 
     }
     
-    public Employee fetchEmployeeData(int employeeNumber) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM employees WHERE employeeNumber = ?")) {
-            
-            pstmt.setInt(1, employeeNumber);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return new Employee(
-                    rs.getInt("employeeNumber"),
-                    rs.getString("firstName"),
-                    rs.getString("lastName"),
-                    rs.getString("extension"),
-                    rs.getString("email"),
-                    rs.getString("officeCode"),
-                    rs.getInt("reportsTo"),
-                    rs.getString("jobTitle")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null; // Return null if employee is not found or an error occurs
-    }
+//    public Employee fetchEmployeeData(int employeeNumber) {
+//        try (Connection connection = DataBaseConnection.getConnection();
+//             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM employees WHERE employeeNumber = ?")) {
+//            
+//            pstmt.setInt(1, employeeNumber);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            if (rs.next()) {
+//                return new Employee(
+//                    rs.getInt("employeeNumber"),
+//                    rs.getString("firstName"),
+//                    rs.getString("lastName"),
+//                    rs.getString("extension"),
+//                    rs.getString("email"),
+//                    rs.getString("officeCode"),
+//                    rs.getInt("reportsTo"),
+//                    rs.getString("jobTitle")
+//                );
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return null; // Return null if employee is not found or an error occurs
+//    }
 
     public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
        
