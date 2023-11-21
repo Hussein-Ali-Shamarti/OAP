@@ -16,7 +16,7 @@ public class ProductHandler {
     // Constructor to initialize the tableModel and database connection
     public ProductHandler(DefaultTableModel tableModel, DataBaseConnection dbConnection) {
         this.tableModel = tableModel;
-        this.DataBaseConnection = dbConnection;
+        this.setDataBaseConnection(dbConnection);
     }
 
     // Method to fetch and display products from the database
@@ -45,4 +45,12 @@ public class ProductHandler {
             e.printStackTrace();
         }
     }
+
+	public DataBaseConnection getDataBaseConnection() {
+		return DataBaseConnection;
+	}
+
+	public void setDataBaseConnection(DataBaseConnection dataBaseConnection) {
+		DataBaseConnection = dataBaseConnection;
+	}
 }
