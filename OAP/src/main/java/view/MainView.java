@@ -73,11 +73,11 @@ public class MainView extends JFrame {
 	            // Create ProductView and set it visible
 	            ProductView productView = new ProductView();
 	            productView.setVisible(true);
-	            productView.fetchAndDisplayProducts(); // Call the fetchAndDisplayProducts method
+	            
 	        });
 	    }
 	}
-
+	// Static inner class for "Orders" button in MainMenu
     private static class OrderListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,7 @@ public class MainView extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 OrderView orderView = new OrderView();
                 orderView.setVisible(true);
-                orderView.fetchAndDisplayOrders(); // This method should be added to your OrderView class
+               
             });
         }
     }
