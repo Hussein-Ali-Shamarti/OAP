@@ -94,6 +94,8 @@ public class OrderView extends JFrame {
         button.addActionListener(listener); // Add the listener
         return button;
     }
+    
+    
 
     // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
