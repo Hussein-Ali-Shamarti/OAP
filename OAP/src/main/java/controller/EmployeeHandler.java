@@ -20,14 +20,14 @@
 public class EmployeeHandler {
     
  
-    public boolean addEmployee(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
+    public boolean addEmployee(String tableName, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
       
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "INSERT INTO " + tableName + " (employeeNr, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        "INSERT INTO " + tableName + " (employeeNumber, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-                pstm.setInt(1, employeeNr);
+                pstm.setInt(1, employeeNumber);
                 pstm.setString(2, firstName);
                 pstm.setString(3, lastName);
                 pstm.setString(4, role);

@@ -89,7 +89,7 @@ public class EmployeeView extends JFrame {
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JTextField employeeNrField = new JTextField(5);
+            JTextField employeeNumberField = new JTextField(5);
             JTextField firstNameField = new JTextField(10);
             JTextField lastNameField = new JTextField(10);
             JTextField roleField = new JTextField(10);
@@ -102,7 +102,7 @@ public class EmployeeView extends JFrame {
 
             JPanel panel = new JPanel(new GridLayout(0, 1));
             panel.add(new JLabel("Employee Number:"));
-            panel.add(employeeNrField);
+            panel.add(employeeNumberField);
             panel.add(new JLabel("First Name:"));
             panel.add(firstNameField);
             panel.add(new JLabel("Last Name:"));
@@ -124,7 +124,7 @@ public class EmployeeView extends JFrame {
                    "Enter Employee Details", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    int employeeNr = Integer.parseInt(employeeNrField.getText());
+                    int employeeNumber = Integer.parseInt(employeeNumberField.getText());
                     String firstName = firstNameField.getText();
                     String lastName = lastNameField.getText();
                     String role = roleField.getText();
@@ -136,7 +136,7 @@ public class EmployeeView extends JFrame {
                     String roles = rolesField.getText();
 
                     EmployeeHandler handler = new EmployeeHandler();
-                    boolean success = handler.addEmployee("employees", employeeNr, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles);
+                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles);
 
                     if (success) {
                         JOptionPane.showMessageDialog(EmployeeView.this, "Employee added successfully!");
