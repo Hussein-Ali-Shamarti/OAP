@@ -134,7 +134,7 @@ public class OrderHandler {
                 String comments = rs.getString("comments");
                 int customerNumber = rs.getInt("customerNumber");
 
-                order = new Order(OrderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
             }
 
         } catch (SQLException e) {

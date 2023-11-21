@@ -8,10 +8,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.Box;
@@ -28,13 +32,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import controller.CustomerHandler;
+import controller.OrderHandler;
+import model.Order;
+
 public class OrderView extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
     private JTextField textField;  // Assuming you have a JTextField for search
-
+    private OrderHandler oh=new OrderHandler();
+    
     public OrderView() {
         super("Order Management");
 
@@ -90,7 +99,7 @@ public class OrderView extends JFrame {
         JButton searchButton = createButton("Search", e -> searchOrders());
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
-        JButton deleteButton = createButton("Delete", e -> deleteOrder());
+        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -136,11 +145,67 @@ public class OrderView extends JFrame {
     }
 
     private class AddButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Add button pressed");
-        }
-    }
+    	 @Override
+         public void actionPerformed(ActionEvent e) {
+             // Fields for customer details
+             JTextField orderDateField = new JTextField(10);
+             JTextField requiredDateField = new JTextField(10);
+             JTextField shippedDateField = new JTextField(10);
+             JTextField statusField = new JTextField(10);
+             JTextField commentsField = new JTextField(10);
+             JTextField customerNumberField = new JTextField(10);
+
+
+             // Panel for the form
+             JPanel panel = new JPanel(new GridLayout(0, 2));
+
+             // Adding labels and text fields to the panel
+             panel.add(new JLabel("Order Date:"));
+             panel.add(orderDateField);
+             panel.add(new JLabel("Required Date:"));
+             panel.add(requiredDateField);
+             panel.add(new JLabel("Shipped Date:"));
+             panel.add(shippedDateField);
+             panel.add(new JLabel("Satus:"));
+             panel.add(statusField);
+             panel.add(new JLabel("Comments:"));
+             panel.add(commentsField);
+             panel.add(new JLabel("customerNumber:"));
+             panel.add(customerNumberField);
+
+             // Show confirm dialog with the form
+             int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
+             if (result == JOptionPane.OK_OPTION) {
+                 try {
+                	 String orderDateString = orderDateField.getText();
+                	 String requiredDateString = requiredDateField.getText();
+                	 String shippedDateString = shippedDateField.getText();
+                	 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                	 
+                	 // Retrieving values from text fields
+                     Date orderDate = dateFormat.parse(orderDateString);
+                     Date requiredDate = dateFormat.parse(requiredDateString);
+                     Date shippedDate = dateFormat.parse(shippedDateString);
+                     String status = statusField.getText();
+                     String comments = commentsField.getText();
+                     int customerNumber = Integer.parseInt(customerNumberField.getText());
+                   
+                     // Call to CustomerHandler to add customer
+                     Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate);
+                     boolean success = oh.addOrder(order);
+                     if (success) {
+                         JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
+                     } else {
+                         JOptionPane.showMessageDialog(OrderView.this, "Failed to add Order.");
+                     }
+                 } catch (NumberFormatException ex) {
+                     JOptionPane.showMessageDialog(OrderView.this, "Invalid input format.");
+                 } catch (Exception ex) {
+                     JOptionPane.showMessageDialog(OrderView.this, "Error: " + ex.getMessage());
+                 }
+             }
+         }
+     }
 
     private class UpdateButtonListener implements ActionListener {
         @Override
@@ -157,10 +222,8 @@ public class OrderView extends JFrame {
     }
 
     private void searchOrders() {
+    	
         // Implement search functionality
     }
 
-    private void deleteOrder() {
-        // Implement delete functionality
-    }
 }

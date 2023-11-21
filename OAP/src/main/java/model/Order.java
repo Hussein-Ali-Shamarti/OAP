@@ -27,8 +27,7 @@ public class Order {
      * @param orderDate 
      */
     
-    public Order(int orderNumber, Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
-        this.orderNumber = orderNumber;
+    public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
         this.orderDate = orderDate;
         this.requiredDate = requiredDate;
         this.shippedDate = shippedDate;
