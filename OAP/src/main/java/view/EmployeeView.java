@@ -136,7 +136,7 @@ public class EmployeeView extends JFrame {
                     String roles = rolesField.getText();
 
                     EmployeeHandler handler = new EmployeeHandler();
-                    boolean success = handler.addEmployee("tableName", employeeNr, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles);
+                    boolean success = handler.addEmployee("employees", employeeNr, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles);
 
                     if (success) {
                         JOptionPane.showMessageDialog(EmployeeView.this, "Employee added successfully!");
