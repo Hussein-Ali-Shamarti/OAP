@@ -82,18 +82,29 @@ public class CustomerView extends JFrame {
         return button;
     }
 
-    // Action listener for "Add New" button
+    // Here ALbert is cooking
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Fields for customer details
             JTextField customerNumberField = new JTextField(10);
             JTextField companyNameField = new JTextField(10);
             JTextField contactLastNameField = new JTextField(10);
             JTextField contactFirstNameField = new JTextField(10);
+            JTextField phoneField = new JTextField(10);
+            JTextField addressLine1Field = new JTextField(10);
+            JTextField addressLine2Field = new JTextField(10);
+            JTextField cityField = new JTextField(10);
+            JTextField stateField = new JTextField(10);
+            JTextField postalCodeField = new JTextField(10);
+            JTextField countryField = new JTextField(10);
             JTextField salesRepEmployeeNumberField = new JTextField(10);
             JTextField creditLimitField = new JTextField(10);
 
+            // Panel for the form
             JPanel panel = new JPanel(new GridLayout(0, 2));
+
+            // Adding labels and text fields to the panel
             panel.add(new JLabel("Customer Number:"));
             panel.add(customerNumberField);
             panel.add(new JLabel("Company Name:"));
@@ -102,23 +113,48 @@ public class CustomerView extends JFrame {
             panel.add(contactLastNameField);
             panel.add(new JLabel("Contact First Name:"));
             panel.add(contactFirstNameField);
+            panel.add(new JLabel("Phone:"));
+            panel.add(phoneField);
+            panel.add(new JLabel("Address Line 1:"));
+            panel.add(addressLine1Field);
+            panel.add(new JLabel("Address Line 2:"));
+            panel.add(addressLine2Field);
+            panel.add(new JLabel("City:"));
+            panel.add(cityField);
+            panel.add(new JLabel("State:"));
+            panel.add(stateField);
+            panel.add(new JLabel("Postal Code:"));
+            panel.add(postalCodeField);
+            panel.add(new JLabel("Country:"));
+            panel.add(countryField);
             panel.add(new JLabel("Sales Rep Employee Number:"));
             panel.add(salesRepEmployeeNumberField);
             panel.add(new JLabel("Credit Limit:"));
             panel.add(creditLimitField);
 
-            int result = JOptionPane.showConfirmDialog(null, panel, 
-                    "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
+            // Show confirm dialog with the form
+            int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 try {
+                    // Retrieving values from text fields
                     int customerNr = Integer.parseInt(customerNumberField.getText());
                     String companyName = companyNameField.getText();
                     String contactLastName = contactLastNameField.getText();
                     String contactFirstName = contactFirstNameField.getText();
+                    String phone = phoneField.getText();
+                    String addressLine1 = addressLine1Field.getText();
+                    String addressLine2 = addressLine2Field.getText();
+                    String city = cityField.getText();
+                    String state = stateField.getText();
+                    String postalCode = postalCodeField.getText();
+                    String country = countryField.getText();
                     int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
-                    boolean success = CustomerHandler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, salesRepEmployeeNr, creditLimit);
+                    // Call to CustomerHandler to add customer
+                    boolean success = CustomerHandler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, 
+                                                                 phone, addressLine1, addressLine2, city, state, postalCode, country, 
+                                                                 salesRepEmployeeNr, creditLimit);
                     if (success) {
                         JOptionPane.showMessageDialog(CustomerView.this, "Customer added successfully!");
                     } else {
