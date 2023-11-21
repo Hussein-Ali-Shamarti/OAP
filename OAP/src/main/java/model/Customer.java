@@ -7,107 +7,144 @@
 package model;
 
 import java.math.BigDecimal;
-import java.util.*;
-
-import database.DataBaseConnection;
 
 public class Customer {
     private int customerNr;
     private String companyName;
     private String contactLastName;
     private String contactFirstName;
+    private String phone;
+    private String addressLine1;
+    private String addressLine2;
+    private String city;
+    private String state;
+    private String postalCode;
+    private String country;
     private int salesRepEmployeeNr;
     private BigDecimal creditLimit;
 
-    /**
-     * Constructor for Customer class.
-     * @param customerNr            The customer number.
-     * @param companyName           The company name.
-     * @param contactLastName       The last name of a customer
-     * @param contactFirstName      The first name of a customer
-     * @param salesRepEmployeeNr    The sales rep for this customer
-     * @param creditLimit           The credit limit for the customer   
-     */
-
-    public Customer(int customerNr, String companyName, String contactLastName, String contactFirstName, int salesRepEmployeeNr, BigDecimal creditLimit) {
+    public Customer(int customerNr, String companyName, String contactLastName, String contactFirstName, 
+                    String phone, String addressLine1, String addressLine2, String city, 
+                    String state, String postalCode, String country, 
+                    int salesRepEmployeeNr, BigDecimal creditLimit) {
         this.customerNr = customerNr;
         this.companyName = companyName;
         this.contactLastName = contactLastName;
         this.contactFirstName = contactFirstName;
+        this.phone = phone;
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.city = city;
+        this.state = state;
+        this.postalCode = postalCode;
+        this.country = country;
         this.salesRepEmployeeNr = salesRepEmployeeNr;
         this.creditLimit = creditLimit;
     }
-    /**
-     * Get the customer number.
-     * @return The customer number.
-     */
-    public int getcustomerNr() {
+
+    // Getters and Setters for all fields
+    public int getCustomerNr() {
         return customerNr;
     }
 
-    public String getcompanyName() {
+    public void setCustomerNr(int customerNr) {
+        this.customerNr = customerNr;
+    }
+
+    public String getCompanyName() {
         return companyName;
     }
 
-    public String getcontactLastName() {
-        return contactLastName;
-    }
-
-    public String getcontactFirstName() {
-        return contactFirstName;
-    }
-
-    public int getsalesRepEmployeeNr() {
-        return salesRepEmployeeNr;
-    }
-
-    /**
-     * Get the credit limit of the customer.
-     * @return The credit limit for the customer
-     */
-    public BigDecimal getcreditLimit() {
-        return creditLimit;
-    }
-
-    /**
-     * Setter methods for the Customer class
-     */
-    public void setCustomerNr(int customerNr) {
-        this.customerNr = customerNr;
-    }      
-
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getContactLastName() {
+        return contactLastName;
     }
 
     public void setContactLastName(String contactLastName) {
         this.contactLastName = contactLastName;
     }
 
+    public String getContactFirstName() {
+        return contactFirstName;
+    }
+
     public void setContactFirstName(String contactFirstName) {
         this.contactFirstName = contactFirstName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getSalesRepEmployeeNr() {
+        return salesRepEmployeeNr;
     }
 
     public void setSalesRepEmployeeNr(int salesRepEmployeeNr) {
         this.salesRepEmployeeNr = salesRepEmployeeNr;
     }
 
+    public BigDecimal getCreditLimit() {
+        return creditLimit;
+    }
+
     public void setCreditLimit(BigDecimal creditLimit) {
         this.creditLimit = creditLimit;
     }
-
-    /**
-     * Method to get the address information from the Address class and combine it with companyName to provide useful information. Overrides the method in the abstract class.
-     */
-    public class CustomerAddress extends Address {
-        public CustomerAddress(String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int phone) {
-            super(addressLine1, addressLine2, city, state, postalCode, country, phone);
-        }
-
-        @Override
-        public String getAddress() {
-            String fullAddress = getaddressLine1() + " " + getaddressLine2() + ", " + getcity() + ", " + getstate() + " " + getPostalCode() + ", " + getcountry() + " " + getphone();
-            return fullAddress + " - " + Customer.this.companyName;
-        }
-    }
 }
+
