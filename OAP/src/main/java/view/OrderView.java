@@ -1,9 +1,18 @@
 package view;
-
+// Essential imports for GUI, events, and database operations
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.table.DefaultTableCellRenderer;
+import controller.OrderHandler;
+import model.Order;
+import database.DataBaseConnection; // Import your DataBaseConnection class
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class OrderView extends JFrame {
 

@@ -1,10 +1,10 @@
 package view;
-
 import javax.swing.*;
+import controller.EmployeeHandler;
+import model.Employee;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 public class MainView extends JFrame {
 
     /**
