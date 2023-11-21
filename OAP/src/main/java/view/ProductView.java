@@ -28,6 +28,8 @@ public class ProductView extends JFrame {
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
+    private JTextField textField; // Assuming you have a JTextField for search
+
     public ProductView() {
         super("Product Management");
 
@@ -50,32 +52,8 @@ public class ProductView extends JFrame {
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
-
-        // Create buttons with listeners
-        JButton addButton = createButton("Add New", new AddButtonListener());
-//        JButton updateButton = createButton("Update", new UpdateButtonListener());
-//        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-//        JButton searchButton = createButton("Search", new SearchButtonListener());
-
-        // Create JPanel for buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1, 4, 10, 10));
-        buttonPanel.add(addButton);
-//        buttonPanel.add(updateButton);
-//        buttonPanel.add(deleteButton);
-//        buttonPanel.add(searchButton);
-
-        // Create JTable and JScrollPane
-        String[] columnNames = {"Column 1", "Column 2", "Column 3"}; // Replace with actual column names
-        Object[][] data = {{"Data 1", "Data 2", "Data 3"}, {"Data 4", "Data 5", "Data 6"}}; // Replace with actual data
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        // Add components to the frame
-
         setupTable();
         setupControlPanel();
-
 
         add(titlePanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
@@ -107,10 +85,10 @@ public class ProductView extends JFrame {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search", e -> searchProducts());
+        JButton searchButton = createButton("Search",new SearchButtonListener());
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
-        JButton deleteButton = createButton("Delete", e -> deleteProduct());
+        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -171,11 +149,20 @@ public class ProductView extends JFrame {
         }
     }
 
-    private void searchProducts() {
-        // Implement search functionality
+ // Action listener for "Search" button
+    private class SearchButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(ProductView.this, "Search button pressed");
+        }
     }
 
-    private void deleteProduct() {
-        // Implement delete functionality
-    }
+    
+
+    private class DeleteButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(ProductView.this, "Delete button pressed");
+        }
+}
 }
