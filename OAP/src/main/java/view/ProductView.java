@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 
 public class ProductView extends JFrame {
 
-    public ProductView() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ProductView() {
         // Set title
         super("Product Management");
 

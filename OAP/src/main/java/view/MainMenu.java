@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 
 public class MainMenu extends JPanel {
 
-    public MainMenu(ActionListener productsListener, ActionListener orderListener, ActionListener customersListener, ActionListener employeesListener) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MainMenu(ActionListener productsListener, ActionListener orderListener, ActionListener customersListener, ActionListener employeesListener) {
         setBackground(Color.WHITE); // White background
 
         // Create buttons with listeners

@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 
 public class OrderView extends JFrame {
 
-    public OrderView() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public OrderView() {
         // Set title
         super("Order Management");
 

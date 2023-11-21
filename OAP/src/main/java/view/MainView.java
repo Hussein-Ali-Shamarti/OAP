@@ -7,7 +7,12 @@ import java.awt.event.ActionListener;
 
 public class MainView extends JFrame {
 
-    public MainView() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MainView() {
         // Set title and size
         super("Model Perfect");
         setSize(800, 600);
