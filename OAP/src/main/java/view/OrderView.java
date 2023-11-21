@@ -23,40 +23,38 @@ public class OrderView extends JFrame {
     private OrderHandler oh = new OrderHandler();
 
     public OrderView() {
-        // Set title and layout for the frame
         super("Order Management");
         setLayout(new BorderLayout());
-
         initializeUI();
         fetchAndDisplayOrders();
-
-        // Set frame properties
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 600);
-        setLocationRelativeTo(null); // Center on screen
+        setLocationRelativeTo(null);
+        pack(); // Adjusts the frame to fit the components
+        setVisible(true); // Make sure the frame is visible
     }
+    
+
 
     private void initializeUI() {
-        // Create JLabel for the title
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(84, 11, 131)); // Purple background color
+        titlePanel.setBackground(new Color(84, 11, 131));
         JLabel titleLabel = new JLabel("Order Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        titleLabel.setForeground(Color.WHITE); // White text color
+        titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
-
-        setupTable();
         setupControlPanel();
+        setupTable();
+      
 
-        // Add components to the frame
         add(titlePanel, BorderLayout.NORTH);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
     }
 
+
     private void setupTable() {
-        // Define table model and setup
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
             /**
@@ -97,48 +95,35 @@ public class OrderView extends JFrame {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
+     
+  
+     
      private void setupControlPanel() {
-    	    JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    	    JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10)); // Adjust as needed
     	    controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
     	    controlPanel.setBackground(new Color(90, 23, 139));
 
-    	    // Instead of using a loop for all buttons, create each button individually
-    	    // This allows for specific ActionListeners for each button
-
-    	    // Search Button
     	    JButton searchButton = createButton("Search", e -> searchOrders());
-    	    controlPanel.add(searchButton);
-
-    	    // Add Button
-    	    JButton addButton = createButton("Add", new addButtonListener());
-    	    controlPanel.add(addButton);
-
-    	    // Edit Button
-    	    JButton editButton = createButton("Edit", new UpdateButtonListener());
-    	    controlPanel.add(editButton);
-
-    	    // Delete Button
+    	    JButton addButton = createButton("Add", new AddButtonListener());
+    	    JButton editButton = createButton("Edit", new AddButtonListener()); // Should be UpdateButtonListener
     	    JButton deleteButton = createButton("Delete", e -> deleteOrder());
+
+    	    controlPanel.add(searchButton);
+    	    controlPanel.add(addButton);
+    	    controlPanel.add(editButton);
     	    controlPanel.add(deleteButton);
 
-    	    // Back Button
-    	    JButton backButton = createButton("Back", e -> dispose()); // Assuming you want to close the window
-    	    controlPanel.add(backButton);
-
-    	    textField = new JTextField(10);
-    	    textField.setBackground(new Color(246, 248, 250));
-    	    controlPanel.add(textField);
-
-    	    this.add(controlPanel, BorderLayout.NORTH);
+    	    JPanel buttonPanelHolder = new JPanel(new BorderLayout());
+    	    buttonPanelHolder.add(controlPanel, BorderLayout.NORTH); // Adjust as per your layout
+    	    this.add(buttonPanelHolder, BorderLayout.SOUTH);
     	}
 
 
-    private void searchOrders() {
-        String searchText = textField.getText(); 
-        List<Order> orders = oh.searchOrders(searchText); 
-        updateTableData(orders); 
-    }
-
+     private void searchOrders() {
+    	    String searchText = textField.getText(); 
+    	    List<Order> orders = oh.searchOrders(searchText); 
+    	    updateTableData(orders); 
+    	}
 
     private void updateTableData(List<Order> orders) {
         tableModel.setRowCount(0);
@@ -155,151 +140,7 @@ public class OrderView extends JFrame {
         }
     }
 
-
-
-    private void addOrder() {
-        // Create a dialog to enter the order data
-        JPanel panel = new JPanel(new GridLayout(0, 2)); // 2 columns
-
-     // Define labels and fields for each order attribute
-        JLabel labelOrderNumber = new JLabel("Order Number:"); 
-        JTextField fieldOrderNumber = new JTextField();        
-        panel.add(labelOrderNumber);                           
-        panel.add(fieldOrderNumber);                          
-        
-        JLabel labelOrderDate = new JLabel("Order Date (yyyy-mm-dd):");
-        JTextField fieldOrderDate = new JTextField();
-        panel.add(labelOrderDate);
-        panel.add(fieldOrderDate);
-
-        JLabel labelRequiredDate = new JLabel("Required Date (yyyy-mm-dd):");
-        JTextField fieldRequiredDate = new JTextField();
-        panel.add(labelRequiredDate);
-        panel.add(fieldRequiredDate);
-
-        JLabel labelShippedDate = new JLabel("Shipped Date (yyyy-mm-dd):");
-        JTextField fieldShippedDate = new JTextField();
-        panel.add(labelShippedDate);
-        panel.add(fieldShippedDate);
-
-        JLabel labelStatus = new JLabel("Status:");
-        JTextField fieldStatus = new JTextField();
-        panel.add(labelStatus);
-        panel.add(fieldStatus);
-
-        JLabel labelComments = new JLabel("Comments:");
-        JTextField fieldComments = new JTextField();
-        panel.add(labelComments);
-        panel.add(fieldComments);
-
-        JLabel labelCustomerNumber = new JLabel("Customer Number:");
-        JTextField fieldCustomerNumber = new JTextField();
-        panel.add(labelCustomerNumber);
-        panel.add(fieldCustomerNumber);
-
-        // Display the dialog
-        int result = JOptionPane.showConfirmDialog(this, panel, "Add New Order", JOptionPane.OK_CANCEL_OPTION);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                // Parse and validate inputs
-                int OrderNumber = Integer.parseInt(fieldOrderNumber.getText());
-                Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldOrderDate.getText());
-                Date requiredDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldRequiredDate.getText());
-                Date shippedDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldShippedDate.getText());
-                String status = fieldStatus.getText();
-                String comments = fieldComments.getText();
-                int customerNumber = Integer.parseInt(fieldCustomerNumber.getText());
-
-                // Create a new order object
-                Order newOrder = new Order(OrderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-                System.out.println("newOrder " + newOrder);
-
-                // Add the order to the database
-                oh.addOrder(newOrder);
-                fetchAndDisplayOrders();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage());
-            }
-        }
-    }
-
-
-
-    private void editOrder() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow >= 0) {
-            // Create a dialog to edit the order data
-            JPanel panel = new JPanel(new GridLayout(0, 2)); // 2 columns
-
-            // Define labels and fields for each order attribute
-            JLabel labelOrderNumber = new JLabel("Order Number:");
-            JTextField fieldOrderNumber = new JTextField(tableModel.getValueAt(selectedRow, 0).toString());
-            panel.add(labelOrderNumber);
-            panel.add(fieldOrderNumber);
-
-            JLabel labelOrderDate = new JLabel("Order Date (yyyy-mm-dd):");
-            JTextField fieldOrderDate = new JTextField(tableModel.getValueAt(selectedRow, 1).toString()); // Use the correct index
-            panel.add(labelOrderDate);
-            panel.add(fieldOrderDate);
-
-            JLabel labelRequiredDate = new JLabel("Required Date (yyyy-mm-dd):");
-            JTextField fieldRequiredDate = new JTextField(tableModel.getValueAt(selectedRow, 2).toString());
-            panel.add(labelRequiredDate);
-            panel.add(fieldRequiredDate);
-
-            JLabel labelShippedDate = new JLabel("Shipped Date (yyyy-mm-dd):");
-            JTextField fieldShippedDate = new JTextField(tableModel.getValueAt(selectedRow, 3).toString());
-            panel.add(labelShippedDate);
-            panel.add(fieldShippedDate);
-
-            JLabel labelStatus = new JLabel("Status:");
-            JTextField fieldStatus = new JTextField(tableModel.getValueAt(selectedRow, 4).toString());
-            panel.add(labelStatus);
-            panel.add(fieldStatus);
-
-            JLabel labelComments = new JLabel("Comments:");
-            JTextField fieldComments = new JTextField(tableModel.getValueAt(selectedRow, 5).toString());
-            panel.add(labelComments);
-            panel.add(fieldComments);
-
-            JLabel labelCustomerNumber = new JLabel("Customer Number:");
-            JTextField fieldCustomerNumber = new JTextField(tableModel.getValueAt(selectedRow, 6).toString());
-            panel.add(labelCustomerNumber);
-            panel.add(fieldCustomerNumber);
-
-            // Display the dialog
-            int result = JOptionPane.showConfirmDialog(this, panel, "Edit Order", JOptionPane.OK_CANCEL_OPTION);
-
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    // Parse and validate inputs
-                    int OrderNumber = Integer.parseInt(fieldOrderNumber.getText());
-                    Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldOrderDate.getText());
-                    Date requiredDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldRequiredDate.getText());
-                    Date shippedDate = new SimpleDateFormat("yyyy-MM-dd").parse(fieldShippedDate.getText());
-                    String status = fieldStatus.getText();
-                    String comments = fieldComments.getText();
-                    int customerNumber = Integer.parseInt(fieldCustomerNumber.getText());
-
-                    // Create an updated order object
-                    Order updatedOrder = new Order(OrderNumber, requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-
-                    // Update the order in the database
-                    oh.editOrder(updatedOrder, OrderNumber);
-                    fetchAndDisplayOrders();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage());
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "No order selected.");
-        }
-    }
-
     
-
-
 
     private void deleteOrder() {
         int selectedRow = table.getSelectedRow();
@@ -315,7 +156,6 @@ public class OrderView extends JFrame {
 
             if (confirm == JOptionPane.YES_OPTION) {
                // tableModel.removeRow(selectedRow);
-                // TODO: Delete the order from the database
                 oh.deleteOrder(valueNew);
                 fetchAndDisplayOrders();
                 
@@ -329,12 +169,13 @@ public class OrderView extends JFrame {
 
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK); // White text color
-        button.setBackground(new Color(84, 11, 131)); // Purple background color
-        button.setFocusPainted(false); // Remove focus highlighting for better appearance
-        button.addActionListener(listener); // Add the listener
+        button.setForeground(Color.BLACK);
+        button.setBackground(new Color(84, 11, 131));
+        button.setFocusPainted(false);
+        button.addActionListener(listener);
         return button;
     }
+
 
  // Method to fetch and display orders from the database
     void fetchAndDisplayOrders() {
@@ -359,8 +200,9 @@ public class OrderView extends JFrame {
            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
        }
    }
+ 
     
-    private class addButtonListener implements ActionListener {
+    private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Create a dialog to enter the order data
