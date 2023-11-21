@@ -1,5 +1,6 @@
 package view;
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import view.OrderView;
 public class MainView extends JFrame {
 
     /**
@@ -72,13 +74,14 @@ public class MainView extends JFrame {
         }
     }
 
-    // Static inner class for "Orders" button in MainMenu
     private static class OrderListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Open OrderView when "Orders" button is pressed
             SwingUtilities.invokeLater(() -> {
-                new OrderView().setVisible(true);
+                OrderView orderView = new OrderView();
+                orderView.setVisible(true);
+                orderView.fetchAndDisplayOrders(); // This method should be added to your OrderView class
             });
         }
     }

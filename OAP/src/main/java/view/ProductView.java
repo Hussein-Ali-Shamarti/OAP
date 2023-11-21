@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import database.DataBaseConnection;
+import controller.ProductHandler;
+
 public class ProductView extends JFrame {
 
     /**
@@ -68,11 +71,46 @@ public class ProductView extends JFrame {
         return button;
     }
 
-    // Action listener for "Add New" button
+ // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Add New button pressed");
+            JTextField productNameField = new JTextField(10);
+            JTextField productDescriptionField = new JTextField(10);
+            JTextField productPriceField = new JTextField(10);
+            JTextField productStockField = new JTextField(10);
+
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            panel.add(new JLabel("Product Name:"));
+            panel.add(productNameField);
+            panel.add(new JLabel("Product Description:"));
+            panel.add(productDescriptionField);
+            panel.add(new JLabel("Product Price:"));
+            panel.add(productPriceField);
+            panel.add(new JLabel("Product Stock:"));
+            panel.add(productStockField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel,
+                    "Enter Product Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    String productName = productNameField.getText();
+                    String productDescription = productDescriptionField.getText();
+                    double productPrice = Double.parseDouble(productPriceField.getText());
+                    int productStock = Integer.parseInt(productStockField.getText());
+
+                    ProductHandler productHandler = new ProductHandler();
+                    boolean success = productHandler.addProduct(null);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(ProductView.this, "Product added successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(ProductView.this, "Failed to add product.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(ProductView.this, "Invalid number format in Price or Stock fields.");
+                }
+            }
         }
     }
 

@@ -1,12 +1,16 @@
 package view;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-// Essential imports for GUI, events, and database operations
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,15 +19,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class OrderView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private DefaultTableModel tableModel;
 
-	public OrderView() {
+    public OrderView() {
         // Set title
         super("Order Management");
 
@@ -63,9 +66,9 @@ public class OrderView extends JFrame {
         statusCheckButtonsPanel.add(paymentButton);
 
         // Create JTable and JScrollPane
-        String[] columnNames = {"Column 1", "Column 2", "Column 3"}; // Replace with actual column names
-        Object[][] data = {{"Data 1", "Data 2", "Data 3"}, {"Data 4", "Data 5", "Data 6"}}; // Replace with actual data
-        JTable table = new JTable(data, columnNames);
+        String[] columnNames = {"OrderNumber", "orderDate", "requiredDate", "shippedDate", "status", "comments", "customerNumber"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
         // Add components to the frame
@@ -95,13 +98,37 @@ public class OrderView extends JFrame {
         return button;
     }
 
-    // Action listener for "Add New" button
-    private class AddButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Add New button pressed");
+    // Method to fetch and display orders from the database
+     void fetchAndDisplayOrders() {
+        tableModel.setRowCount(0);
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                Object[] row = {
+                        resultSet.getString("OrderNumber"),
+                        resultSet.getString("orderDate"),
+                        resultSet.getString("requiredDate"),
+                        resultSet.getString("shippedDate"),
+                        resultSet.getString("status"),
+                        resultSet.getString("comments"),
+                        resultSet.getString("customerNumber")
+                };
+                tableModel.addRow(row);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+     
+  // Action listener for "Update" button
+     private class AddButtonListener implements ActionListener {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+             JOptionPane.showMessageDialog(OrderView.this, "Add button pressed");
+         }
+     }
 
     // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
@@ -142,5 +169,4 @@ public class OrderView extends JFrame {
             JOptionPane.showMessageDialog(OrderView.this, "Check Payment Status button pressed");
         }
     }
-
 }
