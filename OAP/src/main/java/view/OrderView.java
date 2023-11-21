@@ -327,29 +327,6 @@ public class OrderView extends JFrame {
     }
 
 
- // Method to fetch and display orders from the database
-    private void fetchAndDisplayOrders() {
-        tableModel.setRowCount(0);
-        try (Connection conn = DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                Object[] row = {
-                    resultSet.getString("OrderNumber"),
-                    resultSet.getString("orderDate"),
-                    resultSet.getString("requiredDate"),
-                    resultSet.getString("shippedDate"),
-                    resultSet.getString("status"),
-                    resultSet.getString("comments"),
-                    resultSet.getString("customerNumber")
-                };
-                tableModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
 
     private JButton createButton(String text, ActionListener listener) {
@@ -361,6 +338,29 @@ public class OrderView extends JFrame {
         return button;
     }
 
+ // Method to fetch and display orders from the database
+    void fetchAndDisplayOrders() {
+       tableModel.setRowCount(0);
+       try (Connection conn = database.DataBaseConnection.getConnection();
+            Statement statement = conn.createStatement()) {
+           String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
+           ResultSet resultSet = statement.executeQuery(sql);
+           while (resultSet.next()) {
+               Object[] row = {
+                       resultSet.getString("OrderNumber"),
+                       resultSet.getString("orderDate"),
+                       resultSet.getString("requiredDate"),
+                       resultSet.getString("shippedDate"),
+                       resultSet.getString("status"),
+                       resultSet.getString("comments"),
+                       resultSet.getString("customerNumber")
+               };
+               tableModel.addRow(row);
+           }
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+       }
+   }
     private class addButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
