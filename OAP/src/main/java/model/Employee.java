@@ -18,24 +18,22 @@ public class Employee {
      private String lastName;
      private String jobTitle;
      private String email;
-     private String role;
      private int reportsTo;
      private String extension;
-     private int officeCode;
-     private String territory;
+     private String officeCode;
+   
 
      //Constructor for employee class with parameters.
-     public Employee(int employeeNr, String firstName, String lastName, String jobTitle, String email, String role, int reportsTo, String extension, int officeCode, String territory) {
+     public Employee(int employeeNr, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
          this.employeeNr = employeeNr;
          this.firstName = firstName;
          this.lastName = lastName;
          this.jobTitle = jobTitle;
          this.email = email;
-         this.role = role;
          this.reportsTo = reportsTo;
          this.extension = extension;
          this.officeCode = officeCode;
-         this.territory = territory;
+       
       }
 
 
@@ -53,16 +51,6 @@ public class Employee {
     public String getLastName() {
         return lastName;
     }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-
     public String getJobTitle() {
         return jobTitle;
     }
@@ -91,19 +79,13 @@ public class Employee {
         this.extension = extension;
     }
 
-    public int getOfficeCode() {
+    public String getOfficeCode() {
         return officeCode;
     }
 
-    public void setOfficeCode(int officeCode) {
+    public void setOfficeCode(String officeCode) {
         this.officeCode = officeCode;
     }
 
-    public String getTerritory() {
-        return territory;
-    }
-
-    public void setTerritory(String territory) {
-        this.territory = territory;
-    }
+  
 }
