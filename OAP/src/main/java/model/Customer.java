@@ -9,7 +9,6 @@ package model;
 import java.math.BigDecimal;
 
 public class Customer {
-    private int customerNr;
     private String companyName;
     private String contactLastName;
     private String contactFirstName;
@@ -23,11 +22,10 @@ public class Customer {
     private int salesRepEmployeeNr;
     private BigDecimal creditLimit;
 
-    public Customer(int customerNr, String companyName, String contactLastName, String contactFirstName, 
+    public Customer( String companyName, String contactLastName, String contactFirstName, 
                     String phone, String addressLine1, String addressLine2, String city, 
                     String state, String postalCode, String country, 
                     int salesRepEmployeeNr, BigDecimal creditLimit) {
-        this.customerNr = customerNr;
         this.companyName = companyName;
         this.contactLastName = contactLastName;
         this.contactFirstName = contactFirstName;
@@ -43,13 +41,6 @@ public class Customer {
     }
 
     // Getters and Setters for all fields
-    public int getCustomerNr() {
-        return customerNr;
-    }
-
-    public void setCustomerNr(int customerNr) {
-        this.customerNr = customerNr;
-    }
 
     public String getCompanyName() {
         return companyName;
