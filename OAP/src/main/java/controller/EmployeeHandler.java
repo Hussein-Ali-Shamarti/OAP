@@ -20,7 +20,7 @@
 public class EmployeeHandler {
     
  
-    public boolean addEmployee(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String postalCode) {
+    public boolean addEmployee(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String officeCode) {
       
 
             try (Connection connection = DataBaseConnection.getConnection();
@@ -33,7 +33,7 @@ public class EmployeeHandler {
                 pstm.setString(4, role);
                 pstm.setString(5, jobTitle);
                 pstm.setString(6, email);
-                pstm.setString(7, postalCode);
+                pstm.setString(7, officeCode);
     
 
                 int affectedRows = pstm.executeUpdate();
@@ -46,7 +46,7 @@ public class EmployeeHandler {
         } 
     }
 
-    public boolean editEmployeeInDatabase(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String postalCode) {
+    public boolean editEmployeeInDatabase(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, String officeCode) {
        
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
@@ -58,7 +58,7 @@ public class EmployeeHandler {
                  pstm.setString(4, role);
                  pstm.setString(5, jobTitle);
                  pstm.setString(6, email);
-                 pstm.setString(7, postalCode);
+                 pstm.setString(7, officeCode);
      
 
                 int affectedRows = pstm.executeUpdate();
