@@ -1,89 +1,144 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import controller.EmployeeHandler;
 import model.Employee;
 
 public class EmployeeView extends JFrame {
 
-    
-	
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private JTextField textField;
 
+    public EmployeeView() {
+        super("Employee Management");
 
-	public EmployeeView() {
-        // Set title
-        super("Employee View");
-        
-        
-
-        // Set layout for the frame
         setLayout(new BorderLayout());
+        initializeUI();
+        fetchAndDisplayEmployees();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        pack(); // Adjusts the frame to fit the components
+        setVisible(true); // Make sure the frame is visible
+    }
 
-        // Set background color
-        getContentPane().setBackground(Color.WHITE);
-
-        // Create JLabel
+    private void initializeUI() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(84, 11, 131)); // Purple background color
+        titlePanel.setBackground(new Color(84, 11, 131));
         JLabel titleLabel = new JLabel("Employee Management");
-        titleLabel.setBackground(new Color(84, 11, 131)); // Purple background color
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(Color.WHITE); // White text color
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
 
-        // Create buttons with listeners
-        JButton addButton = createButton("Add New", new AddButtonListener());
-        JButton updateButton = createButton("Update", new UpdateButtonListener());
-        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-        JButton searchButton = createButton("Search", new SearchButtonListener());
-        
+        setupTable();
+        setupControlPanel();
 
-        // Create JPanel for buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1, 4, 10, 10));
-        buttonPanel.add(addButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(searchButton);
-
-        // Create JTable and JScrollPane
-        String[] columnNames = {"Column 1", "Column 2", "Column 3"}; // Replace with actual column names
-        Object[][] data = {{"Data 1", "Data 2", "Data 3"}, {"Data 4", "Data 5", "Data 6"}}; // Replace with actual data
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        // Add components to the frame
         add(titlePanel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.SOUTH);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         // Set frame properties
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null); // Center on screen
-
-        // Set the EmployeesListener for buttons
-        addButton.addActionListener(new EmployeesListener());
-        updateButton.addActionListener(new EmployeesListener());
-        deleteButton.addActionListener(new EmployeesListener());
-        searchButton.addActionListener(new EmployeesListener());
     }
 
-    private JButton createButton(String text, ActionListener listener) {
+    private void setupTable() {
+        String[] columnNames = {"Employee Number", "First Name", "Last Name", "Extension", "Email", "Office Code", "Reports To", "Job Title"};
+        tableModel = new DefaultTableModel(null, columnNames) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        table = new JTable(tableModel);
+    }
+
+    private void setupControlPanel() {
+        JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+        controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
+        controlPanel.setBackground(new Color(90, 23, 139));
+
+        JButton searchButton = createButton("Search",new SearchButtonListener());
+        JButton addButton = createButton("Add", new AddButtonListener());
+        JButton editButton = createButton("Edit", new UpdateButtonListener());
+        JButton deleteButton = createButton("Delete",new DeleteButtonListener());
+
+        controlPanel.add(searchButton);
+        controlPanel.add(addButton);
+        controlPanel.add(editButton);
+        controlPanel.add(deleteButton);
+
+        JPanel buttonPanelHolder = new JPanel(new BorderLayout());
+        buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
+        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); // Add space
+        this.add(buttonPanelHolder, BorderLayout.SOUTH);
+    }
+
+   
+
+	private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK); // White text color
-        button.setBackground(new Color(84, 11, 131)); // Purple background color
-        button.setFocusPainted(false); // Remove focus highlighting for better appearance
-        button.addActionListener(listener); // Add the listener
+        button.setForeground(Color.BLACK);
+        button.setBackground(new Color(84, 11, 131));
+        button.setFocusPainted(false);
+        button.addActionListener(listener);
         return button;
     }
-    
- 
-    
+	
+	void fetchAndDisplayEmployees() {
+	    tableModel.setRowCount(0);
+	    try (Connection conn = database.DataBaseConnection.getConnection();
+	         Statement statement = conn.createStatement()) {
+	        String sql = "SELECT employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle FROM employees";
+	        ResultSet resultSet = statement.executeQuery(sql);
+	        while (resultSet.next()) {
+	            Object[] row = {
+	                    resultSet.getString("employeeNumber"),
+	                    resultSet.getString("firstName"),
+	                    resultSet.getString("lastName"),
+	                    resultSet.getString("extension"),
+	                    resultSet.getString("email"),
+	                    resultSet.getString("officeCode"),
+	                    resultSet.getString("reportsTo"),
+	                    resultSet.getString("jobTitle")
+	            };
+	            tableModel.addRow(row);
+	        }
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(this, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+
 
     // Action listener for "Add New" button
     private class AddButtonListener implements ActionListener {

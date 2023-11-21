@@ -81,33 +81,7 @@ public class OrderView extends JFrame {
         };
 
         table = new JTable(tableModel);
-       //customizeTableAppearance();//
     }
-
-    /* private void customizeTableAppearance() {
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                ((JComponent) component).setBorder(new EmptyBorder(5, 10, 5, 10));
-                if (isSelected) {
-                    component.setBackground(new Color(0x5f0c8e));
-                } else {
-                    component.setBackground(row % 2 == 0 ? new Color(0xFFFFFF) : new Color(0xF0F0F0));
-                }
-                return component;
-            }
-        };
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getTableHeader().setReorderingAllowed(false);
-        table.getTableHeader().setResizingAllowed(true);
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-    } */
-
     private void setupControlPanel() {
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
