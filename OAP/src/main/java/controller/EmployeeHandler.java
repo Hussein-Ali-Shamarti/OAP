@@ -51,7 +51,7 @@ public class EmployeeHandler {
     public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstm = connection.prepareStatement(
-                    "UPDATE " + employees + " SET firstName = ?, lastName = ?, extension = ?, email = ?, officeCode = ?, reportsTo = ?, jobTitle = ? WHERE employeeNr = ?")) {
+                    "UPDATE " + employees + " SET firstName = ?, lastName = ?, extension = ?, email = ?, officeCode = ?, reportsTo = ?, jobTitle = ? WHERE employeeNumber = ?")) {
 
             pstm.setString(1, firstName);
             pstm.setString(2, lastName);
