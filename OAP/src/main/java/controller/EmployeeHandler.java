@@ -20,23 +20,22 @@
 public class EmployeeHandler {
     
  
-    public boolean addEmployee(String tableName, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean status, String postalCode, String roles) {
+    public boolean addEmployee(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, boolean status, String postalCode) {
       
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "INSERT INTO " + tableName + " (employeeNumber, firstName, lastName, role, jobTitle, password, email, canCheckDeliveryStatus, postalCode, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        "INSERT INTO " + employee + " (employeeNumber, firstName, lastName, role, jobTitle, email, Status, postalCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 
                 pstm.setInt(1, employeeNumber);
                 pstm.setString(2, firstName);
                 pstm.setString(3, lastName);
                 pstm.setString(4, role);
                 pstm.setString(5, jobTitle);
-                pstm.setString(6, password);
-                pstm.setString(7, email);
-                pstm.setBoolean(8, status);
-                pstm.setString(9, postalCode);
-                pstm.setString(10, roles);
+                pstm.setString(6, email);
+                pstm.setBoolean(7, status);
+                pstm.setString(8, postalCode);
+    
 
                 int affectedRows = pstm.executeUpdate();
 
@@ -48,22 +47,21 @@ public class EmployeeHandler {
         } 
     }
 
-    public boolean editEmployeeInDatabase(String tableName, int employeeNr, String firstName, String lastName, String role, String jobTitle, String password, String email, boolean canCheckDeliveryStatus, String postalCode, String roles) {
+    public boolean editEmployeeInDatabase(String employee, int employeeNumber, String firstName, String lastName, String role, String jobTitle, String email, boolean status, String postalCode) {
        
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "UPDATE " + tableName + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, password = ?, email = ?, canCheckDeliveryStatus = ?, postalCode = ?, roles = ? WHERE employeeNr = ?")) {
+                        "UPDATE " + employee + " SET firstName = ?, lastName = ?, role = ?, jobTitle = ?, password = ?, email = ?, canCheckDeliveryStatus = ?, postalCode = ?, roles = ? WHERE employeeNr = ?")) {
 
-                pstm.setString(1, firstName);
-                pstm.setString(2, lastName);
-                pstm.setString(3, role);
-                pstm.setString(4, jobTitle);
-                pstm.setString(5, password);
-                pstm.setString(6, email);
-                pstm.setBoolean(7, canCheckDeliveryStatus);
-                pstm.setString(8, postalCode);
-                pstm.setString(9, roles);
-                pstm.setInt(10, employeeNr);
+            	 pstm.setInt(1, employeeNumber);
+                 pstm.setString(2, firstName);
+                 pstm.setString(3, lastName);
+                 pstm.setString(4, role);
+                 pstm.setString(5, jobTitle);
+                 pstm.setString(6, email);
+                 pstm.setBoolean(7, status);
+                 pstm.setString(8, postalCode);
+     
 
                 int affectedRows = pstm.executeUpdate();
 
@@ -75,12 +73,12 @@ public class EmployeeHandler {
         } 
     }
 
-    public boolean removeEmployeeFromDatabase(String tableName, int employeeNr) {
+    public boolean removeEmployeeFromDatabase(String tableName, int employeeNumber) {
        
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + tableName + " WHERE employeeNr = ?")) {
-                pstm.setInt(1, employeeNr);
+                pstm.setInt(1, employeeNumber);
 
                 int affectedRows = pstm.executeUpdate();
 
