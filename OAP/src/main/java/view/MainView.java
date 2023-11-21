@@ -1,154 +1,101 @@
-package view;
-
 import javax.swing.*;
-
-import controller.EmployeeHandler;
-import model.Employee;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainView extends JFrame {
-    private static final long serialVersionUID = 1L; // why is this added
-	private ViewWindow viewWindow;
-    private SidePanel sidePanel;
-    private ProductView productView;
-    private EmployeeView employeeView;
-    private OrderView orderView;
-    private CustomerView customerView;
 
     public MainView() {
-        initializeUI();
-    }
-    
-    private void initializeUI() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Set title and size
+        super("Model Perfect");
         setSize(800, 600);
-        setTitle("Main View");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Create components
-        viewWindow = new ViewWindow();
-        sidePanel = new SidePanel(viewWindow);
+        // Set background color
+        getContentPane().setBackground(Color.WHITE);
 
-        // Set layout manager
-        setLayout(new BorderLayout());
+        // Create panel for company name and logo
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.WHITE);
 
-        // Add top empty panel for company name and logo
-        add(createTopPanel(), BorderLayout.NORTH);
+        // Add logo (replace with your own implementation)
+        ImageIcon companyLogo = new ImageIcon("Model Perfect.png");
+        JLabel logoLabel = new JLabel(companyLogo);
+        mainPanel.add(logoLabel);
 
-        // Add side panel and view window
-        add(sidePanel, BorderLayout.WEST);
-        add(viewWindow, BorderLayout.CENTER);
+        // Add panel to the center of the window
+        add(mainPanel, BorderLayout.CENTER);
 
-        // Add bottom button panel
-        add(createBottomPanel(), BorderLayout.SOUTH);
-
-        // Add right panel with buttons
-        add(createRightPanel(), BorderLayout.EAST);
-
+        // Center the window on the screen
         setLocationRelativeTo(null);
-        setVisible(true);
+
+        // Create ProductsListener for "Products" button in MainMenu
+        ProductsListener productsListener = new ProductsListener();
+
+        // Create OrderListener for "Orders" button in MainMenu
+        OrderListener orderListener = new OrderListener();
+
+        // Create CustomersListener for "Customers" button in MainMenu
+        CustomersListener customersListener = new CustomersListener();
+
+        // Create EmployeesListener for "Employees" button in MainMenu
+        EmployeesListener employeesListener = new EmployeesListener();
+
+        // Add MainMenu panel at the top
+        MainMenu mainMenu = new MainMenu(productsListener, orderListener, customersListener, employeesListener);
+        add(mainMenu, BorderLayout.SOUTH);
+
+        // Center the window on the screen
+        setLocationRelativeTo(null);
     }
 
-    
-
-    private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel();
-        JLabel companyNameField = new JLabel("Model Perfect");
-
-        topPanel.add(companyNameField);
-
-    
-    
-        return topPanel;
+    // Static inner class for "Products" button in MainMenu
+    private static class ProductsListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open ProductView when "Products" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                // Create ProductView and set it visible
+                new ProductView().setVisible(true);
+            });
+        }
     }
 
-    
-
-    private JPanel createBottomPanel() {
-        JPanel bottomPanel = new JPanel();
-        // Add components for category actions
-        // You can customize this based on your requirements
-        JButton displayAllButton = new JButton("Display All");
-        JButton addButton = new JButton("Add New");
-        JButton updateButton = new JButton("Update");
-        JButton deleteButton = new JButton("Delete");
-        JButton searchButton = new JButton("Search");
-
-        // Add action listeners to category buttons
-        displayAllButton.addActionListener(createActionListener("Display All"));
-        addButton.addActionListener(createActionListener("Add New"));
-        updateButton.addActionListener(createActionListener("Update"));
-        deleteButton.addActionListener(createActionListener("Delete"));
-        searchButton.addActionListener(createActionListener("Search"));
-
-        // Add buttons to the bottom panel
-        bottomPanel.add(displayAllButton);
-        bottomPanel.add(addButton);
-        bottomPanel.add(updateButton);
-        bottomPanel.add(deleteButton);
-        bottomPanel.add(searchButton);
-
-        return bottomPanel;
+    // Static inner class for "Orders" button in MainMenu
+    private static class OrderListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open OrderView when "Orders" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                new OrderView().setVisible(true);
+            });
+        }
     }
 
-    private JPanel createRightPanel() {
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+    // Static inner class for "Customers" button in MainMenu
+    private static class CustomersListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open CustomerView when "Customers" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                new CustomerView(null).setVisible(true);
+            });
+        }
+    }
 
-        JButton storeResultButton = new JButton("Store Result");
-        JButton sqlQueriesButton = new JButton("SQL Queries");
-        JButton enterTitleButton = new JButton("Enter Title");
+// Static inner class for "Employees" button in MainMenu
+private static class EmployeesListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Open EmployeeView when "Employees" button is pressed
+        new EmployeeView().setVisible(true);
+    }
+}
 
-        // Add action listeners to right panel buttons
-        storeResultButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement store result functionality
-                JOptionPane.showMessageDialog(MainView.this, "Store Result Button Clicked");
-            }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainView mainView = new MainView();
+            mainView.setVisible(true);
         });
-
-        sqlQueriesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement SQL queries functionality
-                JOptionPane.showMessageDialog(MainView.this, "SQL Queries Button Clicked");
-            }
-        });
-
-        enterTitleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement enter title functionality
-                String title = JOptionPane.showInputDialog(MainView.this, "Enter Title:");
-                if (title != null) {
-                    // Use the entered title as needed
-                    JOptionPane.showMessageDialog(MainView.this, "Entered Title: " + title);
-                }
-            }
-        });
-        
-    
-        
-
-        rightPanel.add(storeResultButton);
-        rightPanel.add(sqlQueriesButton);
-        rightPanel.add(enterTitleButton);
-
-        return rightPanel;
     }
-
-    private ActionListener createActionListener(final String action) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implement category actions based on the button clicked
-                JOptionPane.showMessageDialog(MainView.this, action + " Button Clicked");
-            }
-        };
-    }
-
-    
 }
