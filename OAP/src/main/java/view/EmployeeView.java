@@ -117,8 +117,7 @@ public class EmployeeView extends JFrame {
             panel.add(canCheckDeliveryStatusBox);
             panel.add(new JLabel("Postal Code:"));
             panel.add(postalCodeField);
-            panel.add(new JLabel("Roles:"));
-            panel.add(rolesField);
+    
 
             int result = JOptionPane.showConfirmDialog(null, panel, 
                    "Enter Employee Details", JOptionPane.OK_CANCEL_OPTION);
@@ -129,14 +128,13 @@ public class EmployeeView extends JFrame {
                     String lastName = lastNameField.getText();
                     String role = roleField.getText();
                     String jobTitle = jobTitleField.getText();
-                    String password = new String(passwordField.getPassword());
                     String email = emailField.getText();
                     boolean status = canCheckDeliveryStatusBox.isSelected();
                     String postalCode = postalCodeField.getText();
-                    String roles = rolesField.getText();
+                   
 
                     EmployeeHandler handler = new EmployeeHandler();
-                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, password, email, status, postalCode, roles);
+                    boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, role, jobTitle, email, status, postalCode);
 
                     if (success) {
                         JOptionPane.showMessageDialog(EmployeeView.this, "Employee added successfully!");
