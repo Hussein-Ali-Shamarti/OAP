@@ -25,7 +25,7 @@ public class EmployeeHandler {
 
             try (Connection connection = DataBaseConnection.getConnection();
                  PreparedStatement pstm = connection.prepareStatement(
-                        "INSERT INTO " + employees + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        "INSERT INTO " + employees + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 
                 pstm.setInt(1, employeeNumber);
                 pstm.setString(2, firstName);
