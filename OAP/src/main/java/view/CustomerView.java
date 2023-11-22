@@ -137,7 +137,7 @@ public class CustomerView extends JFrame {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     // Retrieving values from text fields
-                    int customerNr = Integer.parseInt(customerNumberField.getText());
+                    int customerNumber = Integer.parseInt(customerNumberField.getText());
                     String companyName = companyNameField.getText();
                     String contactLastName = contactLastNameField.getText();
                     String contactFirstName = contactFirstNameField.getText();
@@ -152,7 +152,7 @@ public class CustomerView extends JFrame {
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                     // Call to CustomerHandler to add customer
-                    boolean success = CustomerHandler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, 
+                    boolean success = CustomerHandler.addCustomer(customerNumber, companyName, contactLastName, contactFirstName, 
                                                                  phone, addressLine1, addressLine2, city, state, postalCode, country, 
                                                                  salesRepEmployeeNr, creditLimit);
                     if (success) {
