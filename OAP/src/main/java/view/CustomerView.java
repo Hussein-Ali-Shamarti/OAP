@@ -249,7 +249,7 @@ public class CustomerView extends MainView {
 
     private void displayEditForm(Customer customer) {
         
-        JTextField customerNameField = new JTextField(customer.getcustomerName(), 10);
+        JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
         JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
         JTextField phoneField = new JTextField(customer.getPhone(), 10);
@@ -259,7 +259,7 @@ public class CustomerView extends MainView {
         JTextField stateField = new JTextField(customer.getState(), 10);
         JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
         JTextField countryField = new JTextField(customer.getCountry(), 10);
-        JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getsalesRepEmployeeNumber()), 10);
+        JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getSalesRepEmployeeNumber()), 10);
         JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
 
         JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -321,7 +321,38 @@ public class CustomerView extends MainView {
     private class DeleteButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(CustomerView.this, "Delete button pressed");
+            String customerNumberStr = JOptionPane.showInputDialog(CustomerView.this, "Enter Customer Number to delete:");
+            if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
+                try {
+                    int customerNumber = Integer.parseInt(customerNumberStr);
+
+                    CustomerHandler handler = new CustomerHandler();
+                    Customer customer = handler.fetchCustomerData(customerNumber);
+
+                    if (customer != null) {
+                        int confirm = JOptionPane.showConfirmDialog(
+                            CustomerView.this, 
+                            "Are you sure you want to delete this customer?\n" +
+                            "Customer Nr: " + customer.getCustomerNumber() + "\n" +
+                            "Name: " + customer.getCustomerName() + "\n" +
+                            "Contact: " + customer.getContactFirstName() + " " + customer.getContactLastName(), 
+                            "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            boolean success = handler.deleteCustomer(customerNumber);
+                            if (success) {
+                                JOptionPane.showMessageDialog(CustomerView.this, "Customer deleted successfully.");
+                            } else {
+                                JOptionPane.showMessageDialog(CustomerView.this, "Failed to delete customer.");
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(CustomerView.this, "Customer not found.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Invalid customer number format.");
+                }
+            }
         }
     }
 

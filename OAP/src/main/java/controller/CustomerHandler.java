@@ -114,19 +114,18 @@ public class CustomerHandler {
 
 
 
-    public boolean deleteCustomer(int customerNumber) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNumber = ?")) {
-            pstm.setInt(1, customerNumber);
+	 public boolean deleteCustomer(int customerNumber) {
+		    try (Connection connection = DataBaseConnection.getConnection();
+		         PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNumber = ?")) {
+		        pstm.setInt(1, customerNumber);
 
-            int affectedRows = pstm.executeUpdate();
-
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+		        int affectedRows = pstm.executeUpdate();
+		        return affectedRows > 0;
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
 
 
     }

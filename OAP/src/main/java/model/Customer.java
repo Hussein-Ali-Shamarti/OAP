@@ -51,11 +51,11 @@ public class Customer {
         this.customerNumber = customerNumber;
     }
     
-    public String getcustomerName() {
+    public String getCustomerName() {
         return customerName;
     }
 
-    public void setcustomerName(String customerName) {
+    public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
 
@@ -131,11 +131,11 @@ public class Customer {
         this.country = country;
     }
 
-    public int getsalesRepEmployeeNumber() {
+    public int getSalesRepEmployeeNumber() {
         return salesRepEmployeeNumber;
     }
 
-    public void setsalesRepEmployeeNumber(int salesRepEmployeeNumber) {
+    public void setSalesRepEmployeeNumber(int salesRepEmployeeNumber) {
         this.salesRepEmployeeNumber = salesRepEmployeeNumber;
     }
 

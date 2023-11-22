@@ -14,10 +14,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+
 public class MainView extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    protected JMenuBar menubar; // Assuming MenuBar is in the same package
+    protected JMenuBar menuBar;
 
     public MainView() {
         super("Model Perfect");
@@ -31,10 +32,11 @@ public class MainView extends JFrame {
         getContentPane().setBackground(Color.WHITE);
 
         // Initialize the Menubar
-        menubar = new JMenuBar();
+        MenuBar menuBar = new MenuBar(); // Create an instance of MenuBar
 
         // Set the menu bar for the frame
-        setJMenuBar(menubar);
+        setJMenuBar(menuBar.getMenuBar()); // Use the instance to get the JMenuBar
+
 
         // Create panel for company name and logo
         
