@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -50,7 +52,7 @@ public class OrderView extends JFrame {
 
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(90, 23, 139));
+        titlePanel.setBackground(new Color(84, 11, 131));
         JLabel titleLabel = new JLabel("Order Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -92,11 +94,18 @@ public class OrderView extends JFrame {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener());
+        JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
+
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(checkStatusButton);
+        controlPanel.add(checkStatusButton); // Add the "Check Status" button to the control panel
+        controlPanel.add(paymentButton); // Add the "Check Status" button to the control panel
+
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -107,7 +116,7 @@ public class OrderView extends JFrame {
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
-        button.setBackground(Color.WHITE);
+        button.setBackground(new Color(84, 11, 131));
         button.setFocusPainted(false);
         button.addActionListener(listener);
         return button;
@@ -300,18 +309,132 @@ public class OrderView extends JFrame {
     private class DeleteButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Delete button pressed");
+            // Prompt the user to enter the Order Number to delete
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to delete:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Confirm deletion with a dialog
+                    int confirmResult = JOptionPane.showConfirmDialog(OrderView.this, "Are you sure you want to delete Order Number " + orderNumber + "?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                    
+                    if (confirmResult == JOptionPane.YES_OPTION) {
+                        // Call the OrderHandler to delete the order
+                        boolean success = oh.deleteOrder(orderNumber);
+                        
+                        if (success) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Order Number " + orderNumber + " deleted successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Failed to delete Order Number " + orderNumber + ".");
+                        }
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
         }
     }
 
  
- // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Prompt the user to enter an Order Number for the search
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Call the OrderHandler to retrieve the order
+                    Order order = oh.getOrder(orderNumber);
+
+                    if (order != null) {
+                        // Display the order details
+                        StringBuilder resultMessage = new StringBuilder("Search result:\n");
+                        resultMessage.append("Order Number: ").append(order.getOrderNumber()).append("\n");
+                        resultMessage.append("Order Date: ").append(order.getOrderDate()).append("\n");
+                        resultMessage.append("Required Date: ").append(order.getRequiredDate()).append("\n");
+                        resultMessage.append("Shipped Date: ").append(order.getShippedDate()).append("\n");
+                        resultMessage.append("Status: ").append(order.getStatus()).append("\n");
+                        resultMessage.append("Comments: ").append(order.getComments()).append("\n");
+                        resultMessage.append("Customer Number: ").append(order.getCustomerNumber()).append("\n");
+                        JOptionPane.showMessageDialog(OrderView.this, resultMessage.toString());
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: " + orderNumber);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
+        }
+    }
+    
+ // Add this method to your CheckStatusButtonListener class
+    private class CheckStatusButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Prompt the user to enter an Order Number for status check
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Call the OrderHandler to retrieve the order status
+                    String status = oh.getOrderStatus(orderNumber);
+
+                    if (status != null) {
+                        // Display the order status
+                        JOptionPane.showMessageDialog(OrderView.this, "Order Status for Order Number " + orderNumber + ": " + status);
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: " + orderNumber);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
+        }
+    }
+    
+    private class PaymentButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Prompt the user to enter a customer number for payment status check
+            String customerNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Customer Number to check payment status:");
+
+            if (customerNumberString != null && !customerNumberString.isEmpty()) {
+                try {
+                    int customerNumber = Integer.parseInt(customerNumberString);
+
+                    // Check if the customer exists before checking payment status
+                    if (oh.customerExists(customerNumber)) {
+                        boolean paid = oh.checkPaymentStatus(customerNumber);
+
+                        if (paid) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Payment Status for Customer Number " + customerNumber + ": Paid");
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Payment Status for Customer Number " + customerNumber + ": Not Paid");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "Customer with Customer Number " + customerNumber + " does not exist.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Customer Number format.");
+                }
+            }
             JOptionPane.showMessageDialog(OrderView.this, "Search button pressed");
         }
     }
 
-    
+
+
 }
+    
+    
+
+
+
+   
+
