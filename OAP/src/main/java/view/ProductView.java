@@ -72,7 +72,7 @@ public class ProductView extends JFrame {
     }
 
     private void setupTable() {
-        String[] columnNames = {"Product Code", "Product Name", "Product Scale", "Product Vendor",
+        String[] columnNames = {"Product Code", "Product Name","product Line", "Product Scale", "Product Vendor",
                 "Product Description", "Quantity In Stock", "Buy Price", "MSRP"};
         tableModel = new DefaultTableModel(null, columnNames) {
             private static final long serialVersionUID = 1L;
@@ -121,13 +121,14 @@ public class ProductView extends JFrame {
         tableModel.setRowCount(0);
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
-            String sql = "SELECT productCode, productName, productScale, productVendor, " +
+            String sql = "SELECT productCode, productName, productLine, productScale, productVendor, " +
                     "productDescription, quantityInStock, buyPrice, msrp FROM products";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Object[] row = {
                         resultSet.getString("productCode"),
                         resultSet.getString("productName"),
+                        resultSet.getString("productLine"),
                         resultSet.getString("productScale"),
                         resultSet.getString("productVendor"),
                         resultSet.getString("productDescription"),
@@ -155,6 +156,7 @@ public class ProductView extends JFrame {
             // Here's a simple example using JOptionPane for input:
             JTextField productCodeField = new JTextField(10);
             JTextField productNameField = new JTextField(20);
+            JTextField productLineField = new JTextField(20);
             JTextField productScaleField = new JTextField(10);
             JTextField productVendorField = new JTextField(20);
             JTextField productDescriptionField = new JTextField(50);
@@ -167,6 +169,8 @@ public class ProductView extends JFrame {
             panel.add(productCodeField);
             panel.add(new JLabel("Product Name:"));
             panel.add(productNameField);
+            panel.add(new JLabel("Product Line:"));
+            panel.add(productLineField);
             panel.add(new JLabel("Product Scale:"));
             panel.add(productScaleField);
             panel.add(new JLabel("Product Vendor:"));
@@ -185,6 +189,7 @@ public class ProductView extends JFrame {
                 try {
                     String productCode = productCodeField.getText();
                     String productName = productNameField.getText();
+                    String productLine = productLineField.getText();
                     String productScale = productScaleField.getText();
                     String productVendor = productVendorField.getText();
                     String productDescription = productDescriptionField.getText();
@@ -193,7 +198,7 @@ public class ProductView extends JFrame {
                     double msrp = Double.parseDouble(msrpField.getText());
 
                     // Create a Products object with the entered details
-                    Products product = new Products(productCode, productName, productScale, productVendor,
+                    Products product = new Products(productCode, productName, productLine, productScale, productVendor,
                             productDescription, quantityInStock, buyPrice, msrp);
 
                     // Call the addProduct method on the productHandler instance
@@ -241,6 +246,7 @@ public class ProductView extends JFrame {
 
             // Now, you can open a dialog to allow the user to edit the product details
             JTextField productNameField = new JTextField(productToUpdate.getProductName());
+            JTextField productLineField = new JTextField(productToUpdate.getProductLine());
             JTextField productScaleField = new JTextField(productToUpdate.getProductScale());
             JTextField productVendorField = new JTextField(productToUpdate.getProductVendor());
             JTextField productDescriptionField = new JTextField(productToUpdate.getProductDescription());
@@ -251,6 +257,8 @@ public class ProductView extends JFrame {
             JPanel panel = new JPanel(new GridLayout(0, 2));
             panel.add(new JLabel("Product Name:"));
             panel.add(productNameField);
+            panel.add(new JLabel("Product Line:"));
+            panel.add(productLineField);
             panel.add(new JLabel("Product Scale:"));
             panel.add(productScaleField);
             panel.add(new JLabel("Product Vendor:"));
@@ -269,6 +277,7 @@ public class ProductView extends JFrame {
                 try {
                     // Update the product details based on user input
                     productToUpdate.setProductName(productNameField.getText());
+                    productToUpdate.setProductLine(productLineField.getText());
                     productToUpdate.setProductScale(productScaleField.getText());
                     productToUpdate.setProductVendor(productVendorField.getText());
                     productToUpdate.setProductDescription(productDescriptionField.getText());
@@ -315,6 +324,7 @@ public class ProductView extends JFrame {
                 if (resultSet.next()) {
                     // Retrieve the product details from the result set and create a Products object
                     String productName = resultSet.getString("productName");
+                    String productLine = resultSet.getString("productLine");
                     String productScale = resultSet.getString("productScale");
                     String productVendor = resultSet.getString("productVendor");
                     String productDescription = resultSet.getString("productDescription");
@@ -322,7 +332,7 @@ public class ProductView extends JFrame {
                     double buyPrice = resultSet.getDouble("buyPrice");
                     double msrp = resultSet.getDouble("msrp");
                     
-                    Products product = new Products(productCode, productName, productScale, productVendor,
+                    Products product = new Products(productCode, productName, productLine, productScale, productVendor,
                             productDescription, quantityInStock, buyPrice, msrp);
                     
                     return product;
@@ -343,12 +353,13 @@ public class ProductView extends JFrame {
             Connection conn = DataBaseConnection.getConnection();
             
             // Define your SQL update query to update the product details
-            String sql = "UPDATE products SET productName = ?, productScale = ?, productVendor = ?, " +
+            String sql = "UPDATE products SET productName = ?, productLine = ?, productScale = ?, productVendor = ?, " +
                     "productDescription = ?, quantityInStock = ?, buyPrice = ?, msrp = ? WHERE productCode = ?";
             
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 // Set the updated product details as parameters in the SQL query
                 pstmt.setString(1, product.getProductName());
+                pstmt.setString(2, product.getProductLine());
                 pstmt.setString(2, product.getProductScale());
                 pstmt.setString(3, product.getProductVendor());
                 pstmt.setString(4, product.getProductDescription());
@@ -413,6 +424,7 @@ public class ProductView extends JFrame {
                 Object[] row = {
                     product.getProductCode(),
                     product.getProductName(),
+                    product.getProductLine(),
                     product.getProductScale(),
                     product.getProductVendor(),
                     product.getProductDescription(),

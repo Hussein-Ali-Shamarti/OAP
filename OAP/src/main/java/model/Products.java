@@ -16,6 +16,7 @@ public class Products {
 
     private String productCode;
     private String productName;
+    private String productLine;
     private String productScale;
     private String productVendor;
     private String productDescription;
@@ -28,6 +29,7 @@ public class Products {
      *
      * @param productCode       The product code.
      * @param productName       The product name.
+     * @param productLine       The product line.
      * @param productScale      The product scale.
      * @param productVendor     The product vendor.
      * @param productDescription The product description.
@@ -35,10 +37,11 @@ public class Products {
      * @param buyPrice          The buy price.
      * @param msrp              The Manufacturer's Suggested Retail Price.
      */
-    public Products(String productCode, String productName, String productScale, String productVendor,
+    public Products(String productCode, String productName, String productLine, String productScale, String productVendor,
             String productDescription, int quantityInStock, double buyPrice, double msrp) {
 this.productCode = productCode;
 this.productName = productName;
+this.productLine = productLine;
 this.productScale = productScale;
 this.productVendor = productVendor;
 this.productDescription = productDescription;
@@ -82,6 +85,23 @@ this.msrp = msrp;
     public void setProductName(String productName) {
         this.productName = productName;
     }
+    /**
+     * get the productLine  
+     * @return productLine
+     */
+
+     public String getProductLine() {
+         return productLine;
+     }
+
+     /**
+      * set the productLine
+      * @param productLine
+      */
+
+     public void setProductLine(String productLine) {
+         this.productLine = productLine;
+     }
 
     /**
      * get the productScale
