@@ -22,17 +22,17 @@ import model.Customer;
 
 public class CustomerHandler {
 	
-	 public boolean addCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, 
+	 public static boolean addCustomer(int customerNumber, String companyName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
              String state, String postalCode, String country, 
-             int salesRepEmployeeNumber, BigDecimal creditLimit) {
+             int salesRepEmployeeNr, BigDecimal creditLimit) {
 		try (Connection connection = DataBaseConnection.getConnection();
 			PreparedStatement pstm = connection.prepareStatement(
 			"INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, " + 
 			"phone, addressLine1, addressLine2, city, state, postalCode, country, " +
 			"salesRepEmployeeNumber, creditLimit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			pstm.setInt(1, customerNumber);
-			pstm.setString(2, customerName);
+			pstm.setString(2, companyName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -42,7 +42,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNumber);
+			pstm.setInt(12, salesRepEmployeeNr);
 			pstm.setBigDecimal(13, creditLimit);
 			
 			int affectedRows = pstm.executeUpdate();
@@ -53,11 +53,11 @@ public class CustomerHandler {
 }
 }
 
-    public boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, BigDecimal creditLimit) {
+    public static boolean editCustomer(int customerNumber,String companyName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNumber = ?, creditLimit = ? WHERE customerNumber = ?")) {
+             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET companyName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, adressLine1 = ?, adressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNr = ?")) {
         	pstm.setInt(1, customerNumber);
-			pstm.setString(2, customerName);
+			pstm.setString(2, companyName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -67,7 +67,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNumber);
+			pstm.setInt(12, salesRepEmployeeNr);
 			pstm.setBigDecimal(13, creditLimit);
             
             int affectedRows = pstm.executeUpdate();
@@ -79,8 +79,7 @@ public class CustomerHandler {
             return false;
         }
     }
-    
-    public Customer fetchCustomer(int customerNumber) {
+    public static Customer fetchCustomer(int customerNumber) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customers WHERE customerNumber = ?")) {
             
@@ -90,7 +89,7 @@ public class CustomerHandler {
             if (rs.next()) {
                 return new Customer(
                     rs.getInt("customerNumber"),
-                    rs.getString("customerName"),
+                    rs.getString("companyName"),
                     rs.getString("contactLastName"),
                     rs.getString("contactFirstName"),
                     rs.getString("phone"),
@@ -109,13 +108,12 @@ public class CustomerHandler {
         }
         return null; // Return null if customer is not found or an error occurs
     }
-    
 
 
-    public boolean deleteCustomer(int customerNumber) {
+    public boolean deleteCustomer(int customerNr) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNumber = ?")) {
-            pstm.setInt(1, customerNumber);
+             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNr = ?")) {
+            pstm.setInt(1, customerNr);
 
             int affectedRows = pstm.executeUpdate();
 

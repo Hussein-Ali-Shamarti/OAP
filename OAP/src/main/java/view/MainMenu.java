@@ -34,8 +34,8 @@ public class MainMenu extends JPanel {
 
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK); // White text color
-        button.setBackground(new Color(84, 11, 131)); // RGB(84, 11, 131) background color
+        button.setForeground(Color.BLACK); // Black text color
+        button.setBackground(Color.WHITE); // White background color
         button.setFocusPainted(false); // Remove focus highlighting for better appearance
         button.addActionListener(listener); // Add the listener
         button.setPreferredSize(new Dimension(120, 50)); // Smaller size

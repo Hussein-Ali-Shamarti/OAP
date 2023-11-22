@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public class Customer {
 	private int customerNumber;
-    private String customerName;
+    private String companyName;
     private String contactLastName;
     private String contactFirstName;
     private String phone;
@@ -20,15 +20,15 @@ public class Customer {
     private String state;
     private String postalCode;
     private String country;
-    private int salesRepEmployeeNumber;
+    private int salesRepEmployeeNr;
     private BigDecimal creditLimit;
 
-    public Customer( int customerNumber,String customerName, String contactLastName, String contactFirstName, 
+    public Customer( int customerNumber,String companyName, String contactLastName, String contactFirstName, 
                     String phone, String addressLine1, String addressLine2, String city, 
                     String state, String postalCode, String country, 
-                    int salesRepEmployeeNumber, BigDecimal creditLimit) {
+                    int salesRepEmployeeNr, BigDecimal creditLimit) {
     	this.customerNumber= customerNumber;
-        this.customerName = customerName;
+        this.companyName = companyName;
         this.contactLastName = contactLastName;
         this.contactFirstName = contactFirstName;
         this.phone = phone;
@@ -38,7 +38,7 @@ public class Customer {
         this.state = state;
         this.postalCode = postalCode;
         this.country = country;
-        this.salesRepEmployeeNumber = salesRepEmployeeNumber;
+        this.salesRepEmployeeNr = salesRepEmployeeNr;
         this.creditLimit = creditLimit;
     }
 
@@ -51,12 +51,12 @@ public class Customer {
         this.customerNumber = customerNumber;
     }
     
-    public String getCustomerName() {
-        return customerName;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getContactLastName() {
@@ -131,12 +131,12 @@ public class Customer {
         this.country = country;
     }
 
-    public int getsalesRepEmployeeNumber() {
-        return salesRepEmployeeNumber;
+    public int getSalesRepEmployeeNr() {
+        return salesRepEmployeeNr;
     }
 
-    public void setsalesRepEmployeeNumber(int salesRepEmployeeNumber) {
-        this.salesRepEmployeeNumber = salesRepEmployeeNumber;
+    public void setSalesRepEmployeeNr(int salesRepEmployeeNr) {
+        this.salesRepEmployeeNr = salesRepEmployeeNr;
     }
 
     public BigDecimal getCreditLimit() {

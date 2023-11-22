@@ -104,7 +104,7 @@ public class ProductView extends JFrame {
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
-        button.setBackground(new Color(84, 11, 131));
+        button.setBackground(Color.WHITE);
         button.setFocusPainted(false);
         button.addActionListener(listener);
         return button;
