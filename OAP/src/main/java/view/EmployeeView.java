@@ -28,7 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import controller.EmployeeHandler;
 import model.Employee;
 
-public class EmployeeView extends JFrame {
+public class EmployeeView extends MainView {
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
@@ -36,7 +36,7 @@ public class EmployeeView extends JFrame {
     private JTextField textField;
 
     public EmployeeView() {
-        super("Employee Management");
+        super();
 
         setLayout(new BorderLayout());
         initializeUI();

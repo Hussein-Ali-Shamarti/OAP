@@ -24,6 +24,10 @@ public class MainView extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Set application icon
+        ImageIcon appIcon = new ImageIcon(getClass().getResource("/images/Model Perfect.png"));
+        setIconImage(appIcon.getImage());
+
         getContentPane().setBackground(Color.WHITE);
 
         // Initialize the Menubar
