@@ -46,7 +46,7 @@ public class CustomerView extends JFrame {
         JLabel titleLabel = new JLabel("Customer Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.BLACK);
         titlePanel.add(titleLabel);
 
         setupTable();
