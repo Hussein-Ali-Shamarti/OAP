@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -378,6 +376,5 @@ public class OrderView extends JFrame {
     }
 
 }
-
    
 
