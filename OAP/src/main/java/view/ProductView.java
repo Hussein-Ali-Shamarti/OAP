@@ -34,7 +34,7 @@ import controller.ProductHandler;
 import database.DataBaseConnection;
 import model.Products;
 
-public class ProductView extends JFrame {
+public class ProductView extends MainView {
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
@@ -42,7 +42,7 @@ public class ProductView extends JFrame {
     private JTextField textField; // Assuming you have a JTextField for search
 
     public ProductView() {
-        super("Product Management");
+        super();
 
         setLayout(new BorderLayout());
         initializeUI();
