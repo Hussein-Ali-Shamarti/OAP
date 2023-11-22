@@ -46,7 +46,7 @@ public class CustomerView extends JFrame {
         JLabel titleLabel = new JLabel("Customer Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
         setupTable();
@@ -100,8 +100,8 @@ public class CustomerView extends JFrame {
 
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(84, 11, 131));
+        button.setForeground(Color.BLACK);
+        button.setBackground(Color.WHITE);
         button.setFocusPainted(false);
         button.addActionListener(listener);
         return button;
