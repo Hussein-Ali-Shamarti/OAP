@@ -74,8 +74,11 @@ public class CustomerHandler {
 
             return affectedRows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+        	e.printStackTrace();
             System.out.println("SQLException occurred: " + e.getMessage());
+            System.out.println("SQLState: " + e.getSQLState());
+            System.out.println("ErrorCode: " + e.getErrorCode());
+            System.out.println("Query: " + e.toString());
             return false;
         }
     }
