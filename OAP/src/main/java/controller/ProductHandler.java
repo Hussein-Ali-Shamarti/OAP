@@ -48,7 +48,7 @@ public class ProductHandler {
 
         try (Connection connection = DataBaseConnection.getConnection()) {
             // Define your SQL query to search for products based on the search criteria
-            String sql = "SELECT * FROM products WHERE productName LIKE ?"; // Example: Searching by product name
+            String sql = "SELECT * FROM products WHERE productCode LIKE ?"; // Example: Searching by product code
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 // Set the search criteria as a parameter in the SQL query
