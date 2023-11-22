@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List; // Ensure this import for generic Lists
+
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -356,14 +358,46 @@ public class CustomerView extends MainView {
         }
     }
 
-    // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(CustomerView.this, "Search button pressed");
+            JTextField searchField = new JTextField(20);
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            panel.add(new JLabel("Enter search criteria:"));
+            panel.add(searchField);
+            
+            int result = JOptionPane.showConfirmDialog(CustomerView.this, panel, 
+                                                       "Search Customers", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                String searchCriteria = searchField.getText().trim();
+                List<Customer> searchResults = new CustomerHandler().searchCustomers(searchCriteria);
+                updateTableWithSearchResults(searchResults);
+            }
+        }
+        
+        private void updateTableWithSearchResults(List<Customer> searchResults) {
+            tableModel.setRowCount(0); // Clear existing rows
+
+            for (Customer customer : searchResults) {
+                Object[] row = {
+                    customer.getCustomerNumber(),
+                    customer.getCustomerName(),
+                    customer.getContactLastName(),
+                    customer.getContactFirstName(),
+                    customer.getPhone(),
+                    customer.getAddressLine1(),
+                    customer.getAddressLine2(),
+                    customer.getCity(),
+                    customer.getState(),
+                    customer.getPostalCode(),
+                    customer.getCountry(),
+                    customer.getSalesRepEmployeeNumber(),
+                    customer.getCreditLimit()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
-
    
  }
 

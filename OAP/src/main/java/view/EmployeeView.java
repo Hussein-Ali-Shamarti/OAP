@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -325,10 +326,40 @@ public class EmployeeView extends MainView {
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(EmployeeView.this, "Search button pressed");
+            JTextField searchField = new JTextField(20);
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Search Employees:"));
+            panel.add(searchField);
+
+            int result = JOptionPane.showConfirmDialog(EmployeeView.this, panel, 
+                                                       "Search Employees", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                String searchCriteria = searchField.getText().trim();
+                EmployeeHandler handler = new EmployeeHandler();
+                List<Employee> searchResults = handler.searchEmployees(searchCriteria);
+                updateTableWithSearchResults(searchResults);
+            }
         }
     }
 
+    // Method to update the table with search results
+    private void updateTableWithSearchResults(List<Employee> searchResults) {
+        tableModel.setRowCount(0); // Clear the existing rows
+
+        for (Employee employee : searchResults) {
+            Object[] row = new Object[]{
+                employee.getEmployeeNumber(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getExtension(),
+                employee.getEmail(),
+                employee.getOfficeCode(),
+                employee.getReportsTo(),
+                employee.getJobTitle(),
+            };
+            tableModel.addRow(row);
+        }
+    }
     
         
     }

@@ -15,12 +15,77 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import database.DataBaseConnection;
 import model.Customer;
 
 
 
 public class CustomerHandler {
+	
+	  // Define the SQL query as a constant
+    private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHERE " +
+            "CAST(customerNumber AS CHAR) LIKE ? OR " +
+            "customerName LIKE ? OR " +
+            "contactLastName LIKE ? OR " +
+            "contactFirstName LIKE ? OR " +
+            "phone LIKE ? OR " +
+            "addressLine1 LIKE ? OR " +
+            "addressLine2 LIKE ? OR " +
+            "city LIKE ? OR " +
+            "state LIKE ? OR " +
+            "postalCode LIKE ? OR " +
+            "country LIKE ? OR " +
+            "CAST(salesRepEmployeeNumber AS CHAR) LIKE ? OR " +
+            "CAST(creditLimit AS CHAR) LIKE ?";
+    
+    public List<Customer> searchCustomers(String searchCriteria) {
+        List<Customer> searchResults = new ArrayList<>();
+
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_CUSTOMERS_SQL)) {
+
+            for (int i = 1; i <= 13; i++) {
+                preparedStatement.setString(i, "%" + searchCriteria + "%");
+            }
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Customer customer = mapResultSetToCustomer(resultSet);
+                    searchResults.add(customer);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return searchResults;
+    }
+    
+    // Helper method to map a ResultSet to a Customer object
+    private Customer mapResultSetToCustomer(ResultSet resultSet) throws SQLException {
+        return new Customer(
+            resultSet.getInt("customerNumber"),
+            resultSet.getString("customerName"),
+            resultSet.getString("contactLastName"),
+            resultSet.getString("contactFirstName"),
+            resultSet.getString("phone"),
+            resultSet.getString("addressLine1"),
+            resultSet.getString("addressLine2"),
+            resultSet.getString("city"),
+            resultSet.getString("state"),
+            resultSet.getString("postalCode"),
+            resultSet.getString("country"),
+            resultSet.getInt("salesRepEmployeeNumber"),
+            resultSet.getBigDecimal("creditLimit")
+        );
+    }
+
+
+
 	
 	 public static boolean addCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
