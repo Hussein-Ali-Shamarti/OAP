@@ -108,6 +108,7 @@ public class CustomerHandler {
         }
         return null; // Return null if customer is not found or an error occurs
     }
+    
 
 
     public boolean deleteCustomer(int customerNumber) {

@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -92,14 +94,17 @@ public class OrderView extends JFrame {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener()); // Create the "Check Status" button
+        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener());
+        JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
 
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(checkStatusButton);
         controlPanel.add(checkStatusButton); // Add the "Check Status" button to the control panel
+        controlPanel.add(paymentButton); // Add the "Check Status" button to the control panel
 
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
@@ -365,16 +370,70 @@ public class OrderView extends JFrame {
             }
         }
     }
+    
+ // Add this method to your CheckStatusButtonListener class
     private class CheckStatusButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Implement the action you want to perform when the "Check Status" button is clicked
-            // You can open a new dialog, perform a specific task, or display information related to the order statuses
-            // For example:
-            JOptionPane.showMessageDialog(OrderView.this, "Check Status button pressed");
+            // Prompt the user to enter an Order Number for status check
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Call the OrderHandler to retrieve the order status
+                    String status = oh.getOrderStatus(orderNumber);
+
+                    if (status != null) {
+                        // Display the order status
+                        JOptionPane.showMessageDialog(OrderView.this, "Order Status for Order Number " + orderNumber + ": " + status);
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: " + orderNumber);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
+        }
+    }
+    
+    private class PaymentButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Prompt the user to enter a customer number for payment status check
+            String customerNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Customer Number to check payment status:");
+
+            if (customerNumberString != null && !customerNumberString.isEmpty()) {
+                try {
+                    int customerNumber = Integer.parseInt(customerNumberString);
+
+                    // Check if the customer exists before checking payment status
+                    if (oh.customerExists(customerNumber)) {
+                        boolean paid = oh.checkPaymentStatus(customerNumber);
+
+                        if (paid) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Payment Status for Customer Number " + customerNumber + ": Paid");
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Payment Status for Customer Number " + customerNumber + ": Not Paid");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "Customer with Customer Number " + customerNumber + " does not exist.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Customer Number format.");
+                }
+            }
         }
     }
 
+
+
 }
+    
+    
+
+
+
    
 
