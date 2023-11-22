@@ -192,7 +192,7 @@ public class CustomerView extends JFrame {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     // Retrieving values from text fields
-                    int customerNr = Integer.parseInt(customerNumberField.getText());
+                    int customerNumber = Integer.parseInt(customerNumberField.getText());
                     String customerName = customerNameField.getText();
                     String contactLastName = contactLastNameField.getText();
                     String contactFirstName = contactFirstNameField.getText();
@@ -210,7 +210,7 @@ public class CustomerView extends JFrame {
                     CustomerHandler handler = new CustomerHandler();
 
                     // Use the handler instance to call addCustomer
-                    boolean success = handler.addCustomer(customerNr, customerName, contactLastName, contactFirstName, 
+                    boolean success = handler.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
                                                          phone, addressLine1, addressLine2, city, state, postalCode, country, 
                                                          salesRepEmployeeNr, creditLimit);
                     if (success) {
