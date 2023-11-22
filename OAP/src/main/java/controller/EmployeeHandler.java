@@ -18,6 +18,56 @@
 
 
 public class EmployeeHandler {
+	
+	
+	 private static final String SEARCH_EMPLOYEES_SQL = 
+		        "SELECT * FROM employees WHERE " +
+		        "CAST(employeeNumber AS CHAR) LIKE ? OR " +
+		        "firstName LIKE ? OR " +
+		        "lastName LIKE ? OR " +
+		        "extension LIKE ? OR " +
+		        "email LIKE ? OR " +
+		        "officeCode LIKE ? OR " +
+		        "CAST(reportsTo AS CHAR) LIKE ? OR " +
+		        "jobTitle LIKE ?";
+
+		    public List<Employee> searchEmployees(String searchCriteria) {
+		        List<Employee> searchResults = new ArrayList<>();
+		        
+		        try (Connection connection = DataBaseConnection.getConnection();
+		             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_EMPLOYEES_SQL)) {
+
+		            for (int i = 1; i <= 8; i++) {
+		                preparedStatement.setString(i, "%" + searchCriteria + "%");
+		            }
+
+		            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+		                while (resultSet.next()) {
+		                    Employee employee = mapResultSetToEmployee(resultSet);
+		                    searchResults.add(employee);
+		                }
+		            }
+
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+
+		        return searchResults;
+		    }
+
+		    private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
+		        return new Employee(
+		            resultSet.getInt("employeeNumber"),
+		            resultSet.getString("firstName"),
+		            resultSet.getString("lastName"),
+		            resultSet.getString("extension"),
+		            resultSet.getString("email"),
+		            resultSet.getString("officeCode"),
+		            resultSet.getInt("reportsTo"),
+		            resultSet.getString("jobTitle")
+		        );
+		    }
+		    
     
  
     public boolean addEmployee(String employees, int employeeNumber, String firstName, String lastName,String extension, String email, String officeCode, int reportsTo, String jobTitle) {
