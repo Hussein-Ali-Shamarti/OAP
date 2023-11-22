@@ -329,14 +329,6 @@ public class EmployeeView extends JFrame {
         }
     }
 
-    // Static inner class for "Employees" button in MainMenu
-    private static class EmployeesListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Open EmployeeView when "Employees" button is pressed
-            SwingUtilities.invokeLater(() -> {
-                new EmployeeView().setVisible(true);
-            });
-        }
+    
+        
     }
-}

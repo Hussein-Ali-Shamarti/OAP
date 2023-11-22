@@ -112,7 +112,9 @@ private static class EmployeesListener implements ActionListener {
              EmployeeView employeeView = new EmployeeView();
              employeeView.setVisible(true);
     	 });
-}
+    	 
+    }
+    
+  }
 
-   
 }
