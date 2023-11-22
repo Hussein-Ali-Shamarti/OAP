@@ -28,9 +28,10 @@ import model.Order;
 
 
 public class OrderHandler {
+	
 	public List<Order> searchOrders(String searchText) {
 	    List<Order> searchResults = new ArrayList<>();
-	    String searchQuery = "SELECT * FROM orders WHERE CONCAT(OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
+	    String searchQuery = "SELECT * FROM orders WHERE CONCAT(orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
 
 	    try (Connection conn = DataBaseConnection.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(searchQuery)) {

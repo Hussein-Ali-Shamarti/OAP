@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -332,35 +333,40 @@ public class OrderView extends MainView {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Prompt the user to enter an Order Number for the search
-            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
+            String searchParameter = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
 
-            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+          /*  if (searchParameter != "" && !searchParameter.isEmpty()) {
                 try {
-                    int orderNumber = Integer.parseInt(orderNumberString);
+                   // int orderNumber = Integer.parseInt(orderNumberString);
 
                     // Call the OrderHandler to retrieve the order
-                    Order order = orderHandler.getOrder(orderNumber);
-
-                    if (order != null) {
+                 //  Order order = orderHandler.searchOrders();
+                	List<Order> filter = orderHandler.searchOrders(searchParameter);
+                	tableModel.setRowCount(0); 
+                	for(Order o:filter) {
+                	tableModel.ad;
+                	}
                         // Display the order details
                         StringBuilder resultMessage = new StringBuilder("Search result:\n");
-                        resultMessage.append("Order Number: ").append(order.getOrderNumber()).append("\n");
-                        resultMessage.append("Order Date: ").append(order.getOrderDate()).append("\n");
-                        resultMessage.append("Required Date: ").append(order.getRequiredDate()).append("\n");
-                        resultMessage.append("Shipped Date: ").append(order.getShippedDate()).append("\n");
-                        resultMessage.append("Status: ").append(order.getStatus()).append("\n");
+                        resultMessage.append("Order Number: ").append(filter.getOrderNumber()).append("\n");
+                        resultMessage.append("Order Date: ").append(filter.getOrderDate()).append("\n");
+                        resultMessage.append("Required Date: ").append(filter.getRequiredDate()).append("\n");
+                        resultMessage.append("Shipped Date: ").append(filter.getShippedDate()).append("\n");
+                        resultMessage.append("Status: ").append(filter.getStatus()).append("\n");
                         resultMessage.append("Comments: ").append(order.getComments()).append("\n");
                         resultMessage.append("Customer Number: ").append(order.getCustomerNumber()).append("\n");
                         JOptionPane.showMessageDialog(OrderView.this, resultMessage.toString());
                     } else {
-                        JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: " + orderNumber);
+                        /*JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: ");
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
                 }
-            }
+            } */
         }
     }
+    
+    
     
  // Add this method to your CheckStatusButtonListener class
     private class CheckStatusButtonListener implements ActionListener {
