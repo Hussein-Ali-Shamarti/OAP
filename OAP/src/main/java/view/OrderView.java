@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -26,19 +25,20 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
 import controller.OrderHandler;
 import model.Order;
 
 
-public class OrderView extends JFrame {
+public class OrderView extends MainView {
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
     private JTextField textField;  // Assuming you have a JTextField for search
-    private OrderHandler oh=new OrderHandler();
+    private OrderHandler orderHandler=new OrderHandler();
     public OrderView() {
-        super("Order Management");
+        super();
 
         setLayout(new BorderLayout());
         initializeUI();
@@ -193,7 +193,7 @@ public class OrderView extends JFrame {
                
                  // Call to CustomerHandler to add customer
                  Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate);
-                 boolean success = oh.addOrder(order);
+                 boolean success = orderHandler.addOrder(order);
                  if (success) {
                      JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
                  } else {
@@ -217,7 +217,7 @@ public class OrderView extends JFrame {
             if (orderNumberString != null && !orderNumberString.isEmpty()) {
                 try {
                     int orderNumber = Integer.parseInt(orderNumberString);
-                    Order existingOrder = oh.getOrder(orderNumber);
+                    Order existingOrder = orderHandler.getOrder(orderNumber);
 
                     if (existingOrder != null) {
                         // Fields for updating order details
@@ -283,7 +283,7 @@ public class OrderView extends JFrame {
                                 Order updatedOrder = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
 
                                 // Call the OrderHandler to update the order
-                                boolean success = oh.editOrder(updatedOrder, orderNumber);
+                                boolean success = orderHandler.editOrder(updatedOrder, orderNumber);
                                 if (success) {
                                     JOptionPane.showMessageDialog(OrderView.this, "Order updated successfully!");
                                 } else {
@@ -321,7 +321,7 @@ public class OrderView extends JFrame {
                     
                     if (confirmResult == JOptionPane.YES_OPTION) {
                         // Call the OrderHandler to delete the order
-                        boolean success = oh.deleteOrder(orderNumber);
+                        boolean success = orderHandler.deleteOrder(orderNumber);
                         
                         if (success) {
                             JOptionPane.showMessageDialog(OrderView.this, "Order Number " + orderNumber + " deleted successfully!");
@@ -348,7 +348,7 @@ public class OrderView extends JFrame {
                     int orderNumber = Integer.parseInt(orderNumberString);
 
                     // Call the OrderHandler to retrieve the order
-                    Order order = oh.getOrder(orderNumber);
+                    Order order = orderHandler.getOrder(orderNumber);
 
                     if (order != null) {
                         // Display the order details
@@ -383,7 +383,7 @@ public class OrderView extends JFrame {
                     int orderNumber = Integer.parseInt(orderNumberString);
 
                     // Call the OrderHandler to retrieve the order status
-                    String status = oh.getOrderStatus(orderNumber);
+                    String status = orderHandler.getOrderStatus(orderNumber);
 
                     if (status != null) {
                         // Display the order status
@@ -409,8 +409,8 @@ public class OrderView extends JFrame {
                     int customerNumber = Integer.parseInt(customerNumberString);
 
                     // Check if the customer exists before checking payment status
-                    if (oh.customerExists(customerNumber)) {
-                        boolean paid = oh.checkPaymentStatus(customerNumber);
+                    if (orderHandler.customerExists(customerNumber)) {
+                        boolean paid = orderHandler.checkPaymentStatus(customerNumber);
 
                         if (paid) {
                             JOptionPane.showMessageDialog(OrderView.this, "Payment Status for Customer Number " + customerNumber + ": Paid");

@@ -1,0 +1,29 @@
+
+Model Perfect ERP System - Quick Guide
+
+Welcome:
+Explore the Model Perfect ERP System for efficient 
+business management.
+
+Navigation:
+
+File Menu: Exit the application.
+About Menu: Learn about the application.
+Help Menu: Access this guide.
+About Model Perfect ERP:
+
+Created for educational purposes.
+Simulates an ERP system for Model Perfect Inc.
+Help Guide:
+
+Use the "Help" menu for tips on features.
+Exiting:
+
+Click "Exit" in the File menu.
+Additional Info:
+
+For help, check the documentation or contact your instructor.
+
+Thank You:
+Enhance your ERP understanding with Model Perfect.
+Reach out for support.

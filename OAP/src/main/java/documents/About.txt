@@ -1,1 +1,25 @@
-Hei, søtnos:)
+Welcome to Model Perfect ERP System
+
+About:
+Model Perfect ERP System is a collaborative school project, 
+featuring a comprehensive ERP system designed for the fictional company, Model Perfect. 
+Our goal is to create an efficient software solution for various aspects of business management.
+
+Key Features:
+
+Products Management: Organize and manage the product 
+catalog efficiently.
+Orders and Transactions: Track orders and transactions for a 
+streamlined sales process.
+CRM: Maintain a customer database for personalized service.
+Employee Management: Effectively handle 
+employee data and organizational structure.
+Why Choose Model Perfect ERP System:
+
+User-Friendly Interface: Intuitive design for 
+easy navigation and task execution.
+Scalability: Adaptable to the evolving needs of 
+a growing business.
+
+Educational Initiative: A valuable project applying theoretical 
+knowledge to real-world scenarios, enhancing software development skills.
