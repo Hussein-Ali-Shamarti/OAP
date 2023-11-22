@@ -22,17 +22,17 @@ import model.Customer;
 
 public class CustomerHandler {
 	
-	 public static boolean addCustomer(int customerNumber, String companyName, String contactLastName, String contactFirstName, 
+	 public static boolean addCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
              String state, String postalCode, String country, 
-             int salesRepEmployeeNr, BigDecimal creditLimit) {
+             int salesRepEmployeeNumber, BigDecimal creditLimit) {
 		try (Connection connection = DataBaseConnection.getConnection();
 			PreparedStatement pstm = connection.prepareStatement(
 			"INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, " + 
 			"phone, addressLine1, addressLine2, city, state, postalCode, country, " +
 			"salesRepEmployeeNumber, creditLimit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			pstm.setInt(1, customerNumber);
-			pstm.setString(2, companyName);
+			pstm.setString(2, customerName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -42,7 +42,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNr);
+			pstm.setInt(12, salesRepEmployeeNumber);
 			pstm.setBigDecimal(13, creditLimit);
 			
 			int affectedRows = pstm.executeUpdate();
@@ -53,11 +53,11 @@ public class CustomerHandler {
 }
 }
 
-    public static boolean editCustomer(int customerNumber,String companyName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
+    public static boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET companyName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, adressLine1 = ?, adressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNr = ?")) {
+             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNumber = ?, creditLimit = ? WHERE customerNumber = ?")) {
         	pstm.setInt(1, customerNumber);
-			pstm.setString(2, companyName);
+			pstm.setString(2, customerName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -67,7 +67,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNr);
+			pstm.setInt(12, salesRepEmployeeNumber);
 			pstm.setBigDecimal(13, creditLimit);
             
             int affectedRows = pstm.executeUpdate();
@@ -89,7 +89,7 @@ public class CustomerHandler {
             if (rs.next()) {
                 return new Customer(
                     rs.getInt("customerNumber"),
-                    rs.getString("companyName"),
+                    rs.getString("customerName"),
                     rs.getString("contactLastName"),
                     rs.getString("contactFirstName"),
                     rs.getString("phone"),
@@ -110,10 +110,10 @@ public class CustomerHandler {
     }
 
 
-    public boolean deleteCustomer(int customerNr) {
+    public boolean deleteCustomer(int customerNumber) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNr = ?")) {
-            pstm.setInt(1, customerNr);
+             PreparedStatement pstm = connection.prepareStatement("DELETE FROM customers WHERE customerNumber = ?")) {
+            pstm.setInt(1, customerNumber);
 
             int affectedRows = pstm.executeUpdate();
 

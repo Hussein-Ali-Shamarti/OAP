@@ -142,7 +142,7 @@ public class CustomerView extends MainView {
         public void actionPerformed(ActionEvent e) {
             // Fields for customer details
             JTextField customerNumberField = new JTextField(10);
-            JTextField companyNameField = new JTextField(10);
+            JTextField customerNameField = new JTextField(10);
             JTextField contactLastNameField = new JTextField(10);
             JTextField contactFirstNameField = new JTextField(10);
             JTextField phoneField = new JTextField(10);
@@ -162,7 +162,7 @@ public class CustomerView extends MainView {
             panel.add(new JLabel("Customer Number:"));
             panel.add(customerNumberField);
             panel.add(new JLabel("Company Name:"));
-            panel.add(companyNameField);
+            panel.add(customerNameField);
             panel.add(new JLabel("Contact Last Name:"));
             panel.add(contactLastNameField);
             panel.add(new JLabel("Contact First Name:"));
@@ -191,8 +191,8 @@ public class CustomerView extends MainView {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     // Retrieving values from text fields
-                    int customerNr = Integer.parseInt(customerNumberField.getText());
-                    String companyName = companyNameField.getText();
+                    int customerNumber = Integer.parseInt(customerNumberField.getText());
+                    String customerName = customerNameField.getText();
                     String contactLastName = contactLastNameField.getText();
                     String contactFirstName = contactFirstNameField.getText();
                     String phone = phoneField.getText();
@@ -202,13 +202,13 @@ public class CustomerView extends MainView {
                     String state = stateField.getText();
                     String postalCode = postalCodeField.getText();
                     String country = countryField.getText();
-                    int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+                    int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                     // Call to CustomerHandler to add customer
-                    boolean success = CustomerHandler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, 
+                    boolean success = CustomerHandler.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
                                                                  phone, addressLine1, addressLine2, city, state, postalCode, country, 
-                                                                 salesRepEmployeeNr, creditLimit);
+                                                                 salesRepEmployeeNumber, creditLimit);
                     if (success) {
                         JOptionPane.showMessageDialog(CustomerView.this, "Customer added successfully!");
                     } else {
@@ -249,7 +249,7 @@ public class CustomerView extends MainView {
 
     private void displayEditForm(Customer customer) {
         // Text fields initialized with customer's existing data
-        JTextField companyNameField = new JTextField(customer.getCompanyName(), 10);
+        JTextField customerNameField = new JTextField(customer.getcustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
         JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
         JTextField phoneField = new JTextField(customer.getPhone(), 10);
@@ -259,7 +259,7 @@ public class CustomerView extends MainView {
         JTextField stateField = new JTextField(customer.getState(), 10);
         JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
         JTextField countryField = new JTextField(customer.getCountry(), 10);
-        JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getSalesRepEmployeeNr()), 10);
+        JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getsalesRepEmployeeNumber()), 10);
         JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
 
         // Panel for form layout
@@ -267,7 +267,7 @@ public class CustomerView extends MainView {
         
         // Adding components to panel
         panel.add(new JLabel("Company Name:"));
-        panel.add(companyNameField);
+        panel.add(customerNameField);
         panel.add(new JLabel("Contact Last Name:"));
         panel.add(contactLastNameField);
         panel.add(new JLabel("Contact First Name:"));
@@ -295,7 +295,7 @@ public class CustomerView extends MainView {
         if (result == JOptionPane.OK_OPTION) {
             try {
               
-            	String companyName = companyNameField.getText();
+            	String customerName = customerNameField.getText();
             	String contactLastName = contactLastNameField.getText();
             	String contactFirstName = contactFirstNameField.getText();
             	String phone = phoneField.getText();
@@ -305,13 +305,13 @@ public class CustomerView extends MainView {
             	String state = stateField.getText();
             	String postalCode = postalCodeField.getText();
             	String country = countryField.getText();
-            	int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+            	int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
             	BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
             	// Now, use these variables in your call to editCustomer
-            	boolean success = CustomerHandler.editCustomer(customer.getCustomerNumber(), companyName, contactLastName, contactFirstName, 
+            	boolean success = CustomerHandler.editCustomer(customer.getCustomerNumber(), customerName, contactLastName, contactFirstName, 
             	                                              phone, addressLine1, addressLine2, city, state, postalCode, country, 
-            	                                              salesRepEmployeeNr, creditLimit);
+            	                                              salesRepEmployeeNumber, creditLimit);
                 if (success) {
                     JOptionPane.showMessageDialog(CustomerView.this, "Customer updated successfully!");
                 } else {
