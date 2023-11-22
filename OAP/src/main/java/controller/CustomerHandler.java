@@ -56,23 +56,24 @@ public class CustomerHandler {
     public static boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNumber = ?, creditLimit = ? WHERE customerNumber = ?")) {
-        	pstm.setInt(1, customerNumber);
-			pstm.setString(2, customerName);
-			pstm.setString(3, contactLastName);
-			pstm.setString(4, contactFirstName);
-			pstm.setString(5, phone);
-			pstm.setString(6, addressLine1);
-			pstm.setString(7, addressLine2);
-			pstm.setString(8, city);
-			pstm.setString(9, state);
-			pstm.setString(10, postalCode);
-			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNumber);
-			pstm.setBigDecimal(13, creditLimit);
+        	
+			pstm.setString(1, customerName);
+			pstm.setString(2, contactLastName);
+			pstm.setString(3, contactFirstName);
+			pstm.setString(4, phone);
+			pstm.setString(5, addressLine1);
+			pstm.setString(6, addressLine2);
+			pstm.setString(7, city);
+			pstm.setString(8, state);
+			pstm.setString(9, postalCode);
+			pstm.setString(10, country);
+			pstm.setInt(11, salesRepEmployeeNumber);
+			pstm.setBigDecimal(12, creditLimit);
+			pstm.setInt(13, customerNumber);
             
             int affectedRows = pstm.executeUpdate();
             
-            System.out.println("Number of rows affected: " + affectedRows);
+            System.out.println("Number of rows affected: " + affectedRows); // 0 rows currently
 
             return affectedRows > 0;
         } catch (SQLException e) {
