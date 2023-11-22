@@ -2,6 +2,7 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DataBaseConnection {
@@ -24,5 +25,11 @@ public class DataBaseConnection {
 
     public static String getPassword() {
         return password;
+    }
+
+    // Create a PreparedStatement
+    public static PreparedStatement prepareStatement(String sql) throws SQLException {
+        Connection connection = getConnection(); // Implement this method to obtain the database connection
+        return connection.prepareStatement(sql);
     }
 }

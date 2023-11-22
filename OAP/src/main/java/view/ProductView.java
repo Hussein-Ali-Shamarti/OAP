@@ -197,6 +197,12 @@ public class ProductView extends JFrame {
                     double buyPrice = Double.parseDouble(buyPriceField.getText());
                     double msrp = Double.parseDouble(msrpField.getText());
 
+                    // Check if the entered product line exists in the database
+                    if (!isProductLineExists(productLine)) {
+                        JOptionPane.showMessageDialog(ProductView.this, "Product line doesn't exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return; // Exit without adding the product
+                    }
+
                     // Create a Products object with the entered details
                     Products product = new Products(productCode, productName, productLine, productScale, productVendor,
                             productDescription, quantityInStock, buyPrice, msrp);
@@ -217,7 +223,30 @@ public class ProductView extends JFrame {
                 }
             }
         }
+
+        // Check if the entered product line exists in the database
+        private boolean isProductLineExists(String productLine) {
+            try {
+                // Assuming you have a database connection established, create a PreparedStatement
+                PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?");
+                preparedStatement.setString(1, productLine);
+
+                // Execute the query
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                // Check if a row with the product line exists
+                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                    return true; // Product line exists
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace(); // Handle the exception properly in your code
+            }
+
+            return false; // Product line doesn't exist or an error occurred
+        }
     }
+
+
 
 
 
