@@ -42,6 +42,42 @@ public class ProductHandler {
             return false;
         }
     }
+    
+    public List<Products> searchProducts(String searchCriteria) {
+        List<Products> searchResults = new ArrayList<>();
+
+        try (Connection connection = DataBaseConnection.getConnection()) {
+            // Define your SQL query to search for products based on the search criteria
+            String sql = "SELECT * FROM products WHERE productName LIKE ?"; // Example: Searching by product name
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                // Set the search criteria as a parameter in the SQL query
+                preparedStatement.setString(1, "%" + searchCriteria + "%");
+
+                // Execute the query and retrieve the result set
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                // Iterate through the result set and add matching products to the list
+                while (resultSet.next()) {
+                    Products product = new Products(
+                        resultSet.getString("productCode"),
+                        resultSet.getString("productName"),
+                        resultSet.getString("productScale"),
+                        resultSet.getString("productVendor"),
+                        resultSet.getString("productDescription"),
+                        resultSet.getInt("quantityInStock"),
+                        resultSet.getDouble("buyPrice"),
+                        resultSet.getDouble("msrp")
+                    );
+                    searchResults.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return searchResults;
+    }
 
     public boolean updateProduct(Products product) {
         try (Connection connection = database.DataBaseConnection.getConnection()) {
