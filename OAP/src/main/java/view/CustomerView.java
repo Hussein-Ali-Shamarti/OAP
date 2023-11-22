@@ -143,7 +143,7 @@ public class CustomerView extends JFrame {
         public void actionPerformed(ActionEvent e) {
             // Fields for customer details
             JTextField customerNumberField = new JTextField(10);
-            JTextField companyNameField = new JTextField(10);
+            JTextField customerNameField = new JTextField(10);
             JTextField contactLastNameField = new JTextField(10);
             JTextField contactFirstNameField = new JTextField(10);
             JTextField phoneField = new JTextField(10);
@@ -163,7 +163,7 @@ public class CustomerView extends JFrame {
             panel.add(new JLabel("Customer Number:"));
             panel.add(customerNumberField);
             panel.add(new JLabel("Company Name:"));
-            panel.add(companyNameField);
+            panel.add(customerNameField);
             panel.add(new JLabel("Contact Last Name:"));
             panel.add(contactLastNameField);
             panel.add(new JLabel("Contact First Name:"));
@@ -193,7 +193,7 @@ public class CustomerView extends JFrame {
                 try {
                     // Retrieving values from text fields
                     int customerNr = Integer.parseInt(customerNumberField.getText());
-                    String companyName = companyNameField.getText();
+                    String customerName = customerNameField.getText();
                     String contactLastName = contactLastNameField.getText();
                     String contactFirstName = contactFirstNameField.getText();
                     String phone = phoneField.getText();
@@ -210,7 +210,7 @@ public class CustomerView extends JFrame {
                     CustomerHandler handler = new CustomerHandler();
 
                     // Use the handler instance to call addCustomer
-                    boolean success = handler.addCustomer(customerNr, companyName, contactLastName, contactFirstName, 
+                    boolean success = handler.addCustomer(customerNr, customerName, contactLastName, contactFirstName, 
                                                          phone, addressLine1, addressLine2, city, state, postalCode, country, 
                                                          salesRepEmployeeNr, creditLimit);
                     if (success) {
@@ -252,7 +252,7 @@ public class CustomerView extends JFrame {
         }
     }
     private void displayEditForm(Customer customer, CustomerHandler handler) {
-        JTextField companyNameField = new JTextField(customer.getCompanyName(), 10);
+        JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
             JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
             JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
             JTextField phoneField = new JTextField(customer.getPhone(), 10);
@@ -268,7 +268,7 @@ public class CustomerView extends JFrame {
             JPanel panel = new JPanel(new GridLayout(0, 2));
 
             panel.add(new JLabel("Company Name:"));
-            panel.add(companyNameField);
+            panel.add(customerNameField);
             panel.add(new JLabel("Contact Last Name:"));
             panel.add(contactLastNameField);
             panel.add(new JLabel("Contact First Name:"));
@@ -295,7 +295,7 @@ public class CustomerView extends JFrame {
         int result = JOptionPane.showConfirmDialog(null, panel, "Edit Customer Details", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
-                String companyName = companyNameField.getText();
+                String customerName = customerNameField.getText();
                     	String contactLastName = contactLastNameField.getText();
                     	String contactFirstName = contactFirstNameField.getText();
                     	String phone = phoneField.getText();
@@ -309,7 +309,7 @@ public class CustomerView extends JFrame {
                     	BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                 // Use the handler instance to call editCustomer
-                boolean success = handler.editCustomer(customer.getCustomerNumber(), companyName, contactLastName, contactFirstName, 
+                boolean success = handler.editCustomer(customer.getCustomerNumber(), customerName, contactLastName, contactFirstName, 
                 phone, addressLine1, addressLine2, city, state, postalCode, country, 
                 salesRepEmployeeNr, creditLimit); // Complete with other fields
                 if (success) {

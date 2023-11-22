@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public class Customer {
 	private int customerNumber;
-    private String companyName;
+    private String customerName;
     private String contactLastName;
     private String contactFirstName;
     private String phone;
@@ -23,12 +23,12 @@ public class Customer {
     private int salesRepEmployeeNr;
     private BigDecimal creditLimit;
 
-    public Customer( int customerNumber,String companyName, String contactLastName, String contactFirstName, 
+    public Customer( int customerNumber,String customerName, String contactLastName, String contactFirstName, 
                     String phone, String addressLine1, String addressLine2, String city, 
                     String state, String postalCode, String country, 
                     int salesRepEmployeeNr, BigDecimal creditLimit) {
     	this.customerNumber= customerNumber;
-        this.companyName = companyName;
+        this.customerName = customerName;
         this.contactLastName = contactLastName;
         this.contactFirstName = contactFirstName;
         this.phone = phone;
@@ -51,12 +51,12 @@ public class Customer {
         this.customerNumber = customerNumber;
     }
     
-    public String getCompanyName() {
-        return companyName;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public String getContactLastName() {

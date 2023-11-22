@@ -22,7 +22,7 @@ import model.Customer;
 
 public class CustomerHandler {
 	
-	 public boolean addCustomer(int customerNumber, String companyName, String contactLastName, String contactFirstName, 
+	 public boolean addCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
              String state, String postalCode, String country, 
              int salesRepEmployeeNr, BigDecimal creditLimit) {
@@ -32,7 +32,7 @@ public class CustomerHandler {
 			"phone, addressLine1, addressLine2, city, state, postalCode, country, " +
 			"salesRepEmployeeNumber, creditLimit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			pstm.setInt(1, customerNumber);
-			pstm.setString(2, companyName);
+			pstm.setString(2, customerName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -53,11 +53,11 @@ public class CustomerHandler {
 }
 }
 
-    public boolean editCustomer(int customerNumber,String companyName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
+    public boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET companyName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, adressLine1 = ?, adressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNr = ?")) {
+             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, adressLine1 = ?, adressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNr = ?")) {
         	pstm.setInt(1, customerNumber);
-			pstm.setString(2, companyName);
+			pstm.setString(2, customerName);
 			pstm.setString(3, contactLastName);
 			pstm.setString(4, contactFirstName);
 			pstm.setString(5, phone);
@@ -89,7 +89,7 @@ public class CustomerHandler {
             if (rs.next()) {
                 return new Customer(
                     rs.getInt("customerNumber"),
-                    rs.getString("companyName"),
+                    rs.getString("customerName"),
                     rs.getString("contactLastName"),
                     rs.getString("contactFirstName"),
                     rs.getString("phone"),
