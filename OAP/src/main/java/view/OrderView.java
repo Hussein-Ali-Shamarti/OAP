@@ -94,11 +94,15 @@ public class OrderView extends JFrame {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener()); // Create the "Check Status" button
+
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(checkStatusButton); // Add the "Check Status" button to the control panel
+
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -363,7 +367,17 @@ public class OrderView extends JFrame {
             }
         }
     }
+    private class CheckStatusButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Implement the action you want to perform when the "Check Status" button is clicked
+            // You can open a new dialog, perform a specific task, or display information related to the order statuses
+            // For example:
+            JOptionPane.showMessageDialog(OrderView.this, "Check Status button pressed");
+        }
+    }
 
 }
+
    
 
