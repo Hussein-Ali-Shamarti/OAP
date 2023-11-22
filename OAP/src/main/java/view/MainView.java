@@ -2,9 +2,11 @@ package view;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,7 +18,6 @@ public class MainView extends JFrame {
     private static final long serialVersionUID = 1L;
 
     public MainView() {
-
         super("Model Perfect");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,24 +26,38 @@ public class MainView extends JFrame {
 
         // Create panel for company name and logo
         JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
 
-        // Load the first image
-        ImageIcon companyLogo1 = new ImageIcon(getClass().getResource("/images/ModelPerfectWritten.png"));
-        JLabel logoLabel1 = new JLabel(companyLogo1);
-        mainPanel.add(logoLabel1);
+        // Sub-panel for the logo
+        JPanel logoPanel = new JPanel();
+        logoPanel.setBackground(Color.WHITE);
 
-        // Load the second image
-        ImageIcon companyLogo2 = new ImageIcon("images/Model Perfect.png");
-        JLabel logoLabel2 = new JLabel(companyLogo2);
-        mainPanel.add(logoLabel2);
+        // Load the image using getClass().getResource()
+        ImageIcon companyLogo = new ImageIcon(getClass().getResource("/images/Model Perfect.png"));
+        JLabel logoLabel = new JLabel(companyLogo);
+        logoPanel.add(logoLabel);
 
-        // Add panel to the center of the window
+        // Sub-panel for the company name
+        JPanel companyNamePanel = new JPanel();
+        companyNamePanel.setBackground(Color.WHITE);
+
+        // Create a label for the company name with a cooler font
+        Font coolFont = new Font("Segoe UI", Font.BOLD, 24);
+        JLabel companyNameLabel = new JLabel("Model Perfect Inc.");
+        companyNameLabel.setFont(coolFont);
+        companyNameLabel.setForeground(Color.BLACK);
+        companyNamePanel.add(companyNameLabel);
+
+        // Add sub-panels to the main panel
+        mainPanel.add(logoPanel);
+        mainPanel.add(companyNamePanel);
+
+        // Add the main panel to the center of the window
         add(mainPanel, BorderLayout.CENTER);
 
         // Center the window on the screen
         setLocationRelativeTo(null);
-
 
         // Create ProductsListener for "Products" button in MainMenu
         ProductsListener productsListener = new ProductsListener();
