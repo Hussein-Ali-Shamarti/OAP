@@ -202,9 +202,100 @@ public class OrderView extends JFrame {
     private class UpdateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Update button pressed");
+            // Prompt the user to enter the Order Number to update
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to update:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+                    Order existingOrder = oh.getOrder(orderNumber);
+
+                    if (existingOrder != null) {
+                        // Fields for updating order details
+                        JTextField orderDateField = new JTextField(10);
+                        JTextField requiredDateField = new JTextField(10);
+                        JTextField shippedDateField = new JTextField(10);
+                        JTextField statusField = new JTextField(10);
+                        JTextField commentsField = new JTextField(10);
+                        JTextField customerNumberField = new JTextField(10);
+
+                        // Set default values in the fields
+                        orderDateField.setText(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "");
+                        requiredDateField.setText(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString() : "");
+                        shippedDateField.setText(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "");
+                        statusField.setText(existingOrder.getStatus());
+                        commentsField.setText(existingOrder.getComments());
+                        customerNumberField.setText(String.valueOf(existingOrder.getCustomerNumber()));
+
+                        // Panel for the update form
+                        JPanel panel = new JPanel(new GridLayout(0, 2));
+
+                        // Adding labels and text fields to the panel
+                        panel.add(new JLabel("Order Date (yyyy-MM-dd):"));
+                        panel.add(orderDateField);
+                        panel.add(new JLabel("Required Date (yyyy-MM-dd):"));
+                        panel.add(requiredDateField);
+                        panel.add(new JLabel("Shipped Date (yyyy-MM-dd):"));
+                        panel.add(shippedDateField);
+                        panel.add(new JLabel("Status:"));
+                        panel.add(statusField);
+                        panel.add(new JLabel("Comments:"));
+                        panel.add(commentsField);
+                        panel.add(new JLabel("Customer Number:"));
+                        panel.add(customerNumberField);
+
+                        // Show confirm dialog with the update form
+                        int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details", JOptionPane.OK_CANCEL_OPTION);
+                        if (result == JOptionPane.OK_OPTION) {
+                            try {
+                                String orderDateString = orderDateField.getText();
+                                String requiredDateString = requiredDateField.getText();
+                                String shippedDateString = shippedDateField.getText();
+                                String status = statusField.getText();
+                                String comments = commentsField.getText();
+                                int customerNumber = Integer.parseInt(customerNumberField.getText());
+
+                                // Parse dates
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                Date orderDate = null;
+                                Date requiredDate = null;
+                                Date shippedDate = null;
+                                if (!orderDateString.isEmpty()) {
+                                    orderDate = new Date(dateFormat.parse(orderDateString).getTime());
+                                }
+                                if (!requiredDateString.isEmpty()) {
+                                    requiredDate = new Date(dateFormat.parse(requiredDateString).getTime());
+                                }
+                                if (!shippedDateString.isEmpty()) {
+                                    shippedDate = new Date(dateFormat.parse(shippedDateString).getTime());
+                                }
+
+                                // Create a new Order object with updated values
+                                Order updatedOrder = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+
+                                // Call the OrderHandler to update the order
+                                boolean success = oh.editOrder(updatedOrder, orderNumber);
+                                if (success) {
+                                    JOptionPane.showMessageDialog(OrderView.this, "Order updated successfully!");
+                                } else {
+                                    JOptionPane.showMessageDialog(OrderView.this, "Failed to update Order.");
+                                }
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(OrderView.this, "Invalid input format.");
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(OrderView.this, "Error: " + ex.getMessage());
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "Order with Order Number " + orderNumber + " not found.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
         }
     }
+
 
     private class DeleteButtonListener implements ActionListener {
         @Override
