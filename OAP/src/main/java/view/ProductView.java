@@ -3,7 +3,10 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -22,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -159,7 +163,7 @@ public class ProductView extends JFrame {
             JTextField productLineField = new JTextField(20);
             JTextField productScaleField = new JTextField(10);
             JTextField productVendorField = new JTextField(20);
-            JTextField productDescriptionField = new JTextField(50);
+            JTextField productDescriptionField = new JTextField(20);
             JTextField quantityInStockField = new JTextField(5);
             JTextField buyPriceField = new JTextField(10);
             JTextField msrpField = new JTextField(10);
@@ -250,7 +254,6 @@ public class ProductView extends JFrame {
 
 
 
- // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -262,10 +265,7 @@ public class ProductView extends JFrame {
                 return;
             }
 
-            // Assuming that the first column (index 0) contains the product code
             String productCode = table.getValueAt(selectedRow, 0).toString();
-
-            // You can fetch the product details from the database based on the product code
             Products productToUpdate = fetchProductFromDatabase(productCode);
 
             if (productToUpdate == null) {
@@ -273,54 +273,63 @@ public class ProductView extends JFrame {
                 return;
             }
 
-            // Now, you can open a dialog to allow the user to edit the product details
             JTextField productNameField = new JTextField(productToUpdate.getProductName());
             JTextField productLineField = new JTextField(productToUpdate.getProductLine());
             JTextField productScaleField = new JTextField(productToUpdate.getProductScale());
             JTextField productVendorField = new JTextField(productToUpdate.getProductVendor());
-            JTextField productDescriptionField = new JTextField(productToUpdate.getProductDescription());
+            JTextArea productDescriptionArea = new JTextArea(productToUpdate.getProductDescription(), 5, 20);
+            productDescriptionArea.setLineWrap(true);
+            productDescriptionArea.setWrapStyleWord(true);
+            JScrollPane productDescriptionScrollPane = new JScrollPane(productDescriptionArea);
             JTextField quantityInStockField = new JTextField(String.valueOf(productToUpdate.getQuantityInStock()));
             JTextField buyPriceField = new JTextField(String.valueOf(productToUpdate.getBuyPrice()));
             JTextField msrpField = new JTextField(String.valueOf(productToUpdate.getMsrp()));
 
-            JPanel panel = new JPanel(new GridLayout(0, 2));
-            panel.add(new JLabel("Product Name:"));
-            panel.add(productNameField);
-            panel.add(new JLabel("Product Line:"));
-            panel.add(productLineField);
-            panel.add(new JLabel("Product Scale:"));
-            panel.add(productScaleField);
-            panel.add(new JLabel("Product Vendor:"));
-            panel.add(productVendorField);
-            panel.add(new JLabel("Product Description:"));
-            panel.add(productDescriptionField);
-            panel.add(new JLabel("Quantity in Stock:"));
-            panel.add(quantityInStockField);
-            panel.add(new JLabel("Buy Price:"));
-            panel.add(buyPriceField);
-            panel.add(new JLabel("MSRP:"));
-            panel.add(msrpField);
+            JPanel panel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weightx = 1;
+            gbc.insets = new Insets(5, 5, 5, 5);
 
-            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Product Details", JOptionPane.OK_CANCEL_OPTION);
+            panel.add(new JLabel("Product Name:"), gbc);
+            panel.add(productNameField, gbc);
+            panel.add(new JLabel("Product Line:"), gbc);
+            panel.add(productLineField, gbc);
+            panel.add(new JLabel("Product Scale:"), gbc);
+            panel.add(productScaleField, gbc);
+            panel.add(new JLabel("Product Vendor:"), gbc);
+            panel.add(productVendorField, gbc);
+            panel.add(new JLabel("Product Description:"), gbc);
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weighty = 1;
+            panel.add(productDescriptionScrollPane, gbc);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weighty = 0;
+            panel.add(new JLabel("Quantity in Stock:"), gbc);
+            panel.add(quantityInStockField, gbc);
+            panel.add(new JLabel("Buy Price:"), gbc);
+            panel.add(buyPriceField, gbc);
+            panel.add(new JLabel("MSRP:"), gbc);
+            panel.add(msrpField, gbc);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Product Details", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    // Update the product details based on user input
                     productToUpdate.setProductName(productNameField.getText());
                     productToUpdate.setProductLine(productLineField.getText());
                     productToUpdate.setProductScale(productScaleField.getText());
                     productToUpdate.setProductVendor(productVendorField.getText());
-                    productToUpdate.setProductDescription(productDescriptionField.getText());
+                    productToUpdate.setProductDescription(productDescriptionArea.getText());
                     productToUpdate.setQuantityInStock(Integer.parseInt(quantityInStockField.getText()));
                     productToUpdate.setBuyPrice(Double.parseDouble(buyPriceField.getText()));
                     productToUpdate.setMsrp(Double.parseDouble(msrpField.getText()));
 
-                    // Call the updateProductInDatabase method to update the product in the database
                     boolean success = updateProductInDatabase(productToUpdate);
 
                     if (success) {
                         JOptionPane.showMessageDialog(ProductView.this, "Product updated successfully!");
-                        // Refresh the product list or take any other necessary action
-                        fetchAndDisplayProducts(); // Refresh the product list
+                        // Add your method to refresh the product list if you have one
                     } else {
                         JOptionPane.showMessageDialog(ProductView.this, "Failed to update product.");
                     }
@@ -389,13 +398,13 @@ public class ProductView extends JFrame {
                 // Set the updated product details as parameters in the SQL query
                 pstmt.setString(1, product.getProductName());
                 pstmt.setString(2, product.getProductLine());
-                pstmt.setString(2, product.getProductScale());
-                pstmt.setString(3, product.getProductVendor());
-                pstmt.setString(4, product.getProductDescription());
-                pstmt.setInt(5, product.getQuantityInStock());
-                pstmt.setDouble(6, product.getBuyPrice());
-                pstmt.setDouble(7, product.getMsrp());
-                pstmt.setString(8, product.getProductCode());
+                pstmt.setString(3, product.getProductScale());
+                pstmt.setString(4, product.getProductVendor());
+                pstmt.setString(5, product.getProductDescription());
+                pstmt.setInt(6, product.getQuantityInStock());
+                pstmt.setDouble(7, product.getBuyPrice());
+                pstmt.setDouble(8, product.getMsrp());
+                pstmt.setString(9, product.getProductCode());
                 
                 // Execute the update query
                 int affectedRows = pstmt.executeUpdate();
