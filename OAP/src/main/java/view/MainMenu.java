@@ -16,7 +16,7 @@ public class MainMenu extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public MainMenu(ActionListener productsListener, ActionListener orderListener, ActionListener customersListener, ActionListener employeesListener) {
-        setBackground(new Color(90, 23, 139)); // White background
+        setBackground(Color.WHITE); // White background
 
         // Create buttons with listeners
         JButton productsButton = createButton("Products", productsListener);
