@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -300,18 +302,68 @@ public class OrderView extends JFrame {
     private class DeleteButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Delete button pressed");
+            // Prompt the user to enter the Order Number to delete
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to delete:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Confirm deletion with a dialog
+                    int confirmResult = JOptionPane.showConfirmDialog(OrderView.this, "Are you sure you want to delete Order Number " + orderNumber + "?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                    
+                    if (confirmResult == JOptionPane.YES_OPTION) {
+                        // Call the OrderHandler to delete the order
+                        boolean success = oh.deleteOrder(orderNumber);
+                        
+                        if (success) {
+                            JOptionPane.showMessageDialog(OrderView.this, "Order Number " + orderNumber + " deleted successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(OrderView.this, "Failed to delete Order Number " + orderNumber + ".");
+                        }
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
         }
     }
 
  
- // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(OrderView.this, "Search button pressed");
+            // Prompt the user to enter an Order Number for the search
+            String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
+
+            if (orderNumberString != null && !orderNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+
+                    // Call the OrderHandler to retrieve the order
+                    Order order = oh.getOrder(orderNumber);
+
+                    if (order != null) {
+                        // Display the order details
+                        StringBuilder resultMessage = new StringBuilder("Search result:\n");
+                        resultMessage.append("Order Number: ").append(order.getOrderNumber()).append("\n");
+                        resultMessage.append("Order Date: ").append(order.getOrderDate()).append("\n");
+                        resultMessage.append("Required Date: ").append(order.getRequiredDate()).append("\n");
+                        resultMessage.append("Shipped Date: ").append(order.getShippedDate()).append("\n");
+                        resultMessage.append("Status: ").append(order.getStatus()).append("\n");
+                        resultMessage.append("Comments: ").append(order.getComments()).append("\n");
+                        resultMessage.append("Customer Number: ").append(order.getCustomerNumber()).append("\n");
+                        JOptionPane.showMessageDialog(OrderView.this, resultMessage.toString());
+                    } else {
+                        JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: " + orderNumber);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                }
+            }
         }
     }
 
-    
 }
+   
+
