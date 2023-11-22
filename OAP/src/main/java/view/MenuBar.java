@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import database.DataBaseConnection;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -10,6 +13,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MenuBar {
 
@@ -34,6 +39,7 @@ public class MenuBar {
 
         // Add items to the File menu
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
+        testDatabaseConnectionItem.addActionListener(new TestConnectionListener());
         sqlQueryItem = new JMenuItem("SQL Query");
         exitMenuItem = new JMenuItem("Exit");
 
@@ -61,6 +67,7 @@ public class MenuBar {
         menuBar.add(fileMenu);
         menuBar.add(aboutMenu);
         menuBar.add(helpMenu);
+        
     }
 
     public JMenuBar getMenuBar() {
@@ -132,4 +139,22 @@ public class MenuBar {
             }
         }
     }
+    
+    private class TestConnectionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Try to get a connection and show a message depending on whether it was successful
+            try {
+                Connection conn = DataBaseConnection.getConnection();
+                // If no exception is thrown, the connection is successful
+                JOptionPane.showMessageDialog(null, "Database connection successful!");
+                // Don't forget to close the connection when done
+                conn.close();
+            } catch (SQLException ex) {
+                // If there's an exception, the connection failed
+                JOptionPane.showMessageDialog(null, "Failed to connect to the database: " + ex.getMessage());
+            }
+        }
+    }
+
 }
