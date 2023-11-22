@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 
 import controller.CustomerHandler;
+import model.Customer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -226,11 +227,104 @@ public class CustomerView extends JFrame {
     }
 
 
-    // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(CustomerView.this, "Update button pressed");
+            String customerNumberStr = JOptionPane.showInputDialog(CustomerView.this, "Enter Customer Number to edit:");
+            if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
+                try {
+                    int customerNumber = Integer.parseInt(customerNumberStr);
+
+                    
+                    Customer customer = CustomerHandler.fetchCustomer(customerNumber); // Assuming fetchCustomerData() returns a Customer object
+
+                    if (customer != null) {
+                        displayEditForm(customer);
+                    } else {
+                        JOptionPane.showMessageDialog(CustomerView.this, "Customer not found.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Invalid customer number format.");
+                }
+            }
+        }
+    }
+
+    private void displayEditForm(Customer customer) {
+        // Text fields initialized with customer's existing data
+        JTextField companyNameField = new JTextField(customer.getCompanyName(), 10);
+        JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
+        JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
+        JTextField phoneField = new JTextField(customer.getPhone(), 10);
+        JTextField addressLine1Field = new JTextField(customer.getAddressLine1(), 10);
+        JTextField addressLine2Field = new JTextField(customer.getAddressLine2(), 10);
+        JTextField cityField = new JTextField(customer.getCity(), 10);
+        JTextField stateField = new JTextField(customer.getState(), 10);
+        JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
+        JTextField countryField = new JTextField(customer.getCountry(), 10);
+        JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getSalesRepEmployeeNr()), 10);
+        JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
+
+        // Panel for form layout
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        
+        // Adding components to panel
+        panel.add(new JLabel("Company Name:"));
+        panel.add(companyNameField);
+        panel.add(new JLabel("Contact Last Name:"));
+        panel.add(contactLastNameField);
+        panel.add(new JLabel("Contact First Name:"));
+        panel.add(contactFirstNameField);
+        panel.add(new JLabel("Phone:"));
+        panel.add(phoneField);
+        panel.add(new JLabel("Address Line 1:"));
+        panel.add(addressLine1Field);
+        panel.add(new JLabel("Address Line 2:"));
+        panel.add(addressLine2Field);
+        panel.add(new JLabel("City:"));
+        panel.add(cityField);
+        panel.add(new JLabel("State:"));
+        panel.add(stateField);
+        panel.add(new JLabel("Postal Code:"));
+        panel.add(postalCodeField);
+        panel.add(new JLabel("Country:"));
+        panel.add(countryField);
+        panel.add(new JLabel("Sales Rep Employee Number:"));
+        panel.add(salesRepEmployeeNumberField);
+        panel.add(new JLabel("Credit Limit:"));
+        panel.add(creditLimitField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Edit Customer Details", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+              
+            	String companyName = companyNameField.getText();
+            	String contactLastName = contactLastNameField.getText();
+            	String contactFirstName = contactFirstNameField.getText();
+            	String phone = phoneField.getText();
+            	String addressLine1 = addressLine1Field.getText();
+            	String addressLine2 = (addressLine2Field.getText().isEmpty()) ? null : addressLine2Field.getText(); // assuming addressLine2 can be null
+            	String city = cityField.getText();
+            	String state = stateField.getText();
+            	String postalCode = postalCodeField.getText();
+            	String country = countryField.getText();
+            	int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+            	BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
+
+            	// Now, use these variables in your call to editCustomer
+            	boolean success = CustomerHandler.editCustomer(customer.getCustomerNumber(), companyName, contactLastName, contactFirstName, 
+            	                                              phone, addressLine1, addressLine2, city, state, postalCode, country, 
+            	                                              salesRepEmployeeNr, creditLimit);
+                if (success) {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Customer updated successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(CustomerView.this, "Failed to update customer.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(CustomerView.this, "Invalid number format.");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(CustomerView.this, "Error: " + ex.getMessage());
+            }
         }
     }
 
