@@ -23,6 +23,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.ProductHandler;
+import model.Products;
+
 public class ProductView extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -135,12 +138,79 @@ public class ProductView extends JFrame {
         }
     }
 
+ // Action listener for "Add" button
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Add button pressed");
+            // Create an instance of ProductHandler
+            ProductHandler productHandler = new ProductHandler();
+
+            // Implement the logic for the "Add" button here
+            // For example, you can open a dialog to input product details
+            // and then call the addProduct method on the productHandler instance
+            // Here's a simple example using JOptionPane for input:
+            JTextField productCodeField = new JTextField(10);
+            JTextField productNameField = new JTextField(20);
+            JTextField productScaleField = new JTextField(10);
+            JTextField productVendorField = new JTextField(20);
+            JTextField productDescriptionField = new JTextField(50);
+            JTextField quantityInStockField = new JTextField(5);
+            JTextField buyPriceField = new JTextField(10);
+            JTextField msrpField = new JTextField(10);
+
+            JPanel panel = new JPanel(new GridLayout(0, 2));
+            panel.add(new JLabel("Product Code:"));
+            panel.add(productCodeField);
+            panel.add(new JLabel("Product Name:"));
+            panel.add(productNameField);
+            panel.add(new JLabel("Product Scale:"));
+            panel.add(productScaleField);
+            panel.add(new JLabel("Product Vendor:"));
+            panel.add(productVendorField);
+            panel.add(new JLabel("Product Description:"));
+            panel.add(productDescriptionField);
+            panel.add(new JLabel("Quantity in Stock:"));
+            panel.add(quantityInStockField);
+            panel.add(new JLabel("Buy Price:"));
+            panel.add(buyPriceField);
+            panel.add(new JLabel("MSRP:"));
+            panel.add(msrpField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Enter Product Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    String productCode = productCodeField.getText();
+                    String productName = productNameField.getText();
+                    String productScale = productScaleField.getText();
+                    String productVendor = productVendorField.getText();
+                    String productDescription = productDescriptionField.getText();
+                    int quantityInStock = Integer.parseInt(quantityInStockField.getText());
+                    double buyPrice = Double.parseDouble(buyPriceField.getText());
+                    double msrp = Double.parseDouble(msrpField.getText());
+
+                    // Create a Products object with the entered details
+                    Products product = new Products(productCode, productName, productScale, productVendor,
+                            productDescription, quantityInStock, buyPrice, msrp);
+
+                    // Call the addProduct method on the productHandler instance
+                    boolean success = productHandler.addProduct(product);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(ProductView.this, "Product added successfully!");
+                        // Refresh the product list or take any other necessary action
+                    } else {
+                        JOptionPane.showMessageDialog(ProductView.this, "Failed to add product.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(ProductView.this, "Invalid input format.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(ProductView.this, "Error: " + ex.getMessage());
+                }
+            }
         }
     }
+
+
 
     private class UpdateButtonListener implements ActionListener {
         @Override
@@ -164,5 +234,5 @@ public class ProductView extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(ProductView.this, "Delete button pressed");
         }
-}
+
 }
