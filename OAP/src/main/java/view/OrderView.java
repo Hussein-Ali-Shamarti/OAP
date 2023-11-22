@@ -424,7 +424,6 @@ public class OrderView extends JFrame {
                     JOptionPane.showMessageDialog(OrderView.this, "Invalid Customer Number format.");
                 }
             }
-            JOptionPane.showMessageDialog(OrderView.this, "Search button pressed");
         }
     }
 
