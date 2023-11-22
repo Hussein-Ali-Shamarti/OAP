@@ -145,5 +145,53 @@ public class OrderHandler {
     }
 
 
-
+    // Add this method to your OrderHandler class
+    public String getOrderStatus(int orderNumber) {
+        String selectOrderStatusSQL = "SELECT status FROM orders WHERE OrderNumber = ?";
+        String status = null;
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectOrderStatusSQL)) {
+            pstmt.setInt(1, orderNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                status = rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+    
+    public boolean checkPaymentStatus(int customerNumber) {
+        String checkPaymentStatusSQL = "SELECT COUNT(*) FROM payments WHERE customerNumber = ? AND paymentDate IS NOT NULL";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(checkPaymentStatusSQL)) {
+            pstmt.setInt(1, customerNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean customerExists(int customerNumber) {
+        // Your code to check if the customer exists
+        String checkCustomerExistsSQL = "SELECT COUNT(*) FROM customers WHERE customerNumber = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(checkCustomerExistsSQL)) {
+            pstmt.setInt(1, customerNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
+
