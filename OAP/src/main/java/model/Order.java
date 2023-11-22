@@ -28,12 +28,12 @@ public class Order {
      */
     
     public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
-        this.orderDate = orderDate;
         this.requiredDate = requiredDate;
         this.shippedDate = shippedDate;
         this.status = status;
         this.comments = comments;
         this.customerNumber = customerNumber;
+        this.orderDate = orderDate;
         this.orderDetailsList = new ArrayList<>();
     }
 
@@ -67,6 +67,10 @@ public class Order {
 
     public int getCustomerNumber() {
         return this.customerNumber;
+    }
+    
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public void setOrderDate(Date orderDate) {

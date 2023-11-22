@@ -14,6 +14,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -24,7 +26,6 @@ import model.Order;
 
 
 public class OrderHandler {
-
 	public List<Order> searchOrders(String searchText) {
 	    List<Order> searchResults = new ArrayList<>();
 	    String searchQuery = "SELECT * FROM orders WHERE CONCAT(OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
@@ -44,7 +45,11 @@ public class OrderHandler {
 	        e.printStackTrace();
 	    }
 	    return searchResults;
-	}
+	} 
+	
+
+
+
 
     // CRUD-methods
 
