@@ -50,7 +50,7 @@ public class EmployeeView extends JFrame {
 
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(84, 11, 131));
+        titlePanel.setBackground(new Color(90, 23, 139));
         JLabel titleLabel = new JLabel("Employee Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -109,7 +109,7 @@ public class EmployeeView extends JFrame {
 	private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
-        button.setBackground(new Color(84, 11, 131));
+        button.setBackground(Color.WHITE);
         button.setFocusPainted(false);
         button.addActionListener(listener);
         return button;

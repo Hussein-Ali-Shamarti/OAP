@@ -10,12 +10,14 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class MainView extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    protected JMenuBar menubar; // Assuming MenuBar is in the same package
 
     public MainView() {
         super("Model Perfect");
@@ -24,7 +26,15 @@ public class MainView extends JFrame {
 
         getContentPane().setBackground(Color.WHITE);
 
+        // Initialize the Menubar
+        menubar = new JMenuBar();
+
+        // Set the menu bar for the frame
+        setJMenuBar(menubar);
+
         // Create panel for company name and logo
+        
+        
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
