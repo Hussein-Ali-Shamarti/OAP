@@ -37,7 +37,7 @@ public class ProductView extends JFrame {
         initializeUI();
         fetchAndDisplayProducts();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(600, 400);
         setLocationRelativeTo(null);
         pack(); // Adjusts the frame to fit the components
         setVisible(true); // Make sure the frame is visible
