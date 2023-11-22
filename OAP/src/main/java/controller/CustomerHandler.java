@@ -22,7 +22,7 @@ import model.Customer;
 
 public class CustomerHandler {
 	
-	 public static boolean addCustomer(int customerNumber, String companyName, String contactLastName, String contactFirstName, 
+	 public boolean addCustomer(int customerNumber, String companyName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
              String state, String postalCode, String country, 
              int salesRepEmployeeNr, BigDecimal creditLimit) {
@@ -53,7 +53,7 @@ public class CustomerHandler {
 }
 }
 
-    public static boolean editCustomer(int customerNumber,String companyName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
+    public boolean editCustomer(int customerNumber,String companyName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET companyName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, adressLine1 = ?, adressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNr = ?")) {
         	pstm.setInt(1, customerNumber);
@@ -78,7 +78,8 @@ public class CustomerHandler {
             return false;
         }
     }
-    public static Customer fetchCustomer(int customerNumber) {
+    
+    public Customer fetchCustomer(int customerNumber) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customers WHERE customerNumber = ?")) {
             
