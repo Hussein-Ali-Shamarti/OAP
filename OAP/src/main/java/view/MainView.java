@@ -96,7 +96,8 @@ public class MainView extends JFrame {
         public void actionPerformed(ActionEvent e) {
             // Open CustomerView when "Customers" button is pressed
             SwingUtilities.invokeLater(() -> {
-                new CustomerView(null).setVisible(true);
+                CustomerView customerView = new CustomerView();
+                customerView.setVisible(true);
                
             });
         }
@@ -107,8 +108,10 @@ private static class EmployeesListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Open EmployeeView when "Employees" button is pressed
-        new EmployeeView().setVisible(true);
-    }
+    	 SwingUtilities.invokeLater(() -> {
+             EmployeeView employeeView = new EmployeeView();
+             employeeView.setVisible(true);
+    	 });
 }
 
    
