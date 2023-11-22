@@ -236,3 +236,5 @@ public class ProductView extends JFrame {
         }
 
 }
+    
+}
