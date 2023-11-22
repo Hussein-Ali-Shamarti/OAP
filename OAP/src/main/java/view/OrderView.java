@@ -30,16 +30,15 @@ import controller.OrderHandler;
 import model.Order;
 
 
-public class OrderView extends MainView {
 
-    private static final long serialVersionUID = 1L;
+public class OrderView extends MainView {
+   private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
     private JTextField textField;  // Assuming you have a JTextField for search
     private OrderHandler orderHandler=new OrderHandler();
     public OrderView() {
-        super();
-
+       super();
         setLayout(new BorderLayout());
         initializeUI();
         fetchAndDisplayOrders();
@@ -49,7 +48,7 @@ public class OrderView extends MainView {
         pack(); // Adjusts the frame to fit the components
         setVisible(true); // Make sure the frame is visible
     }
-
+    
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(84, 11, 131));
@@ -58,61 +57,52 @@ public class OrderView extends MainView {
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
-
-        setupTable();
         setupControlPanel();
-
-        add(titlePanel, BorderLayout.NORTH);
+        setupTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
-
         // Set frame properties
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Center on screen
+        setLocationRelativeTo(null);
     }
-
     private void setupTable() {
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
             private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-
         table = new JTable(tableModel);
     }
-    
     private void setupControlPanel() {
+        // Control panel for the Search, Add, Edit, Delete buttons
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
-
         JButton searchButton = createButton("Search", new SearchButtonListener());
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener());
-        JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
-
-
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
-        controlPanel.add(checkStatusButton);
-        controlPanel.add(checkStatusButton); // Add the "Check Status" button to the control panel
-        controlPanel.add(paymentButton); // Add the "Check Status" button to the control panel
-
-
-        JPanel buttonPanelHolder = new JPanel(new BorderLayout());
-        buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
-        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); // Add space
-        this.add(buttonPanelHolder, BorderLayout.SOUTH);
+        // Control panel for the Check Status and Check Payment Status buttons
+        JPanel statusPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        statusPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
+        statusPanel.setBackground(new Color(100, 25, 150));
+        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener());
+        JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
+        statusPanel.add(checkStatusButton);
+        statusPanel.add(paymentButton);
+        // Main panel holder to hold both the status and control panels
+        JPanel panelHolder = new JPanel(new BorderLayout());
+        panelHolder.add(statusPanel, BorderLayout.NORTH);
+        panelHolder.add(controlPanel, BorderLayout.SOUTH);
+        this.add(panelHolder, BorderLayout.SOUTH);
     }
-
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
@@ -121,6 +111,7 @@ public class OrderView extends MainView {
         button.addActionListener(listener);
         return button;
     }
+
 
     void fetchAndDisplayOrders() {
         tableModel.setRowCount(0);
