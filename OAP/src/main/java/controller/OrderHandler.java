@@ -1,115 +1,204 @@
+  
+
+/**
+ * File: OrderHandler.java
+ * Description:
+ * Manages order operations (add, update, delete, retrieve) within a CMS, ensuring proper handling and status tracking of orders.
+ * @author Hussein
+ * @version 09.11.2023
+ */
+
+
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import database.DataBaseConnection;
 import model.Order;
 
+
 public class OrderHandler {
+	public List<Order> searchOrders(String searchText) {
+	    List<Order> searchResults = new ArrayList<>();
+	    String searchQuery = "SELECT * FROM orders WHERE CONCAT(OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
 
-    private static final String INSERT_ORDER_SQL = "INSERT INTO orders (orderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String SEARCH_ORDERS_SQL = "SELECT * FROM orders WHERE orderNumber LIKE ? OR orderDate LIKE ? OR requiredDate LIKE ? OR shippedDate LIKE ? OR status LIKE ? OR comments LIKE ? OR customerNumber LIKE ?";
-    private static final String UPDATE_ORDER_SQL = "UPDATE orders SET orderDate = ?, requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ? WHERE orderNumber = ?";
-    private static final String DELETE_ORDER_SQL = "DELETE FROM orders WHERE orderNumber = ?";
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(searchQuery)) {
+	        
+	        pstmt.setString(1, "%" + searchText + "%");
+	        ResultSet rs = pstmt.executeQuery();
 
-    public boolean addOrder(Order order) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ORDER_SQL)) {
+	        while (rs.next()) {
+	            // Assuming you have a constructor in Order class that takes ResultSet as a parameter
+	            Order order = new Order(rs);
+	            searchResults.add(order);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return searchResults;
+	} 
+	
 
-            setOrderParameters(preparedStatement, order);
 
-            int affectedRows = preparedStatement.executeUpdate();
+
+
+    // CRUD-methods
+
+	public boolean addOrder(Order order) {
+	    String insertOrderSQL = "INSERT INTO orders(ordernumber, requireddate, shippeddate, status, comments, customernumber, orderdate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	    
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(insertOrderSQL)) {
+	        pstmt.setInt(1, order.getOrderNumber());
+	        pstmt.setDate(2, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
+	        pstmt.setDate(3, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
+	        pstmt.setString(4, order.getStatus());
+	        pstmt.setString(5, order.getComments());
+	        pstmt.setInt(6, order.getCustomerNumber());
+	        pstmt.setDate(7, new java.sql.Date(order.getOrderDate().getTime()));
+
+	        int affectedRows = pstmt.executeUpdate();
+	        if (affectedRows > 0) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+
+    // Update
+    public boolean editOrder(Order order, int OrderNumber) {
+        String updateOrderSQL = "UPDATE orders SET requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ?, orderDate = ? WHERE OrderNumber = ?";
+        
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(updateOrderSQL)) {
+            pstmt.setDate(1, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
+            pstmt.setDate(2, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
+            pstmt.setString(3, order.getStatus());
+            pstmt.setString(4, order.getComments());
+            pstmt.setInt(5, order.getCustomerNumber());
+            pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
+            pstmt.setInt(7, OrderNumber);
+
+            int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
-
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    // Delete
+    public boolean deleteOrder(int OrderNumber) {
+        String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
+        
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(deleteOrderSQL)) {
+            
+            pstmt.setInt(1, OrderNumber);
+            
+            int affectedRows = pstmt.executeUpdate();
+            System.out.println("slettet");
+            
+            return affectedRows > 0;
+            
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public List<Order> searchOrders(String searchCriteria) {
-        List<Order> searchResults = new ArrayList<>();
+    // Read
+    public Order getOrder(int OrderNumber) {
+        String selectOrderSQL = "SELECT * FROM orders WHERE OrderNumber = ?";
+        Order order = null;
 
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_ORDERS_SQL)) {
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectOrderSQL)) {
 
-            for (int i = 1; i <= 7; i++) {
-                preparedStatement.setString(i, "%" + searchCriteria + "%");
+            pstmt.setInt(1, OrderNumber);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Date orderDate = rs.getDate("orderDate");
+                Date requiredDate = rs.getDate("requiredDate");
+                Date shippedDate = rs.getDate("shippedDate");
+                String status = rs.getString("status");
+                String comments = rs.getString("comments");
+                int customerNumber = rs.getInt("customerNumber");
+
+                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
             }
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    Order order = mapResultSetToOrder(resultSet);
-                    searchResults.add(order);
-                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return order;
+    }
+
+
+    // Add this method to your OrderHandler class
+    public String getOrderStatus(int orderNumber) {
+        String selectOrderStatusSQL = "SELECT status FROM orders WHERE OrderNumber = ?";
+        String status = null;
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectOrderStatusSQL)) {
+            pstmt.setInt(1, orderNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                status = rs.getString("status");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return searchResults;
+        return status;
     }
-
-    public boolean updateOrder(Order order) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ORDER_SQL)) {
-
-            setOrderParameters(preparedStatement, order);
-
-            int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
-
+    
+    public boolean checkPaymentStatus(int customerNumber) {
+        String checkPaymentStatusSQL = "SELECT COUNT(*) FROM payments WHERE customerNumber = ? AND paymentDate IS NOT NULL";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(checkPaymentStatusSQL)) {
+            pstmt.setInt(1, customerNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
-
-    public boolean deleteOrder(String orderNumber) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ORDER_SQL)) {
-
-            preparedStatement.setString(1, orderNumber);
-            int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
-
+    public boolean customerExists(int customerNumber) {
+        // Your code to check if the customer exists
+        String checkCustomerExistsSQL = "SELECT COUNT(*) FROM customers WHERE customerNumber = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(checkCustomerExistsSQL)) {
+            pstmt.setInt(1, customerNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
-    }
-
-    private void setOrderParameters(PreparedStatement preparedStatement, Order order) throws SQLException {
-        preparedStatement.setInt(1, order.getOrderNumber());
-        preparedStatement.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
-        preparedStatement.setDate(3, new java.sql.Date(order.getRequiredDate().getTime()));
-        preparedStatement.setDate(4, new java.sql.Date(order.getShippedDate().getTime()));
-        preparedStatement.setString(5, order.getStatus());
-        preparedStatement.setString(6, order.getComments());
-        preparedStatement.setInt(7, order.getCustomerNumber());
-    }
-
-    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
-        int orderNumber = resultSet.getInt("orderNumber");
-        Date orderDate = resultSet.getDate("orderDate");
-        Date requiredDate = resultSet.getDate("requiredDate");
-        Date shippedDate = resultSet.getDate("shippedDate");
-        String status = resultSet.getString("status");
-        String comments = resultSet.getString("comments");
-        int customerNumber = resultSet.getInt("customerNumber");
-
-        // Convert null values to actual dates
-        orderDate = (orderDate != null) ? new Date(orderDate.getTime()) : null;
-        requiredDate = (requiredDate != null) ? new Date(requiredDate.getTime()) : null;
-        shippedDate = (shippedDate != null) ? new Date(shippedDate.getTime()) : null;
-
-        return new Order(orderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber);
+        return false;
     }
 }
+

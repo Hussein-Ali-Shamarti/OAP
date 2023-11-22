@@ -14,35 +14,34 @@ public class Order {
     private String status;
     private String comments;
     private int customerNumber;
- 
+    private List<OrderDetails> orderDetailsList;
 
     /**
      * Constructor for the Order class that sets all fields.
-     *
-     * @param orderNumber    The unique serial number consisting of 5 digits.
-     * @param requiredDate   The date when the order is required to be delivered.
-     * @param shippedDate    The date when the order was actually shipped.
-     * @param date         The status of the order.
-     * @param comments       Any comments related to the order.
-     * @param string The customer number associated with the order.
-     * @param orderDate
+     * @param OrderNumber The unique serial number consisting of 5 digits.
+     * @param requiredDate The date when the order is required to be delivered.
+     * @param shippedDate The date when the order was actually shipped.
+     * @param status The status of the order.
+     * @param comments Any comments related to the order.
+     * @param customerNumber The customer number associated with the order.
+     * @param orderDate 
      */
-    public Order(int orderNumber, Date orderDate, Date requiredDate, Date shippedDate, String status, String comments, int customerNumber) {
-        this.orderNumber = orderNumber;
-        this.orderDate = orderDate;
+    
+    public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
         this.requiredDate = requiredDate;
         this.shippedDate = shippedDate;
         this.status = status;
         this.comments = comments;
         this.customerNumber = customerNumber;
-       
+        this.orderDate = orderDate;
+        this.orderDetailsList = new ArrayList<>();
     }
 
     public Order(ResultSet rs) {
-        // TODO: Implement logic for ResultSet if needed
-    }
+		// TODO Auto-generated constructor stub
+	}
 
-    public int getOrderNumber() {
+	public int getOrderNumber() {
         return this.orderNumber;
     }
 
@@ -68,6 +67,10 @@ public class Order {
 
     public int getCustomerNumber() {
         return this.customerNumber;
+    }
+    
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public void setOrderDate(Date orderDate) {
@@ -106,3 +109,4 @@ public class Order {
         return total;
     }
 }
+
