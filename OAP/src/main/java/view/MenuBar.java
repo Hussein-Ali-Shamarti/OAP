@@ -1,6 +1,7 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 import database.DataBaseConnection;
 
@@ -14,7 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
 
 public class MenuBar {
 
@@ -41,6 +46,7 @@ public class MenuBar {
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
         testDatabaseConnectionItem.addActionListener(new TestConnectionListener());
         sqlQueryItem = new JMenuItem("SQL Query");
+        sqlQueryItem.addActionListener(new SQLQueryListener()); // dont know
         exitMenuItem = new JMenuItem("Exit");
 
         // Add extended menu items if the flag is true
@@ -156,5 +162,81 @@ public class MenuBar {
             }
         }
     }
+    
+ // ActionListener for sqlQueryItem
+    private class SQLQueryListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Create a text area for user input
+            JTextArea queryInput = new JTextArea(10, 40);
+            queryInput.setWrapStyleWord(true);
+            queryInput.setLineWrap(true);
+            JScrollPane scrollPane = new JScrollPane(queryInput);
+
+            // Show dialog with text area
+            int option = JOptionPane.showConfirmDialog(null, scrollPane, "Enter SQL Query",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            // If user clicks OK, process the query
+            if (option == JOptionPane.OK_OPTION) {
+                String sql = queryInput.getText();
+                executeSqlQuery(sql);
+            }
+        }
+
+        private void executeSqlQuery(String sql) {
+            try (Connection conn = DataBaseConnection.getConnection();
+                 Statement stmt = conn.createStatement()) {
+                 
+                // Check if the query is a SELECT or an action query (INSERT/UPDATE/DELETE)
+                if (sql.trim().toUpperCase().startsWith("SELECT")) {
+                    executeSelectQuery(stmt, sql);
+                } else {
+                    executeActionQuery(stmt, sql);
+                }
+            } catch (SQLException ex) {
+                // Handle any SQL errors
+                JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
+            }
+        }
+
+        private void executeSelectQuery(Statement stmt, String sql) throws SQLException {
+            ResultSet rs = stmt.executeQuery(sql);
+            // Convert ResultSet to a more friendly format, like a JTable
+            JTable table = new JTable(buildTableModel(rs));
+            JOptionPane.showMessageDialog(null, new JScrollPane(table));
+        }
+
+        private void executeActionQuery(Statement stmt, String sql) throws SQLException {
+            int affectedRows = stmt.executeUpdate(sql);
+            // Inform the user of the result
+            JOptionPane.showMessageDialog(null, affectedRows + " rows affected.");
+        }
+
+        private DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+            ResultSetMetaData metaData = rs.getMetaData();
+            // Names of columns
+            Vector<String> columnNames = new Vector<>();
+            int columnCount = metaData.getColumnCount();
+            for (int column = 1; column <= columnCount; column++) {
+                columnNames.add(metaData.getColumnName(column));
+            }
+
+            // Data of the table
+            Vector<Vector<Object>> data = new Vector<>();
+            while (rs.next()) {
+                Vector<Object> vector = new Vector<>();
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    vector.add(rs.getObject(columnIndex));
+                }
+                data.add(vector);
+            }
+
+            return new DefaultTableModel(data, columnNames);
+        }
+    }
+
+    
+
 
 }
