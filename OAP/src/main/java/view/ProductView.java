@@ -7,9 +7,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -24,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.ProductHandler;
+import database.DataBaseConnection;
 import model.Products;
 
 public class ProductView extends JFrame {
@@ -272,7 +276,7 @@ public class ProductView extends JFrame {
                     productToUpdate.setBuyPrice(Double.parseDouble(buyPriceField.getText()));
                     productToUpdate.setMsrp(Double.parseDouble(msrpField.getText()));
 
-                    // Call the updateProduct method in ProductHandler to update the product in the database
+                    // Call the updateProductInDatabase method to update the product in the database
                     boolean success = updateProductInDatabase(productToUpdate);
 
                     if (success) {
@@ -291,39 +295,191 @@ public class ProductView extends JFrame {
         }
     }
 
-    // Fetch product details from the database based on the product code
+ // Fetch product details from the database based on the product code
     private Products fetchProductFromDatabase(String productCode) {
-        // Implement the logic to fetch the product details from the database
-        // You can use the productCode to query the database and return the product object
-        // If the product is not found, return null
-        // This is a placeholder method; you should replace it with your database logic
+        try {
+            // Assuming you have a connection to the database
+            Connection conn = DataBaseConnection.getConnection();
+            
+            // Define your SQL query to fetch the product details based on the product code
+            String sql = "SELECT * FROM products WHERE productCode = ?";
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                // Set the product code as a parameter in the SQL query
+                pstmt.setString(1, productCode);
+                
+                // Execute the query and retrieve the result set
+                ResultSet resultSet = pstmt.executeQuery();
+                
+                // Check if a record was found
+                if (resultSet.next()) {
+                    // Retrieve the product details from the result set and create a Products object
+                    String productName = resultSet.getString("productName");
+                    String productScale = resultSet.getString("productScale");
+                    String productVendor = resultSet.getString("productVendor");
+                    String productDescription = resultSet.getString("productDescription");
+                    int quantityInStock = resultSet.getInt("quantityInStock");
+                    double buyPrice = resultSet.getDouble("buyPrice");
+                    double msrp = resultSet.getDouble("msrp");
+                    
+                    Products product = new Products(productCode, productName, productScale, productVendor,
+                            productDescription, quantityInStock, buyPrice, msrp);
+                    
+                    return product;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        // Return null if the product was not found or an error occurred
         return null;
     }
 
-    // Update product details in the database
+ // Update product details in the database
     private boolean updateProductInDatabase(Products product) {
-        // Implement the logic to update the product details in the database
-        // You can use the product object to update the corresponding database record
-        // Return true if the update is successful, or false if it fails
-        // This is a placeholder method; you should replace it with your database logic
+        try {
+            // Assuming you have a connection to the database
+            Connection conn = DataBaseConnection.getConnection();
+            
+            // Define your SQL update query to update the product details
+            String sql = "UPDATE products SET productName = ?, productScale = ?, productVendor = ?, " +
+                    "productDescription = ?, quantityInStock = ?, buyPrice = ?, msrp = ? WHERE productCode = ?";
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                // Set the updated product details as parameters in the SQL query
+                pstmt.setString(1, product.getProductName());
+                pstmt.setString(2, product.getProductScale());
+                pstmt.setString(3, product.getProductVendor());
+                pstmt.setString(4, product.getProductDescription());
+                pstmt.setInt(5, product.getQuantityInStock());
+                pstmt.setDouble(6, product.getBuyPrice());
+                pstmt.setDouble(7, product.getMsrp());
+                pstmt.setString(8, product.getProductCode());
+                
+                // Execute the update query
+                int affectedRows = pstmt.executeUpdate();
+                
+                // Check if the update was successful
+                return affectedRows > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        // Return false if the update failed or an error occurred
         return false;
     }
-
 
  // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Search button pressed");
+            // Create a dialog to input search criteria
+            JTextField searchField = new JTextField(20);
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Search Criteria:"));
+            panel.add(searchField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Search Products", JOptionPane.OK_CANCEL_OPTION);
+
+            if (result == JOptionPane.OK_OPTION) {
+                String searchCriteria = searchField.getText().trim();
+
+                // Perform the search based on the user's input
+                List<Products> searchResults = performSearch(searchCriteria);
+
+                // Update the table with the search results
+                updateTableWithSearchResults(searchResults);
+            }
+        }
+
+        // Implement the logic to perform the search based on user input
+        private List<Products> performSearch(String searchCriteria) {
+            // Placeholder logic: You should implement the actual database search here
+            // This code assumes you have a ProductHandler class to handle database operations
+            ProductHandler productHandler = new ProductHandler();
+            List<Products> searchResults = productHandler.searchProducts(searchCriteria);
+
+            return searchResults;
+        }
+
+        // Update the table with the search results
+        private void updateTableWithSearchResults(List<Products> searchResults) {
+            tableModel.setRowCount(0); // Clear existing rows from the table
+
+            // Populate the table with the search results
+            for (Products product : searchResults) {
+                Object[] row = {
+                    product.getProductCode(),
+                    product.getProductName(),
+                    product.getProductScale(),
+                    product.getProductVendor(),
+                    product.getProductDescription(),
+                    product.getQuantityInStock(),
+                    product.getBuyPrice(),
+                    product.getMsrp()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 
     
 
+ // Action listener for "Delete" button
     private class DeleteButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Delete button pressed");
+            // Get the selected row(s) in the table
+            int[] selectedRows = table.getSelectedRows();
+
+            if (selectedRows.length == 0) {
+                JOptionPane.showMessageDialog(ProductView.this, "Please select a product to delete.", "Delete Product", JOptionPane.WARNING_MESSAGE);
+            } else {
+                int confirmResult = JOptionPane.showConfirmDialog(ProductView.this, "Are you sure you want to delete selected product(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+
+                if (confirmResult == JOptionPane.YES_OPTION) {
+                    // Delete the selected product(s) from the database
+                    boolean success = deleteSelectedProducts(selectedRows);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(ProductView.this, "Product(s) deleted successfully.");
+                        // Refresh the product list or take any other necessary action
+                        fetchAndDisplayProducts(); // Refresh the product list after deletion
+                    } else {
+                        JOptionPane.showMessageDialog(ProductView.this, "Failed to delete product(s).", "Delete Product", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         }
+
+        // Implement the logic to delete selected products from the database
+        private boolean deleteSelectedProducts(int[] selectedRows) {
+            try {
+                Connection conn = database.DataBaseConnection.getConnection();
+                String deleteSQL = "DELETE FROM products WHERE productCode = ?";
+                PreparedStatement pstmt = conn.prepareStatement(deleteSQL);
+
+                for (int rowIndex : selectedRows) {
+                    String productCode = (String) table.getValueAt(rowIndex, 0);
+                    pstmt.setString(1, productCode);
+                    pstmt.addBatch();
+                }
+
+                int[] deleteCounts = pstmt.executeBatch();
+                for (int count : deleteCounts) {
+                    if (count != 1) {
+                        return false; // If any deletion count is not 1, consider it a failure
+                    }
+                }
+
+                return true; // All deletions were successful
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
 
 }
