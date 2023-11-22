@@ -75,6 +75,7 @@ public class CustomerHandler {
             return affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("SQLException occurred: " + e.getMessage());
             return false;
         }
     }
