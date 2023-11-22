@@ -2,43 +2,58 @@ package view;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import view.OrderView;
-import view.CustomerView;
-import view.ProductView;
+
 public class MainView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MainView() {
-        // Set title anxd size
+    public MainView() {
         super("Model Perfect");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Set background color
         getContentPane().setBackground(Color.WHITE);
 
         // Create panel for company name and logo
         JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
 
-        // Add logo (replace with your own implementation)
-        ImageIcon companyLogo = new ImageIcon("images/Model Perfect.png");
-        JLabel logoLabel = new JLabel(companyLogo);
-        mainPanel.add(logoLabel);
+        // Sub-panel for the logo
+        JPanel logoPanel = new JPanel();
+        logoPanel.setBackground(Color.WHITE);
 
-        // Add panel to the center of the window
+        // Load the image using getClass().getResource()
+        ImageIcon companyLogo = new ImageIcon(getClass().getResource("/images/Model Perfect.png"));
+        JLabel logoLabel = new JLabel(companyLogo);
+        logoPanel.add(logoLabel);
+
+        // Sub-panel for the company name
+        JPanel companyNamePanel = new JPanel();
+        companyNamePanel.setBackground(Color.WHITE);
+
+        // Create a label for the company name with a cooler font
+        Font coolFont = new Font("Segoe UI", Font.BOLD, 24);
+        JLabel companyNameLabel = new JLabel("Model Perfect Inc.");
+        companyNameLabel.setFont(coolFont);
+        companyNameLabel.setForeground(Color.BLACK);
+        companyNamePanel.add(companyNameLabel);
+
+        // Add sub-panels to the main panel
+        mainPanel.add(logoPanel);
+        mainPanel.add(companyNamePanel);
+
+        // Add the main panel to the center of the window
         add(mainPanel, BorderLayout.CENTER);
 
         // Center the window on the screen
