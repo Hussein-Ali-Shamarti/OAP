@@ -378,7 +378,7 @@ public class ProductView extends JFrame {
             // Create a dialog to input search criteria
             JTextField searchField = new JTextField(20);
             JPanel panel = new JPanel();
-            panel.add(new JLabel("Search Criteria:"));
+            panel.add(new JLabel("Search Products Code:"));
             panel.add(searchField);
 
             int result = JOptionPane.showConfirmDialog(null, panel, "Search Products", JOptionPane.OK_CANCEL_OPTION);
