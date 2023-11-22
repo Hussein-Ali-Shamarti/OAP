@@ -71,11 +71,13 @@ public class CustomerHandler {
 			pstm.setBigDecimal(13, creditLimit);
             
             int affectedRows = pstm.executeUpdate();
+            
+            System.out.println("Number of rows affected: " + affectedRows);
 
             return affectedRows > 0;
         } catch (SQLException e) {
         	e.printStackTrace();
-            System.out.println("SQLException occurred: " + e.getMessage());
+            System.out.println("SQLException occurred: " + e.getMessage());   // feil meldinger skal poppe opp
             System.out.println("SQLState: " + e.getSQLState());
             System.out.println("ErrorCode: " + e.getErrorCode());
             System.out.println("Query: " + e.toString());
