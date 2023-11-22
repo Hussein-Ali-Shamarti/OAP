@@ -40,7 +40,7 @@ public class ProductView extends JFrame {
         initializeUI();
         fetchAndDisplayProducts();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 400);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         pack(); // Adjusts the frame to fit the components
         setVisible(true); // Make sure the frame is visible
@@ -212,12 +212,103 @@ public class ProductView extends JFrame {
 
 
 
+ // Action listener for "Update" button
     private class UpdateButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(ProductView.this, "Update button pressed");
+            // Get the selected row from the table
+            int selectedRow = table.getSelectedRow();
+
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(ProductView.this, "Please select a product to update.");
+                return;
+            }
+
+            // Assuming that the first column (index 0) contains the product code
+            String productCode = table.getValueAt(selectedRow, 0).toString();
+
+            // You can fetch the product details from the database based on the product code
+            Products productToUpdate = fetchProductFromDatabase(productCode);
+
+            if (productToUpdate == null) {
+                JOptionPane.showMessageDialog(ProductView.this, "Product not found in the database.");
+                return;
+            }
+
+            // Now, you can open a dialog to allow the user to edit the product details
+            JTextField productNameField = new JTextField(productToUpdate.getProductName());
+            JTextField productScaleField = new JTextField(productToUpdate.getProductScale());
+            JTextField productVendorField = new JTextField(productToUpdate.getProductVendor());
+            JTextField productDescriptionField = new JTextField(productToUpdate.getProductDescription());
+            JTextField quantityInStockField = new JTextField(String.valueOf(productToUpdate.getQuantityInStock()));
+            JTextField buyPriceField = new JTextField(String.valueOf(productToUpdate.getBuyPrice()));
+            JTextField msrpField = new JTextField(String.valueOf(productToUpdate.getMsrp()));
+
+            JPanel panel = new JPanel(new GridLayout(0, 2));
+            panel.add(new JLabel("Product Name:"));
+            panel.add(productNameField);
+            panel.add(new JLabel("Product Scale:"));
+            panel.add(productScaleField);
+            panel.add(new JLabel("Product Vendor:"));
+            panel.add(productVendorField);
+            panel.add(new JLabel("Product Description:"));
+            panel.add(productDescriptionField);
+            panel.add(new JLabel("Quantity in Stock:"));
+            panel.add(quantityInStockField);
+            panel.add(new JLabel("Buy Price:"));
+            panel.add(buyPriceField);
+            panel.add(new JLabel("MSRP:"));
+            panel.add(msrpField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Product Details", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    // Update the product details based on user input
+                    productToUpdate.setProductName(productNameField.getText());
+                    productToUpdate.setProductScale(productScaleField.getText());
+                    productToUpdate.setProductVendor(productVendorField.getText());
+                    productToUpdate.setProductDescription(productDescriptionField.getText());
+                    productToUpdate.setQuantityInStock(Integer.parseInt(quantityInStockField.getText()));
+                    productToUpdate.setBuyPrice(Double.parseDouble(buyPriceField.getText()));
+                    productToUpdate.setMsrp(Double.parseDouble(msrpField.getText()));
+
+                    // Call the updateProduct method in ProductHandler to update the product in the database
+                    boolean success = updateProductInDatabase(productToUpdate);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(ProductView.this, "Product updated successfully!");
+                        // Refresh the product list or take any other necessary action
+                        fetchAndDisplayProducts(); // Refresh the product list
+                    } else {
+                        JOptionPane.showMessageDialog(ProductView.this, "Failed to update product.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(ProductView.this, "Invalid input format.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(ProductView.this, "Error: " + ex.getMessage());
+                }
+            }
         }
     }
+
+    // Fetch product details from the database based on the product code
+    private Products fetchProductFromDatabase(String productCode) {
+        // Implement the logic to fetch the product details from the database
+        // You can use the productCode to query the database and return the product object
+        // If the product is not found, return null
+        // This is a placeholder method; you should replace it with your database logic
+        return null;
+    }
+
+    // Update product details in the database
+    private boolean updateProductInDatabase(Products product) {
+        // Implement the logic to update the product details in the database
+        // You can use the product object to update the corresponding database record
+        // Return true if the update is successful, or false if it fails
+        // This is a placeholder method; you should replace it with your database logic
+        return false;
+    }
+
 
  // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
