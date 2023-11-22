@@ -20,13 +20,13 @@ public class Customer {
     private String state;
     private String postalCode;
     private String country;
-    private int salesRepEmployeeNr;
+    private int salesRepEmployeeNumber;
     private BigDecimal creditLimit;
 
     public Customer( int customerNumber,String customerName, String contactLastName, String contactFirstName, 
                     String phone, String addressLine1, String addressLine2, String city, 
                     String state, String postalCode, String country, 
-                    int salesRepEmployeeNr, BigDecimal creditLimit) {
+                    int salesRepEmployeeNumber, BigDecimal creditLimit) {
     	this.customerNumber= customerNumber;
         this.customerName = customerName;
         this.contactLastName = contactLastName;
@@ -38,7 +38,7 @@ public class Customer {
         this.state = state;
         this.postalCode = postalCode;
         this.country = country;
-        this.salesRepEmployeeNr = salesRepEmployeeNr;
+        this.salesRepEmployeeNumber = salesRepEmployeeNumber;
         this.creditLimit = creditLimit;
     }
 
@@ -131,12 +131,12 @@ public class Customer {
         this.country = country;
     }
 
-    public int getSalesRepEmployeeNr() {
-        return salesRepEmployeeNr;
+    public int getsalesRepEmployeeNumber() {
+        return salesRepEmployeeNumber;
     }
 
-    public void setSalesRepEmployeeNr(int salesRepEmployeeNr) {
-        this.salesRepEmployeeNr = salesRepEmployeeNr;
+    public void setsalesRepEmployeeNumber(int salesRepEmployeeNumber) {
+        this.salesRepEmployeeNumber = salesRepEmployeeNumber;
     }
 
     public BigDecimal getCreditLimit() {

@@ -25,7 +25,7 @@ public class CustomerHandler {
 	 public boolean addCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, 
              String phone, String addressLine1, String addressLine2, String city, 
              String state, String postalCode, String country, 
-             int salesRepEmployeeNr, BigDecimal creditLimit) {
+             int salesRepEmployeeNumber, BigDecimal creditLimit) {
 		try (Connection connection = DataBaseConnection.getConnection();
 			PreparedStatement pstm = connection.prepareStatement(
 			"INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, " + 
@@ -42,7 +42,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNr);
+			pstm.setInt(12, salesRepEmployeeNumber);
 			pstm.setBigDecimal(13, creditLimit);
 			
 			int affectedRows = pstm.executeUpdate();
@@ -53,9 +53,9 @@ public class CustomerHandler {
 }
 }
 
-    public boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNr, BigDecimal creditLimit) {
+    public boolean editCustomer(int customerNumber,String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, BigDecimal creditLimit) {
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNr = ?, creditLimit = ? WHERE customerNumber = ?")) {
+             PreparedStatement pstm = connection.prepareStatement("UPDATE customers SET customerName = ?, contactLastName = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNumber = ?, creditLimit = ? WHERE customerNumber = ?")) {
         	pstm.setInt(1, customerNumber);
 			pstm.setString(2, customerName);
 			pstm.setString(3, contactLastName);
@@ -67,7 +67,7 @@ public class CustomerHandler {
 			pstm.setString(9, state);
 			pstm.setString(10, postalCode);
 			pstm.setString(11, country);
-			pstm.setInt(12, salesRepEmployeeNr);
+			pstm.setInt(12, salesRepEmployeeNumber);
 			pstm.setBigDecimal(13, creditLimit);
             
             int affectedRows = pstm.executeUpdate();

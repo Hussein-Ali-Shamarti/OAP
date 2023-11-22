@@ -203,7 +203,7 @@ public class CustomerView extends JFrame {
                     String state = stateField.getText();
                     String postalCode = postalCodeField.getText();
                     String country = countryField.getText();
-                    int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+                    int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                     // Create an instance of CustomerHandler
@@ -212,7 +212,7 @@ public class CustomerView extends JFrame {
                     // Use the handler instance to call addCustomer
                     boolean success = handler.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
                                                          phone, addressLine1, addressLine2, city, state, postalCode, country, 
-                                                         salesRepEmployeeNr, creditLimit);
+                                                         salesRepEmployeeNumber, creditLimit);
                     if (success) {
                         JOptionPane.showMessageDialog(CustomerView.this, "Customer added successfully!");
                     } else {
@@ -262,7 +262,7 @@ public class CustomerView extends JFrame {
             JTextField stateField = new JTextField(customer.getState(), 10);
             JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
             JTextField countryField = new JTextField(customer.getCountry(), 10);
-            JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getSalesRepEmployeeNr()), 10);
+            JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getsalesRepEmployeeNumber()), 10);
             JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
 
             JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -305,13 +305,13 @@ public class CustomerView extends JFrame {
                     	String state = stateField.getText();
                     	String postalCode = postalCodeField.getText();
                     	String country = countryField.getText();
-                    	int salesRepEmployeeNr = Integer.parseInt(salesRepEmployeeNumberField.getText());
+                    	int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
                     	BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                 // Use the handler instance to call editCustomer
                 boolean success = handler.editCustomer(customer.getCustomerNumber(), customerName, contactLastName, contactFirstName, 
                 phone, addressLine1, addressLine2, city, state, postalCode, country, 
-                salesRepEmployeeNr, creditLimit); // Complete with other fields
+                salesRepEmployeeNumber, creditLimit); // Complete with other fields
                 if (success) {
                     JOptionPane.showMessageDialog(CustomerView.this, "Customer updated successfully!");
                 } else {
