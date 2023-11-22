@@ -34,7 +34,7 @@ public class CustomerView extends JFrame {
         initializeUI();
         fetchAndDisplayCustomers();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(1000, 500);
         setLocationRelativeTo(null);
         pack(); // Adjusts the frame to fit the components
         setVisible(true); // Make sure the frame is visible
@@ -100,7 +100,7 @@ public class CustomerView extends JFrame {
 
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK);
+        button.setForeground(Color.WHITE);
         button.setBackground(new Color(84, 11, 131));
         button.setFocusPainted(false);
         button.addActionListener(listener);

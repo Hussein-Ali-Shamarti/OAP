@@ -10,39 +10,39 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import view.OrderView;
-import view.CustomerView;
-import view.ProductView;
+
 public class MainView extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MainView() {
-        // Set title anxd size
+    public MainView() {
+
         super("Model Perfect");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Set background color
         getContentPane().setBackground(Color.WHITE);
 
         // Create panel for company name and logo
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.WHITE);
 
-        // Add logo (replace with your own implementation)
-        ImageIcon companyLogo = new ImageIcon("images/Model Perfect.png");
-        JLabel logoLabel = new JLabel(companyLogo);
-        mainPanel.add(logoLabel);
+        // Load the first image
+        ImageIcon companyLogo1 = new ImageIcon(getClass().getResource("/images/ModelPerfectWritten.png"));
+        JLabel logoLabel1 = new JLabel(companyLogo1);
+        mainPanel.add(logoLabel1);
+
+        // Load the second image
+        ImageIcon companyLogo2 = new ImageIcon("images/Model Perfect.png");
+        JLabel logoLabel2 = new JLabel(companyLogo2);
+        mainPanel.add(logoLabel2);
 
         // Add panel to the center of the window
         add(mainPanel, BorderLayout.CENTER);
 
         // Center the window on the screen
         setLocationRelativeTo(null);
+
 
         // Create ProductsListener for "Products" button in MainMenu
         ProductsListener productsListener = new ProductsListener();
