@@ -117,9 +117,10 @@ public class Order {
     }
     
 
-   /* @Override
+   @Override
     public String toString() {
-    	return String.format("%-10d %-20s %")
-    }*/
+    	return "orderID: " + orderNumber +", orderDate: +" + orderDate + ", requiredDate: "+requiredDate+", shippedDate: "+shippedDate+", status: "+status+", comments: "+comments;
+ 
+    }
 }
 

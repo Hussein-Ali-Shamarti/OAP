@@ -438,19 +438,25 @@ public class OrderView extends MainView {
             // Prompt the user to enter an Order Number for the search
             String searchParameter = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
 
-          /*  if (searchParameter != "" && !searchParameter.isEmpty()) {
+            if (searchParameter != "" && !searchParameter.isEmpty()) {
                 try {
+                	List<Order> filter = orderHandler.searchOrders(searchParameter);
+                	for(Order o : filter) {
+                		System.out.println(o);
+                	}
+                	
+                	//StringBuilder resultMessage = new StringBuilder("Search result:\n");
+                	//resultMessage.append("Order Number: ").append(filter)
+
                    // int orderNumber = Integer.parseInt(orderNumberString);
 
                     // Call the OrderHandler to retrieve the order
                  //  Order order = orderHandler.searchOrders();
-                	List<Order> filter = orderHandler.searchOrders(searchParameter);
-                	tableModel.setRowCount(0); 
-                	for(Order o:filter) {
-                	tableModel.ad;
-                	}
+                	//List<Order> filter = orderHandler.searchOrders(searchParameter);
+                	//tableModel.setRowCount(0); 
+                
                         // Display the order details
-                        StringBuilder resultMessage = new StringBuilder("Search result:\n");
+                       /* StringBuilder resultMessage = new StringBuilder("Search result:\n");
                         resultMessage.append("Order Number: ").append(filter.getOrderNumber()).append("\n");
                         resultMessage.append("Order Date: ").append(filter.getOrderDate()).append("\n");
                         resultMessage.append("Required Date: ").append(filter.getRequiredDate()).append("\n");
@@ -458,22 +464,23 @@ public class OrderView extends MainView {
                         resultMessage.append("Status: ").append(filter.getStatus()).append("\n");
                         resultMessage.append("Comments: ").append(order.getComments()).append("\n");
                         resultMessage.append("Customer Number: ").append(order.getCustomerNumber()).append("\n");
-                        JOptionPane.showMessageDialog(OrderView.this, resultMessage.toString());
-                    } else {
-                        /*JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: ");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+                        JOptionPane.showMessageDialog(OrderView.this, resultMessage.toString());*/
+                    } catch(NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+
+                        }
+                } else {
+                	 JOptionPane.showMessageDialog(OrderView.this, "No order found for Order Number: ");
+                     
                 }
-            } */
+            } 
         }
-    }
     
     
     
  // Add this method to your CheckStatusButtonListener class
-    private class CheckStatusButtonListener implements ActionListener {
-        @Override
+private class CheckStatusButtonListener implements ActionListener {       
+	@Override
         public void actionPerformed(ActionEvent e) {
             // Prompt the user to enter an Order Number for status check
             String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
@@ -526,7 +533,6 @@ public class OrderView extends MainView {
             }
         }
     }
-
 
 
 }
