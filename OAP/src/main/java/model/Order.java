@@ -29,7 +29,7 @@ public class Order {
     
     public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
         this.requiredDate = requiredDate;
-        this.shippedDate = shippedDate;
+        this.shippedDate = shippedDate;	
         this.status = status;
         this.comments = comments;
         this.customerNumber = customerNumber;
@@ -108,6 +108,7 @@ public class Order {
         }
         return total;
     }
+    
    /* @Override
     public String toString() {
     	return String.format("%-10d %-20s %")
