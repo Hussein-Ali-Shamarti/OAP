@@ -33,7 +33,7 @@ public class MenuBar {
     private JFrame parentFrame; //dont remove it!!
 
     public MenuBar(JFrame parentFrame, boolean includeExtendedMenuItems) {
-        this.parentFrame = parentFrame;
+        this.setParentFrame(parentFrame);
         this.includeExtendedMenuItems = includeExtendedMenuItems;
         // Initialize the menu bar
         menuBar = new JMenuBar();
@@ -53,10 +53,11 @@ public class MenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (parentFrame != null) {
-                    parentFrame.dispose(); // Close the specific window
+                    parentFrame.dispose(); // Use the parentFrame here
                 }
             }
         });
+
 
         // Add extended menu items if the flag is true
         if (includeExtendedMenuItems) {
@@ -132,7 +133,15 @@ public class MenuBar {
         }
     }
 
-    // Action listener for saving data
+    public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+	// Action listener for saving data
     private class SaveListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
