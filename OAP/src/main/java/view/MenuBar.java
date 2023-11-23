@@ -152,13 +152,7 @@ public class MenuBar {
 		this.parentFrame = parentFrame;
 	}
 
-	// Action listener for saving data
-//    private class SaveListener implements ActionListener {
-//        
-//       
-//    }
 
-    // Action listener for saving to a file
 	private class SaveToFileListener implements ActionListener {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -170,9 +164,11 @@ public class MenuBar {
 	        if (userSelection == JFileChooser.APPROVE_OPTION) {
 	            File fileToSave = fileChooser.getSelectedFile();
 	            // Use the database connection to fetch and write data
+	            
+	            
 	            try (Connection connection = DataBaseConnection.getConnection();
 	                 Statement statement = connection.createStatement();
-	                 ResultSet resultSet = statement.executeQuery("SELECT * FROM customers"); // Replace with your actual table name
+	                 ResultSet resultSet = statement.executeQuery("SELECT * FROM ?"); // Replace with your actual table name
 	                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
 
 	                int columnCount = resultSet.getMetaData().getColumnCount();
