@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 
+
 import controller.CustomerHandler;
 import model.Customer;
 
@@ -254,13 +255,13 @@ public class CustomerView extends MainView {
         JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
         JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
-        JTextField phoneField = new JTextField(customer.getPhone(), 10);
-        JTextField addressLine1Field = new JTextField(customer.getAddressLine1(), 10);
-        JTextField addressLine2Field = new JTextField(customer.getAddressLine2(), 10);
-        JTextField cityField = new JTextField(customer.getCity(), 10);
-        JTextField stateField = new JTextField(customer.getState(), 10);
+        JTextField phoneField = new JTextField(customer.getphone(), 10);
+        JTextField addressLine1Field = new JTextField(customer.getaddressLine1(), 10);
+        JTextField addressLine2Field = new JTextField(customer.getaddressLine2(), 10);
+        JTextField cityField = new JTextField(customer.getcity(), 10);
+        JTextField stateField = new JTextField(customer.getstate(), 10);
         JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
-        JTextField countryField = new JTextField(customer.getCountry(), 10);
+        JTextField countryField = new JTextField(customer.getcountry(), 10);
         JTextField salesRepEmployeeNumberField = new JTextField(String.valueOf(customer.getSalesRepEmployeeNumber()), 10);
         JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
 
@@ -384,13 +385,13 @@ public class CustomerView extends MainView {
                     customer.getCustomerName(),
                     customer.getContactLastName(),
                     customer.getContactFirstName(),
-                    customer.getPhone(),
-                    customer.getAddressLine1(),
-                    customer.getAddressLine2(),
-                    customer.getCity(),
-                    customer.getState(),
+                    customer.getphone(),
+                    customer.getaddressLine1(),
+                    customer.getaddressLine2(),
+                    customer.getcity(),
+                    customer.getstate(),
                     customer.getPostalCode(),
-                    customer.getCountry(),
+                    customer.getcountry(),
                     customer.getSalesRepEmployeeNumber(),
                     customer.getCreditLimit()
                 };
