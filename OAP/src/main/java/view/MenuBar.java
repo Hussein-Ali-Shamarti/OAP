@@ -11,10 +11,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,8 +39,10 @@ public class MenuBar {
     protected JMenu helpMenu;
     protected JMenuItem helpMenuItem;
     protected boolean includeExtendedMenuItems; // Flag to include extended menu items
+    private JFrame parentFrame; //dont remove it!!
 
-    public MenuBar(boolean includeExtendedMenuItems) {
+    public MenuBar(JFrame parentFrame, boolean includeExtendedMenuItems) {
+        this.setParentFrame(parentFrame);
         this.includeExtendedMenuItems = includeExtendedMenuItems;
         // Initialize the menu bar
         menuBar = new JMenuBar();
@@ -53,6 +57,17 @@ public class MenuBar {
         sqlQueryItem.addActionListener(new SQLQueryListener());
 
         exitMenuItem = new JMenuItem("Exit");
+        
+        // Modify the ActionListener for exitMenuItem
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (parentFrame != null) {
+                    parentFrame.dispose(); // Use the parentFrame here
+                }
+            }
+        });
+
 
         // Add extended menu items if the flag is true
         if (includeExtendedMenuItems) {
@@ -117,6 +132,7 @@ public class MenuBar {
         });
         return menuItem;
     }
+    
 
     private String readTextFromFile(String filePath) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream("/documents/" + filePath)) {
@@ -129,7 +145,15 @@ public class MenuBar {
         }
     }
 
-    // Action listener for saving data
+    public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+	// Action listener for saving data
     private class SaveListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -257,6 +281,7 @@ public class MenuBar {
 
             return new DefaultTableModel(data, columnNames);
         }
+        
     }
 
     

@@ -32,7 +32,7 @@ public class MainView extends JFrame {
         getContentPane().setBackground(Color.WHITE);
 
         // Initialize the Menubar
-        MenuBar menuBar = new MenuBar(rootPaneCheckingEnabled); // Create an instance of MenuBar
+        MenuBar menuBar = new MenuBar(this, rootPaneCheckingEnabled); // Pass 'this' to the constructor
 
         // Set the menu bar for the frame
         setJMenuBar(menuBar.getMenuBar()); // Use the instance to get the JMenuBar

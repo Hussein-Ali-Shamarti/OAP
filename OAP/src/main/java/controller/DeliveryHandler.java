@@ -2,15 +2,13 @@
  * File: DeliveryHandler.java
  * Description:  
  * DeliveryHandler class manages the delivery status updates and queries for orders within a CMS, interfacing with OrderHandler for database interactions.
- * It provides a method to check the orderstatus.
+ * It provides a method to check the order status.
  * @author Albert
  * @version 09.11.2023
  */
 
-
-
-
 package controller;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,12 +16,14 @@ import java.sql.SQLException;
 
 import database.DataBaseConnection;
 
+/**
+ * A class for managing delivery status updates and queries for orders within a CMS.
+ */
 public class DeliveryHandler {
-	
-
+    
     /**
      * Checks the status of a shipment based on the order number.
-     * @param orderNr The unique order number for the shipment.
+     * @param orderNumber The unique order number for the shipment.
      * @return The status of the shipment (e.g., "Shipped", "In Process", "On Hold", "Cancelled", "Disputed").
      */
     public String checkShipmentStatus(int orderNumber) {
