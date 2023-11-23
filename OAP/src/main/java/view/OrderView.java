@@ -38,6 +38,7 @@ public class OrderView extends MainView {
     private JTable table;
     private JTextField textField;  // Assuming you have a JTextField for search
     private OrderHandler orderHandler=new OrderHandler();
+    
     public OrderView() {
        super();
         setLayout(new BorderLayout());
@@ -51,18 +52,24 @@ public class OrderView extends MainView {
     }
     
     private void initializeUI() {
-        JPanel titlePanel = new JPanel();
+    	JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(84, 11, 131));
         JLabel titleLabel = new JLabel("Order Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
+
+        
         setupControlPanel();
         setupTable();
+        
+        add(titlePanel, BorderLayout.NORTH);
+
+        
         add(new JScrollPane(table), BorderLayout.CENTER);
         // Set frame properties
-       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
     }
