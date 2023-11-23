@@ -14,12 +14,15 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import docs.DataExportController;
+
 
 public class MenuBar {
 
@@ -27,6 +30,7 @@ public class MenuBar {
     protected JMenu fileMenu;
     protected JMenuItem testDatabaseConnectionItem;
     protected JMenuItem sqlQueryItem;
+    protected JMenuItem ExportCustomerItem;
     protected JMenuItem exitMenuItem;
     protected JMenu aboutMenu;
     protected JMenuItem aboutMenuItem;
@@ -46,7 +50,8 @@ public class MenuBar {
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
         testDatabaseConnectionItem.addActionListener(new TestConnectionListener());
         sqlQueryItem = new JMenuItem("SQL Query");
-        sqlQueryItem.addActionListener(new SQLQueryListener()); // dont know
+        sqlQueryItem.addActionListener(new SQLQueryListener());
+
         exitMenuItem = new JMenuItem("Exit");
 
         // Add extended menu items if the flag is true
@@ -57,7 +62,9 @@ public class MenuBar {
         // Add the rest of the items to the File menu
         fileMenu.add(testDatabaseConnectionItem);
         fileMenu.add(sqlQueryItem);
+        fileMenu.add(ExportCustomerItem);
         fileMenu.add(exitMenuItem);
+        
 
         // Create an About menu
         aboutMenu = new JMenu("About");
@@ -126,8 +133,22 @@ public class MenuBar {
     private class SaveListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Add your logic to save data here
-            JOptionPane.showMessageDialog(null, "Data saved successfully!");
+            // Implementation of the export functionality
+            String city = JOptionPane.showInputDialog("Enter the city for which to export customers:");
+            if (city != null && !city.isEmpty()) {
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    Path file = Paths.get(fileChooser.getSelectedFile().getAbsolutePath());
+                    try {
+                        // Replace the next line with your actual export logic
+                        // Example: DataExportImportController.exportCustomersByCity(city, file);
+                        Files.writeString(file, "Exported data for city: " + city, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                        JOptionPane.showMessageDialog(null, "Customers exported successfully!");
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Failed to export customers: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         }
     }
 
@@ -183,6 +204,8 @@ public class MenuBar {
                 executeSqlQuery(sql);
             }
         }
+        
+        
 
         private void executeSqlQuery(String sql) {
             try (Connection conn = DataBaseConnection.getConnection();
