@@ -172,7 +172,7 @@ public class MenuBar {
 	            // Use the database connection to fetch and write data
 	            try (Connection connection = DataBaseConnection.getConnection();
 	                 Statement statement = connection.createStatement();
-	                 ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table_name"); // Replace with your actual table name
+	                 ResultSet resultSet = statement.executeQuery("SELECT * FROM customers"); // Replace with your actual table name
 	                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
 
 	                int columnCount = resultSet.getMetaData().getColumnCount();
