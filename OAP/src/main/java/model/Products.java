@@ -1,18 +1,15 @@
 package model;
 
 /**
+ * Represents information about a product, including its code, name, scale, vendor, description,
+ * stock quantity, buy price, and MSRP (Manufacturer's Suggested Retail Price).
  * 
- * File: Products.java
- * Description: This is an entity class for "product" and encapsulates the basic information of a product.
- * This class represents information about a product's attributes, such as code, name, scale, vendor, description, stock quantity, buy price, and MSRP.
+ * <p>This class serves as an entity class for the "product" entity and encapsulates basic information about a product.</p>
+ * 
  * @author Ole
  * @version 09.11.2023
-*/ 
-
-
-
+ */
 public class Products {
-
 
     private String productCode;
     private String productName;
@@ -39,16 +36,17 @@ public class Products {
      */
     public Products(String productCode, String productName, String productLine, String productScale, String productVendor,
             String productDescription, int quantityInStock, double buyPrice, double msrp) {
-this.productCode = productCode;
-this.productName = productName;
-this.productLine = productLine;
-this.productScale = productScale;
-this.productVendor = productVendor;
-this.productDescription = productDescription;
-this.quantityInStock = quantityInStock;
-this.buyPrice = buyPrice;
-this.msrp = msrp;
-}
+        this.productCode = productCode;
+        this.productName = productName;
+        this.productLine = productLine;
+        this.productScale = productScale;
+        this.productVendor = productVendor;
+        this.productDescription = productDescription;
+        this.quantityInStock = quantityInStock;
+        this.buyPrice = buyPrice;
+        this.msrp = msrp;
+    }
+
 
    /**
     * get the product code
