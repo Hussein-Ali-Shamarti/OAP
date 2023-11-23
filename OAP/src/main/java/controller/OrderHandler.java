@@ -154,13 +154,8 @@ public class OrderHandler {
             pstmt.setString(4, order.getComments());
             pstmt.setInt(5, order.getCustomerNumber());
             pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
-<<<<<<< HEAD
-            //pstmt.setString(7, order.getProductCode());
-            pstmt.setInt(7, OrderNumber);
 
-=======
             pstmt.setInt(7, OrderNumber);
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -207,10 +202,7 @@ public class OrderHandler {
                 String status = rs.getString("status");
                 String comments = rs.getString("comments");
                 int customerNumber = rs.getInt("customerNumber");
-<<<<<<< HEAD
                // String productCode = rs.getString("productCode"); // Fetch the product code
-=======
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
 
                 order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
             }

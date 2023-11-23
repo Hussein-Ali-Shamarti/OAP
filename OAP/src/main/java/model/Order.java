@@ -2,6 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -21,10 +22,8 @@ public class Order {
     private Date shippedDate;
     private String status;
     private String comments;
-<<<<<<< HEAD
     //private String productCode; // New field for product code
-=======
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
+
     private int customerNumber;
 
     /**
@@ -37,7 +36,6 @@ public class Order {
      * @param customerNumber The customer number associated with the order.
      * @param orderDate      The date when the order was placed.
      */
-<<<<<<< HEAD
     
     public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
         this.requiredDate = requiredDate;
@@ -47,17 +45,9 @@ public class Order {
         this.customerNumber = customerNumber;
         this.orderDate = orderDate;
         //this.productCode = productCode; // Initialize the product code
-        this.orderDetailsList = new ArrayList<>();
+       // this.orderDetailsList = new ArrayList<>();
         
-=======
-    public Order(ResultSet rs) throws SQLException {
-        this.orderDate = rs.getDate("orderDate");
-        this.requiredDate = rs.getDate("requiredDate");
-        this.shippedDate = rs.getDate("shippedDate");
-        this.status = rs.getString("status");
-        this.comments = rs.getString("comments");
-        this.customerNumber = rs.getInt("customerNumber");
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
+
     }
 
     /**
@@ -186,7 +176,6 @@ public class Order {
         this.customerNumber = customerNumber;
     }
     
-<<<<<<< HEAD
    /* public String getProductCode() {
         return this.productCode;
     }*/
@@ -197,10 +186,8 @@ public class Order {
     	return "orderID: " + orderNumber +", orderDate: +" + orderDate + ", requiredDate: "+requiredDate+", shippedDate: "+shippedDate+", status: "+status+", comments: "+comments;
  
     }
-=======
     /* public void addOrderDetail(OrderDetails orderDetail) {
     orderDetailsList.add(orderDetail);
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
 }
 
 public double calculateOrderTotal() {

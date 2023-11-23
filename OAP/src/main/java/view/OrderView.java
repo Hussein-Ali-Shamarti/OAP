@@ -14,13 +14,12 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-<<<<<<< HEAD
 import java.util.Map;
 import java.util.Vector;
-=======
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
+
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -116,7 +115,6 @@ public class OrderView extends MainView {
         return button;
     }
 
-<<<<<<< HEAD
     private void fetchAndDisplayOrders() {
 
         try {
@@ -141,24 +139,7 @@ public class OrderView extends MainView {
                     ordersResultSet.getString("comments"),
                     ordersResultSet.getInt("customerNumber"), // Assuming customerNumber is an int
                     //ordersResultSet.getString("productCode") // This now comes from the joined orderDetails table
-=======
 
-    void fetchAndDisplayOrders() {
-        tableModel.setRowCount(0);
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                Object[] row = {
-                        resultSet.getString("OrderNumber"),
-                        resultSet.getString("orderDate"),
-                        resultSet.getString("requiredDate"),
-                        resultSet.getString("shippedDate"),
-                        resultSet.getString("status"),
-                        resultSet.getString("comments"),
-                        resultSet.getString("customerNumber")
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
                 };
                 tableModel.addRow(row);
             }
@@ -166,11 +147,7 @@ public class OrderView extends MainView {
             JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-<<<<<<< HEAD
-    
 
-=======
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
 
     private class AddButtonListener implements ActionListener {
    	 @Override
@@ -248,7 +225,6 @@ public class OrderView extends MainView {
 
                     if (existingOrder != null) {
                         // Fields for updating order details
-<<<<<<< HEAD
                         JTextField orderDateField = new JTextField(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "", 10);
                         JTextField requiredDateField = new JTextField(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString() : "", 10);
                         JTextField shippedDateField = new JTextField(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "", 10);
@@ -261,15 +237,15 @@ public class OrderView extends MainView {
                         // Add product selection dropdowns
                         JComboBox<String> productNameDropdown = new JComboBox<>();
                         JComboBox<String> productCodeDropdown = new JComboBox<>(); // Changed to String based on your database
-                        Map<String, String> products = orderHandler.getProducts(); // Fetch products as Map<String, String>
+                      //  Map<String, String> products = orderHandler.getProducts(); // Fetch products as Map<String, String>
                         
                         // Populate dropdowns
                      // Assuming you have a Map<String, Integer> products where key is productName and value is productCode
-                        products.forEach((name, code) -> {
+                       /* products.forEach((name, code) -> {
                             productNameDropdown.addItem(name);
                             productCodeDropdown.addItem(code);
                         });
-
+*/
 
                         // Set the selected item based on existingOrder's product code
                       //  String existingProductCode = existingOrder.getProductCode(); // Assume getProductCode() returns a String
@@ -289,26 +265,10 @@ public class OrderView extends MainView {
                             @Override
                             public void actionPerformed(ActionEvent event) {
                                 String selectedProductName = (String) productNameDropdown.getSelectedItem();
-                                String selectedProductCode = products.get(selectedProductName);
-                                productCodeDropdown.setSelectedItem(selectedProductCode);
+                               // String selectedProductCode = products.get(selectedProductName);
+                               // productCodeDropdown.setSelectedItem(selectedProductCode);
                             }
                         });
-=======
-                        JTextField orderDateField = new JTextField(10);
-                        JTextField requiredDateField = new JTextField(10);
-                        JTextField shippedDateField = new JTextField(10);
-                        JTextField statusField = new JTextField(10);
-                        JTextField commentsField = new JTextField(10);
-                        JTextField customerNumberField = new JTextField(10);
-
-                        // Set default values in the fields
-                        orderDateField.setText(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "");
-                        requiredDateField.setText(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString() : "");
-                        shippedDateField.setText(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "");
-                        statusField.setText(existingOrder.getStatus());
-                        commentsField.setText(existingOrder.getComments());
-                        customerNumberField.setText(String.valueOf(existingOrder.getCustomerNumber()));
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
 
                         // Panel for the update form
                         JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -354,9 +314,8 @@ public class OrderView extends MainView {
                                 }
 
                                 // Create a new Order object with updated values
-                                Order updatedOrder = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+ //                               Order updatedOrder = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
 
-<<<<<<< HEAD
                                 // Update the Order object
                                 Order updatedOrder = new Order(
                                 	    requiredDate, 
@@ -367,8 +326,7 @@ public class OrderView extends MainView {
                                 	    orderDate
                                 	    //productCode // Include the productCode here
                                 	);
-=======
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
+
                                 // Call the OrderHandler to update the order
                                 boolean success = orderHandler.editOrder(updatedOrder, orderNumber);
                                 if (success) {
@@ -430,7 +388,6 @@ public class OrderView extends MainView {
             // Prompt the user to enter an Order Number for the search
             String searchParameter = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
 
-<<<<<<< HEAD
             if (searchParameter != "" && !searchParameter.isEmpty()) {
                 try {tableModel.setRowCount(0);
                 	List<Order> filter = orderHandler.searchOrder(searchParameter);
@@ -449,15 +406,16 @@ public class OrderView extends MainView {
 
                 	}
                 	System.out.println(filter);
-                	
+                }catch(NumberFormatException ex) {
+                	JOptionPane.showMessageDialog(OrderView.this,  "Invalid Order format");
+                }
+            }}}
 
                 	//StringBuilder resultMessage = new StringBuilder("Search result:\n");
                 	//resultMessage.append("Order Number: ").append(filter)
 
-=======
           /*  if (searchParameter != "" && !searchParameter.isEmpty()) {
                 try {
->>>>>>> 146aae7b2c95014daf51f953d82f4133d272d258
                    // int orderNumber = Integer.parseInt(orderNumberString);
 
                     // Call the OrderHandler to retrieve the order
@@ -484,8 +442,8 @@ public class OrderView extends MainView {
                     JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
                 }
             } */
-        }
-    }
+        
+    
     
     
     
@@ -512,9 +470,9 @@ public class OrderView extends MainView {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
                 }
-            }
-        }
-    }
+            }}}
+        
+    
     
     private class PaymentButtonListener implements ActionListener {
         @Override
