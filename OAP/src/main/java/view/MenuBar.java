@@ -11,9 +11,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,8 +30,10 @@ public class MenuBar {
     protected JMenu helpMenu;
     protected JMenuItem helpMenuItem;
     protected boolean includeExtendedMenuItems; // Flag to include extended menu items
+    private JFrame parentFrame; //dont remove it!!
 
-    public MenuBar(boolean includeExtendedMenuItems) {
+    public MenuBar(JFrame parentFrame, boolean includeExtendedMenuItems) {
+        this.parentFrame = parentFrame;
         this.includeExtendedMenuItems = includeExtendedMenuItems;
         // Initialize the menu bar
         menuBar = new JMenuBar();
@@ -48,6 +47,16 @@ public class MenuBar {
         sqlQueryItem = new JMenuItem("SQL Query");
         sqlQueryItem.addActionListener(new SQLQueryListener()); // dont know
         exitMenuItem = new JMenuItem("Exit");
+        
+        // Modify the ActionListener for exitMenuItem
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (parentFrame != null) {
+                    parentFrame.dispose(); // Close the specific window
+                }
+            }
+        });
 
         // Add extended menu items if the flag is true
         if (includeExtendedMenuItems) {
@@ -110,6 +119,7 @@ public class MenuBar {
         });
         return menuItem;
     }
+    
 
     private String readTextFromFile(String filePath) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream("/documents/" + filePath)) {
@@ -234,6 +244,7 @@ public class MenuBar {
 
             return new DefaultTableModel(data, columnNames);
         }
+        
     }
 
     
