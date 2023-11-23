@@ -16,9 +16,7 @@ import java.sql.SQLException;
 
 import database.DataBaseConnection;
 
-/**
- * A class for managing delivery status updates and queries for orders within a CMS.
- */
+
 public class DeliveryHandler {
     
     /**

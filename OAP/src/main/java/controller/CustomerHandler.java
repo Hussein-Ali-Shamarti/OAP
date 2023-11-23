@@ -20,10 +20,7 @@ import java.util.List;
 import database.DataBaseConnection;
 import model.Customer;
 
-/**
- * A class for managing customer records in the CMS.
- */
-public class CustomerHandler {
+ class CustomerHandler {
     
     // Define the SQL query as a constant for searching customers in the database.
     // This SQL query utilizes a SELECT statement with multiple conditions to filter results based on different customer attributes.

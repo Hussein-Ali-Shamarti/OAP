@@ -14,7 +14,7 @@ public abstract class Address {
     protected String state;
     protected String postalCode;
     private String country;
-    private int phone;
+    private String phone;
 
     /**
      * Constructor for Address class.
@@ -27,7 +27,7 @@ public abstract class Address {
      * @param country           The country of the customer
      * @param phone             The phone number of the customer
      */
-    public Address(String addressLine2, String addressLine1, String city, String state, String postalCode, String country, int phone) {
+    public Address(String addressLine1, String addressLine2, String city, String state, String postalCode, String country, String phone) {
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.city = city;
@@ -35,7 +35,7 @@ public abstract class Address {
         this.postalCode = postalCode;
         this.country = country;
         this.phone = phone;
-    }
+    } 
 
     /**
      * Get the first address of the customer.
@@ -72,7 +72,7 @@ public abstract class Address {
         return country;
     }
     
-   public int getphone() {
+   public String getphone() {
         return phone;
     }
 
@@ -103,7 +103,7 @@ public abstract class Address {
         this.country = country;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

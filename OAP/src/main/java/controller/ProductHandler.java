@@ -1,7 +1,8 @@
 /**
  * File: ProductHandler.java
- * Description: This class serves as the controller for managing products in the application. It provides methods for creating, updating, and deleting products in the database, as well as searching for products and adding them to orders.
- * The class interacts with the model (Product) and the database to handle product-related operations.
+ * Description: This class is responsible for handling CRUD operations related to products.
+ * It provides methods for adding, searching, updating, and deleting products in the database.
+ * The class interacts with the model (Products) and the database to manage product-related operations.
  * @author Ole
  * @version 08.11.2023
  */
@@ -15,17 +16,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import database.DataBaseConnection;
 import model.Products;
+
+
 public class ProductHandler {
 
-    // CRUD Methods
-
+    /**
+     * Adds a new product to the database.
+     * @param product The product to be added.
+     * @return True if the product is added successfully, false otherwise.
+     */
     public boolean addProduct(Products product) {
-        try (Connection connection = DataBaseConnection.getConnection()) {
-            String sql = "INSERT INTO products (productCode, productName,productLine, productScale, productVendor, productDescription, quantityInStock, buyPrice, MSRP) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "INSERT INTO products (productCode, productName, productLine, productScale, productVendor, productDescription, quantityInStock, buyPrice, MSRP) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+
             preparedStatement.setString(1, product.getProductCode());
             preparedStatement.setString(2, product.getProductName());
             preparedStatement.setString(3, product.getProductLine());
@@ -35,57 +42,48 @@ public class ProductHandler {
             preparedStatement.setInt(7, product.getQuantityInStock());
             preparedStatement.setDouble(8, product.getBuyPrice());
             preparedStatement.setDouble(9, product.getMsrp());
+
             int affectedRows = preparedStatement.executeUpdate();
-            
+
             return affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
+    /**
+     * Searches for products in the database based on the provided search criteria.
+     * @param searchCriteria The criteria to search for products.
+     * @return A list of Products objects matching the search criteria.
+     */
     public List<Products> searchProducts(String searchCriteria) {
         List<Products> searchResults = new ArrayList<>();
 
-        try (Connection connection = DataBaseConnection.getConnection()) {
-            // Define your SQL query to search for products based on the search criteria
-            String sql = "SELECT * FROM products WHERE " +
-                         "productCode LIKE ? OR " +
-                         "productName LIKE ? OR " +
-                         "productLine LIKE ? OR " +
-                         "productScale LIKE ? OR " +
-                         "productVendor LIKE ? OR " +
-                         "quantityInStock LIKE ? OR " +
-                         "buyPrice LIKE ? OR " +
-                         "MSRP LIKE ? OR " +
-                         "productDescription LIKE ?"; // Add more columns as needed
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM products WHERE " +
+                             "productCode LIKE ? OR " +
+                             "productName LIKE ? OR " +
+                             "productLine LIKE ? OR " +
+                             "productScale LIKE ? OR " +
+                             "productVendor LIKE ? OR " +
+                             "quantityInStock LIKE ? OR " +
+                             "buyPrice LIKE ? OR " +
+                             "MSRP LIKE ? OR " +
+                             "productDescription LIKE ?")) {
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                // Set the search criteria as a parameter in the SQL query for each column
-            	for (int i = 1; i <= 9; i++) { // Update the loop to go up to 9
-            	    preparedStatement.setString(i, "%" + searchCriteria + "%");
-            	}
+            for (int i = 1; i <= 9; i++) {
+                preparedStatement.setString(i, "%" + searchCriteria + "%");
+            }
 
-
-                // Execute the query and retrieve the result set
-                ResultSet resultSet = preparedStatement.executeQuery();
-
-                // Iterate through the result set and add matching products to the list
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    Products product = new Products(
-                        resultSet.getString("productCode"),
-                        resultSet.getString("productName"),
-                        resultSet.getString("productLine"),
-                        resultSet.getString("productScale"),
-                        resultSet.getString("productVendor"),
-                        resultSet.getString("productDescription"),
-                        resultSet.getInt("quantityInStock"),
-                        resultSet.getDouble("buyPrice"),
-                        resultSet.getDouble("msrp")
-                    );
+                    Products product = mapResultSetToProduct(resultSet);
                     searchResults.add(product);
                 }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,11 +91,17 @@ public class ProductHandler {
         return searchResults;
     }
 
-
+    /**
+     * Updates an existing product's information in the database.
+     * @param product The updated product information.
+     * @return True if the product is updated successfully, false otherwise.
+     */
     public boolean updateProduct(Products product) {
-        try (Connection connection = database.DataBaseConnection.getConnection()) {
-            String sql = "UPDATE products SET productName = ?,productLine = ?, productScale = ?, productVendor = ?, productDescription = ?, quantityInStock = ?, buyPrice = ?, MSRP = ? WHERE productCode = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "UPDATE products SET productName = ?, productLine = ?, productScale = ?, productVendor = ?, " +
+                             "productDescription = ?, quantityInStock = ?, buyPrice = ?, MSRP = ? WHERE productCode = ?")) {
+
             preparedStatement.setString(1, product.getProductName());
             preparedStatement.setString(2, product.getProductLine());
             preparedStatement.setString(3, product.getProductScale());
@@ -107,8 +111,9 @@ public class ProductHandler {
             preparedStatement.setDouble(7, product.getBuyPrice());
             preparedStatement.setDouble(8, product.getMsrp());
             preparedStatement.setString(9, product.getProductCode());
+
             int affectedRows = preparedStatement.executeUpdate();
-            
+
             return affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,17 +121,44 @@ public class ProductHandler {
         }
     }
 
+    /**
+     * Deletes a product from the database based on the product code.
+     * @param productCode The product code of the product to be deleted.
+     * @return True if the product is deleted successfully, false otherwise.
+     */
     public boolean deleteProduct(String productCode) {
-        try (Connection connection = database.DataBaseConnection.getConnection()) {
-            String sql = "DELETE FROM products WHERE productCode = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "DELETE FROM products WHERE productCode = ?")) {
+
             preparedStatement.setString(1, productCode);
+
             int affectedRows = preparedStatement.executeUpdate();
-            
+
             return affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Maps a ResultSet to a Products object.
+     * @param resultSet The ResultSet containing product information.
+     * @return The Products object created from the ResultSet.
+     * @throws SQLException If a SQL exception occurs.
+     */
+    private Products mapResultSetToProduct(ResultSet resultSet) throws SQLException {
+        return new Products(
+                resultSet.getString("productCode"),
+                resultSet.getString("productName"),
+                resultSet.getString("productLine"),
+                resultSet.getString("productScale"),
+                resultSet.getString("productVendor"),
+                resultSet.getString("productDescription"),
+                resultSet.getInt("quantityInStock"),
+                resultSet.getDouble("buyPrice"),
+                resultSet.getDouble("msrp")
+        );
     }
 }

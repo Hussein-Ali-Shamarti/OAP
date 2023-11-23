@@ -11,37 +11,61 @@ package model;
 
 import java.util.Date;
 
+/**
+ * Represents a payment, including check number, payment date, and the paid amount.
+ * 
+ * <p>This class contains a constructor and getter methods for retrieving check number,
+ * payment date, and the total paid amount.</p>
+ * 
+ * <p>Note: The check number is a unique serial number consisting of two letters followed by 6 digits.</p>
+ * 
+ * @author Kim
+ * @version [Version Date]
+ */
 public class Payment {
     
-    //Declaration of private data fields 
-    
+    // Declaration of private data fields 
     private final String checkNr;
     private final Date paymentDate;
     private final double amount;
 
-   /**
-   * Constructor for payment class to create objects
-   * @param checkNr        The unique serial number consists of two letters followed by 6 digits.
-   */
-
-    public Payment(String checkNr, Date paymentDate, double amount){
+    /**
+     * Constructor for the Payment class to create objects.
+     * 
+     * @param checkNr      The unique serial number consisting of two letters followed by 6 digits.
+     * @param paymentDate  The date when the payment was made.
+     * @param amount       The total amount paid.
+     */
+    public Payment(String checkNr, Date paymentDate, double amount) {
         this.checkNr = checkNr;
         this.paymentDate = paymentDate;
         this.amount = amount;
     }
 
-   /**
-   * Getter methods for following variables.
-   * @return check number, payment date, and the total paid amount. 
-   */
-
-    public String getCheckNr(){
+    /**
+     * Gets the check number.
+     * 
+     * @return The check number.
+     */
+    public String getCheckNr() {
         return checkNr;
     }
-    public Date getPaymentDate(){
+
+    /**
+     * Gets the payment date.
+     * 
+     * @return The payment date.
+     */
+    public Date getPaymentDate() {
         return paymentDate;
     }
-    public double getAmount(){
+
+    /**
+     * Gets the paid amount.
+     * 
+     * @return The total paid amount.
+     */
+    public double getAmount() {
         return amount;
     }
 }
