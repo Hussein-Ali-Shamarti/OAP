@@ -13,10 +13,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,6 +52,9 @@ public class OrderView extends MainView {
         setLocationRelativeTo(null);
         pack(); // Adjusts the frame to fit the components
         setVisible(true); // Make sure the frame is visible
+       /* fetchProductMappings();
+        setupProductDropdowns();
+    }*/
     }
     
     private void initializeUI() {
@@ -73,6 +79,34 @@ public class OrderView extends MainView {
         setSize(600, 400);
         setLocationRelativeTo(null);
     }
+      /*  
+        // Method to fetch product mappings from the database
+        private void fetchProductMappings() {
+            productCodeNameMap = orderHandler.getProductCodeNameMapping();
+            productNameCodeMap = new HashMap<>();
+            productCodeNameMap.forEach((code, name) -> productNameCodeMap.put(name, code));
+        }
+
+        // This method initializes the product dropdowns and sets up listeners for them
+        private void setupProductDropdowns() {
+            // Initialize the dropdowns
+            productCodeDropdown = new JComboBox<>(productCodeNameMap.keySet().toArray(new String[0]));
+            productNameDropdown = new JComboBox<>(productNameCodeMap.keySet().toArray(new String[0]));
+
+            // Setup dropdown listeners
+            productCodeDropdown.addActionListener(e -> {
+                String selectedCode = (String) productCodeDropdown.getSelectedItem();
+                productNameDropdown.setSelectedItem(productCodeNameMap.get(selectedCode));
+            });
+
+            productNameDropdown.addActionListener(e -> {
+                String selectedName = (String) productNameDropdown.getSelectedItem();
+                productCodeDropdown.setSelectedItem(productNameCodeMap.get(selectedName));
+            });
+        }
+        
+        */
+    
     private void setupTable() {
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
         tableModel = new DefaultTableModel(null, columnNames) {
@@ -84,6 +118,7 @@ public class OrderView extends MainView {
         };
         table = new JTable(tableModel);
     }
+    
     private void setupControlPanel() {
         // Control panel for the Search, Add, Edit, Delete buttons
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
@@ -119,30 +154,44 @@ public class OrderView extends MainView {
         button.addActionListener(listener);
         return button;
     }
+    
+   
+    
 
-
-    void fetchAndDisplayOrders() {
+    private void fetchAndDisplayOrders() {
         tableModel.setRowCount(0);
+
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
-            String sql = "SELECT OrderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber FROM orders";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
+
+            // Adjusted query to join orders with orderDetails to fetch productCode
+            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber, od.productCode " +
+                               "FROM orders o " +
+                               "JOIN orderDetails od ON o.OrderNumber = od.OrderNumber";
+            ResultSet ordersResultSet = statement.executeQuery(ordersSql);
+
+            // Iterate through the orders and display the data
+            while (ordersResultSet.next()) {
                 Object[] row = {
-                        resultSet.getString("OrderNumber"),
-                        resultSet.getString("orderDate"),
-                        resultSet.getString("requiredDate"),
-                        resultSet.getString("shippedDate"),
-                        resultSet.getString("status"),
-                        resultSet.getString("comments"),
-                        resultSet.getString("customerNumber")
+                    ordersResultSet.getString("OrderNumber"),
+                    ordersResultSet.getDate("orderDate"),
+                    ordersResultSet.getDate("requiredDate"),
+                    ordersResultSet.getDate("shippedDate"),
+                    ordersResultSet.getString("status"),
+                    ordersResultSet.getString("comments"),
+                    ordersResultSet.getInt("customerNumber"), // Assuming customerNumber is an int
+                    ordersResultSet.getString("productCode") // This now comes from the joined orderDetails table
                 };
+
                 tableModel.addRow(row);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+        
     }
+
+
 
     private class AddButtonListener implements ActionListener {
    	 @Override
@@ -154,11 +203,20 @@ public class OrderView extends MainView {
          JTextField statusField = new JTextField(10);
          JTextField commentsField = new JTextField(10);
          JTextField customerNumberField = new JTextField(10);
+         
 
 
          // Panel for the form
          JPanel panel = new JPanel(new GridLayout(0, 2));
-
+         
+         JComboBox<String> productNameDropdown = new JComboBox<>();
+         JComboBox<String> productCodeDropdown = new JComboBox<>();
+         
+         // Populate the dropdown with product data from the database
+         Map<String, String> products = orderHandler.getProducts(); // Corrected to Map<String, Integer>
+         for (String productName : products.keySet()) {
+             productNameDropdown.addItem(productName);
+         }
          // Adding labels and text fields to the panel
          panel.add(new JLabel("Order Date (yyyy-MM-dd) :"));
          panel.add(orderDateField);
@@ -172,6 +230,10 @@ public class OrderView extends MainView {
          panel.add(commentsField);
          panel.add(new JLabel("customerNumber:"));
          panel.add(customerNumberField);
+         panel.add(new JLabel("Product Name:"));
+         panel.add(productNameDropdown);
+         panel.add(new JLabel("Product Code:"));
+         panel.add(productCodeDropdown);
 
          // Show confirm dialog with the form
          int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
@@ -189,9 +251,16 @@ public class OrderView extends MainView {
                  String status = statusField.getText();
                  String comments = commentsField.getText();
                  int customerNumber = Integer.parseInt(customerNumberField.getText());
-               
+                 
+                 String selectedProductName = (String) productNameDropdown.getSelectedItem();
+                 String productCode = products.get(selectedProductName); // Get the product code using the product name
+                 int stock = orderHandler.getStock(String.valueOf(productCode));
+                 if (stock <= 0) {
+                     JOptionPane.showMessageDialog(OrderView.this, "Not enough stock for selected product.");
+                     return;
+                 }
                  // Call to CustomerHandler to add customer
-                 Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate);
+                 Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate, productCode);
                  boolean success = orderHandler.addOrder(order);
                  if (success) {
                      JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
@@ -220,25 +289,55 @@ public class OrderView extends MainView {
 
                     if (existingOrder != null) {
                         // Fields for updating order details
-                        JTextField orderDateField = new JTextField(10);
-                        JTextField requiredDateField = new JTextField(10);
-                        JTextField shippedDateField = new JTextField(10);
-                        JTextField statusField = new JTextField(10);
-                        JTextField commentsField = new JTextField(10);
-                        JTextField customerNumberField = new JTextField(10);
+                        JTextField orderDateField = new JTextField(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "", 10);
+                        JTextField requiredDateField = new JTextField(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString() : "", 10);
+                        JTextField shippedDateField = new JTextField(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "", 10);
+                        JTextField statusField = new JTextField(existingOrder.getStatus(), 10);
+                        JTextField commentsField = new JTextField(existingOrder.getComments(), 10);
+                        JTextField customerNumberField = new JTextField(String.valueOf(existingOrder.getCustomerNumber()), 10);
+                        JTextField productCodeField = new JTextField(String.valueOf(existingOrder.getProductCode())); // Your product code text field
+                        String productCode = productCodeField.getText();
 
-                        // Set default values in the fields
-                        orderDateField.setText(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "");
-                        requiredDateField.setText(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString() : "");
-                        shippedDateField.setText(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "");
-                        statusField.setText(existingOrder.getStatus());
-                        commentsField.setText(existingOrder.getComments());
-                        customerNumberField.setText(String.valueOf(existingOrder.getCustomerNumber()));
+                        // Add product selection dropdowns
+                        JComboBox<String> productNameDropdown = new JComboBox<>();
+                        JComboBox<String> productCodeDropdown = new JComboBox<>(); // Changed to String based on your database
+                        Map<String, String> products = orderHandler.getProducts(); // Fetch products as Map<String, String>
+                        
+                        // Populate dropdowns
+                     // Assuming you have a Map<String, Integer> products where key is productName and value is productCode
+                        products.forEach((name, code) -> {
+                            productNameDropdown.addItem(name);
+                            productCodeDropdown.addItem(code);
+                        });
+
+
+                        // Set the selected item based on existingOrder's product code
+                        String existingProductCode = existingOrder.getProductCode(); // Assume getProductCode() returns a String
+                        if (existingProductCode != null) {
+                            productCodeDropdown.setSelectedItem(existingProductCode);
+                            // Find the product name corresponding to the existing product code
+                            for (Map.Entry<String, String> entry : products.entrySet()) {
+                                if (entry.getValue().equals(existingProductCode)) {
+                                    productNameDropdown.setSelectedItem(entry.getKey());
+                                    break;
+                                }
+                            }
+                        }
+                       
+                        
+                        productNameDropdown.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent event) {
+                                String selectedProductName = (String) productNameDropdown.getSelectedItem();
+                                String selectedProductCode = products.get(selectedProductName);
+                                productCodeDropdown.setSelectedItem(selectedProductCode);
+                            }
+                        });
 
                         // Panel for the update form
                         JPanel panel = new JPanel(new GridLayout(0, 2));
 
-                        // Adding labels and text fields to the panel
+                        // Adding components to the panel
                         panel.add(new JLabel("Order Date (yyyy-MM-dd):"));
                         panel.add(orderDateField);
                         panel.add(new JLabel("Required Date (yyyy-MM-dd):"));
@@ -251,36 +350,32 @@ public class OrderView extends MainView {
                         panel.add(commentsField);
                         panel.add(new JLabel("Customer Number:"));
                         panel.add(customerNumberField);
+                        panel.add(new JLabel("Product Name:"));
+                        panel.add(productNameDropdown);
+                        panel.add(new JLabel("Product Code:"));
+                        panel.add(productCodeDropdown);
+
 
                         // Show confirm dialog with the update form
                         int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details", JOptionPane.OK_CANCEL_OPTION);
                         if (result == JOptionPane.OK_OPTION) {
                             try {
-                                String orderDateString = orderDateField.getText();
-                                String requiredDateString = requiredDateField.getText();
-                                String shippedDateString = shippedDateField.getText();
-                                String status = statusField.getText();
-                                String comments = commentsField.getText();
-                                int customerNumber = Integer.parseInt(customerNumberField.getText());
-
-                                // Parse dates
+                                // Parse and update order details
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                Date orderDate = null;
-                                Date requiredDate = null;
-                                Date shippedDate = null;
-                                if (!orderDateString.isEmpty()) {
-                                    orderDate = new Date(dateFormat.parse(orderDateString).getTime());
-                                }
-                                if (!requiredDateString.isEmpty()) {
-                                    requiredDate = new Date(dateFormat.parse(requiredDateString).getTime());
-                                }
-                                if (!shippedDateString.isEmpty()) {
-                                    shippedDate = new Date(dateFormat.parse(shippedDateString).getTime());
-                                }
+                                Date orderDate = !orderDateField.getText().isEmpty() ? new Date(dateFormat.parse(orderDateField.getText()).getTime()) : null;
+                                Date requiredDate = !requiredDateField.getText().isEmpty() ? new Date(dateFormat.parse(requiredDateField.getText()).getTime()) : null;
+                                Date shippedDate = !shippedDateField.getText().isEmpty() ? new Date(dateFormat.parse(shippedDateField.getText()).getTime()) : null;
 
-                                // Create a new Order object with updated values
-                                Order updatedOrder = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-
+                                // Update the Order object
+                                Order updatedOrder = new Order(
+                                	    requiredDate, 
+                                	    shippedDate, 
+                                	    statusField.getText(), 
+                                	    commentsField.getText(), 
+                                	    Integer.parseInt(customerNumberField.getText()), 
+                                	    orderDate,
+                                	    productCode // Include the productCode here
+                                	);
                                 // Call the OrderHandler to update the order
                                 boolean success = orderHandler.editOrder(updatedOrder, orderNumber);
                                 if (success) {
@@ -303,6 +398,7 @@ public class OrderView extends MainView {
             }
         }
     }
+
 
 
     private class DeleteButtonListener implements ActionListener {

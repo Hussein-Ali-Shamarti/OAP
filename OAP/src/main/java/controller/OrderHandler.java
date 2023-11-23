@@ -19,12 +19,15 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import database.DataBaseConnection;
 import model.Order;
+
 
 
 public class OrderHandler {
@@ -84,7 +87,7 @@ public class OrderHandler {
 
     // Update
     public boolean editOrder(Order order, int OrderNumber) {
-        String updateOrderSQL = "UPDATE orders SET requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ?, orderDate = ? WHERE OrderNumber = ?";
+        String updateOrderSQL = "UPDATE orders SET requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ?, orderDate = ?, productCode = ? WHERE OrderNumber = ?";
         
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(updateOrderSQL)) {
@@ -94,7 +97,9 @@ public class OrderHandler {
             pstmt.setString(4, order.getComments());
             pstmt.setInt(5, order.getCustomerNumber());
             pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
-            pstmt.setInt(7, OrderNumber);
+            pstmt.setString(7, order.getProductCode());
+            pstmt.setInt(8, OrderNumber);
+
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -123,9 +128,11 @@ public class OrderHandler {
         }
     }
 
-    // Read
     public Order getOrder(int OrderNumber) {
-        String selectOrderSQL = "SELECT * FROM orders WHERE OrderNumber = ?";
+        String selectOrderSQL = "SELECT o.*, od.productCode " +
+                                "FROM orders o " +
+                                "JOIN orderDetails od ON o.OrderNumber = od.OrderNumber " +
+                                "WHERE o.OrderNumber = ?";
         Order order = null;
 
         try (Connection conn = DataBaseConnection.getConnection();
@@ -141,8 +148,9 @@ public class OrderHandler {
                 String status = rs.getString("status");
                 String comments = rs.getString("comments");
                 int customerNumber = rs.getInt("customerNumber");
+                String productCode = rs.getString("productCode"); // Fetch the product code
 
-                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate, productCode);
             }
 
         } catch (SQLException e) {
@@ -150,6 +158,22 @@ public class OrderHandler {
         }
 
         return order;
+    }
+    
+    // Method to get the product code-name mapping
+    public Map<String, String> getProductCodeNameMapping() {
+        Map<String, String> codeNameMapping = new HashMap<>();
+        String query = "SELECT productCode, productName FROM products";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                codeNameMapping.put(rs.getString("productCode"), rs.getString("productName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return codeNameMapping;
     }
 
 
@@ -201,5 +225,36 @@ public class OrderHandler {
         }
         return false;
     }
+    public Map<String, String> getProducts() {
+        Map<String, String> products = new HashMap<>();
+        String query = "SELECT productName, productCode FROM products";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                products.put(rs.getString("productName"), rs.getString("productCode"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+    
+    public int getStock(String productCode) {
+        String query = "SELECT quantityInStock FROM products WHERE productCode = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, productCode);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("quantityInStock");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Or appropriate error handling
+    }
+
+    
 }
 
