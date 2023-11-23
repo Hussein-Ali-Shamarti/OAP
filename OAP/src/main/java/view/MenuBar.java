@@ -8,6 +8,7 @@ import database.DataBaseConnection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,7 +104,7 @@ public class MenuBar {
     private void addExtendedMenuItems() {
         // Add extended menu items
         JMenuItem saveItem = new JMenuItem("Save");
-        JMenuItem saveToFileItem = new JMenuItem("Save to File");
+        JMenuItem saveToFileItem = new JMenuItem("Save to Folder");
 
         // Add action listeners
 //        saveItem.addActionListener(new SaveListener()); 
@@ -158,19 +159,53 @@ public class MenuBar {
 //    }
 
     // Action listener for saving to a file
-    private class SaveToFileListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Add your logic to save data to a file here
-            // For demonstration purposes, let's write a sample file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
-                writer.write("This is a sample file content.");
-                JOptionPane.showMessageDialog(null, "File saved successfully!");
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
+	private class SaveToFileListener implements ActionListener {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        JFileChooser fileChooser = new JFileChooser();
+	        fileChooser.setDialogTitle("Specify a file to save");
+
+	        int userSelection = fileChooser.showSaveDialog(null);
+
+	        if (userSelection == JFileChooser.APPROVE_OPTION) {
+	            File fileToSave = fileChooser.getSelectedFile();
+	            // Use the database connection to fetch and write data
+	            try (Connection connection = DataBaseConnection.getConnection();
+	                 Statement statement = connection.createStatement();
+	                 ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table_name"); // Replace with your actual table name
+	                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+
+	                int columnCount = resultSet.getMetaData().getColumnCount();
+
+	                // Write column headers
+	                for (int i = 1; i <= columnCount; i++) {
+	                    writer.write(resultSet.getMetaData().getColumnName(i));
+	                    writer.write("\t");
+	                }
+	                writer.newLine();
+
+	                // Write rows
+	                while (resultSet.next()) {
+	                    for (int i = 1; i <= columnCount; i++) {
+	                        writer.write(resultSet.getString(i) != null ? resultSet.getString(i) : "");
+	                        writer.write(i != columnCount ? "\t" : "");
+	                    }
+	                    writer.newLine();
+	                }
+	                JOptionPane.showMessageDialog(null, "File saved successfully!");
+	            } catch (SQLException sqlEx) {
+	                JOptionPane.showMessageDialog(null, "Database error: " + sqlEx.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+	                sqlEx.printStackTrace();
+	            } catch (IOException ioEx) {
+	                JOptionPane.showMessageDialog(null, "File writing error: " + ioEx.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+	                ioEx.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
+    
+    
     
     private class TestConnectionListener implements ActionListener {
         @Override
