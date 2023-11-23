@@ -13,7 +13,7 @@ public class Order {
     private Date shippedDate;
     private String status;
     private String comments;
-    private String productCode; // New field for product code
+    //private String productCode; // New field for product code
     private int customerNumber;
     private List<OrderDetails> orderDetailsList;
 
@@ -28,14 +28,14 @@ public class Order {
      * @param orderDate 
      */
     
-    public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate, String productCode) {
+    public Order(Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
         this.requiredDate = requiredDate;
         this.shippedDate = shippedDate;	
         this.status = status;
         this.comments = comments;
         this.customerNumber = customerNumber;
         this.orderDate = orderDate;
-        this.productCode = productCode; // Initialize the product code
+        //this.productCode = productCode; // Initialize the product code
         this.orderDetailsList = new ArrayList<>();
         
     }
@@ -112,9 +112,9 @@ public class Order {
         return total;
     }
     
-    public String getProductCode() {
+   /* public String getProductCode() {
         return this.productCode;
-    }
+    }*/
     
 
    @Override

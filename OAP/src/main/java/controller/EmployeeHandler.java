@@ -54,6 +54,7 @@ public class EmployeeHandler {
 
 		        return searchResults;
 		    }
+		    
 
 		    private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
 		        return new Employee(

@@ -13,11 +13,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -39,7 +38,6 @@ public class OrderView extends MainView {
    private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
-    private JTextField textField;  // Assuming you have a JTextField for search
     private OrderHandler orderHandler=new OrderHandler();
     
     public OrderView() {
@@ -159,15 +157,16 @@ public class OrderView extends MainView {
     
 
     private void fetchAndDisplayOrders() {
-        tableModel.setRowCount(0);
 
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
+        try {
+            tableModel.setRowCount(0);
+        	Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement(); 
 
             // Adjusted query to join orders with orderDetails to fetch productCode
-            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber, od.productCode " +
-                               "FROM orders o " +
-                               "JOIN orderDetails od ON o.OrderNumber = od.OrderNumber";
+            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber  " + //od.productCode
+                               "FROM orders o ";
+                               //"JOIN orderDetails od ON o.OrderNumber = od.OrderNumber"; //join inner or join outer osv
             ResultSet ordersResultSet = statement.executeQuery(ordersSql);
 
             // Iterate through the orders and display the data
@@ -180,7 +179,7 @@ public class OrderView extends MainView {
                     ordersResultSet.getString("status"),
                     ordersResultSet.getString("comments"),
                     ordersResultSet.getInt("customerNumber"), // Assuming customerNumber is an int
-                    ordersResultSet.getString("productCode") // This now comes from the joined orderDetails table
+                    //ordersResultSet.getString("productCode") // This now comes from the joined orderDetails table
                 };
 
                 tableModel.addRow(row);
@@ -190,7 +189,7 @@ public class OrderView extends MainView {
         }
         
     }
-
+    
 
 
     private class AddButtonListener implements ActionListener {
@@ -260,7 +259,7 @@ public class OrderView extends MainView {
                      return;
                  }
                  // Call to CustomerHandler to add customer
-                 Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate, productCode);
+                 Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber,orderDate);
                  boolean success = orderHandler.addOrder(order);
                  if (success) {
                      JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
@@ -295,8 +294,8 @@ public class OrderView extends MainView {
                         JTextField statusField = new JTextField(existingOrder.getStatus(), 10);
                         JTextField commentsField = new JTextField(existingOrder.getComments(), 10);
                         JTextField customerNumberField = new JTextField(String.valueOf(existingOrder.getCustomerNumber()), 10);
-                        JTextField productCodeField = new JTextField(String.valueOf(existingOrder.getProductCode())); // Your product code text field
-                        String productCode = productCodeField.getText();
+                        //JTextField productCodeField = new JTextField(String.valueOf(existingOrder.getProductCode())); // Your product code text field
+                       // String productCode = productCodeField.getText();
 
                         // Add product selection dropdowns
                         JComboBox<String> productNameDropdown = new JComboBox<>();
@@ -312,8 +311,8 @@ public class OrderView extends MainView {
 
 
                         // Set the selected item based on existingOrder's product code
-                        String existingProductCode = existingOrder.getProductCode(); // Assume getProductCode() returns a String
-                        if (existingProductCode != null) {
+                      //  String existingProductCode = existingOrder.getProductCode(); // Assume getProductCode() returns a String
+                       /* if (existingProductCode != null) {
                             productCodeDropdown.setSelectedItem(existingProductCode);
                             // Find the product name corresponding to the existing product code
                             for (Map.Entry<String, String> entry : products.entrySet()) {
@@ -322,7 +321,7 @@ public class OrderView extends MainView {
                                     break;
                                 }
                             }
-                        }
+                        }*/
                        
                         
                         productNameDropdown.addActionListener(new ActionListener() {
@@ -373,8 +372,8 @@ public class OrderView extends MainView {
                                 	    statusField.getText(), 
                                 	    commentsField.getText(), 
                                 	    Integer.parseInt(customerNumberField.getText()), 
-                                	    orderDate,
-                                	    productCode // Include the productCode here
+                                	    orderDate
+                                	    //productCode // Include the productCode here
                                 	);
                                 // Call the OrderHandler to update the order
                                 boolean success = orderHandler.editOrder(updatedOrder, orderNumber);
@@ -439,12 +438,25 @@ public class OrderView extends MainView {
             String searchParameter = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to search:");
 
             if (searchParameter != "" && !searchParameter.isEmpty()) {
-                try {
-                	List<Order> filter = orderHandler.searchOrders(searchParameter);
+                try {tableModel.setRowCount(0);
+                	List<Order> filter = orderHandler.searchOrder(searchParameter);
                 	for(Order o : filter) {
                 		System.out.println(o);
+                	    Vector<Object> row = new Vector<>();
+                	    row.add(o.getOrderNumber());
+                	    row.add(o.getOrderDate());
+                	    row.add(o.getRequiredDate());
+                	    row.add(o.getShippedDate());
+                	    row.add(o.getStatus());
+                	    row.add(o.getComments());
+                	    row.add(o.getCustomerNumber());
+
+                	    tableModel.addRow(row);
+
                 	}
+                	System.out.println(filter);
                 	
+
                 	//StringBuilder resultMessage = new StringBuilder("Search result:\n");
                 	//resultMessage.append("Order Number: ").append(filter)
 

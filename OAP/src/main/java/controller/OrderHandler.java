@@ -26,51 +26,111 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import database.DataBaseConnection;
+import model.Employee;
 import model.Order;
 
 
 
 public class OrderHandler {
 	
-	public List<Order> searchOrders(String searchText) {
+	/*public List<Order> searchOrders(String searchText) {
+		System.out.println("sjekk parameter "+searchText);
 	    List<Order> searchResults = new ArrayList<>();
-	    String searchQuery = "SELECT * FROM orders WHERE CONCAT(orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
+	    //String searchQuery = "SELECT * FROM orders WHERE CONCAT(orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
+	    String searchQuery = "SELECT * FROM orders WHERE orderDate LIKE ? OR requiredDate = ? OR shippedDate LIKE ? OR status LIKE ? OR comments LIKE ? OR customerNumber LIKE ?";
+	    try {
+	    	Connection conn = DataBaseConnection.getConnection();
 
-	    try (Connection conn = DataBaseConnection.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(searchQuery)) {
+     PreparedStatement pstmt = conn.prepareStatement(searchQuery); 
 	        
 	        pstmt.setString(1, "%" + searchText + "%");
 	        ResultSet rs = pstmt.executeQuery();
+	        System.out.println(rs);
+	        Order order= null; 
+	        if (rs.next()) {
+                Date orderDate = rs.getDate("orderDate");
+                Date requiredDate = rs.getDate("requiredDate");
+                Date shippedDate = rs.getDate("shippedDate");
+                String status = rs.getString("status");
+                String comments = rs.getString("comments");
+                int customerNumber = rs.getInt("customerNumber");
+                String productCode = rs.getString("productCode"); // Fetch the product code
 
-	        while (rs.next()) {
-	            // Assuming you have a constructor in Order class that takes ResultSet as a parameter
-	            Order order = new Order(rs);
-	            searchResults.add(order);
+                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                searchResults.add(order);
 	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        System.out.println("searchresult: "+searchResults);
+	    }catch(SQLException e) {
+	    	e.printStackTrace();
 	    }
-	    return searchResults;
-	} 
+		return searchResults;
+
+	    
+	  
+	} */
 	
+	private static final String SEARCH_ORDER_SQL = 
+	        "SELECT * FROM orders WHERE " +
+	        "CAST(orderDate AS CHAR) LIKE ? OR " +
+	        "CAST(requiredDate AS CHAR) LIKE ? OR " +
+	        "CAST(shippedDate AS CHAR )LIKE ? OR " +
+	        "status LIKE ? OR " +
+	        "comments LIKE ? OR " +
+	        "CAST(customerNumber AS CHAR) LIKE ?  ";
+	       
+
+	    public List<Order> searchOrder(String searchCriteria) {
+	        List<Order> searchResults = new ArrayList<>();
+	        
+	        try (Connection connection = DataBaseConnection.getConnection();
+	             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_ORDER_SQL)) {
+
+	            for (int i = 1; i <= 6; i++) {
+	                preparedStatement.setString(i, "%" + searchCriteria + "%");
+	            }
+
+	            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	                while (resultSet.next()) {
+	                    Order order = mapResultSetToOrder(resultSet);
+	                    searchResults.add(order);
+	                }
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return searchResults;
+	    }
+	    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
+	        return new Order(
+	        		resultSet.getDate("requiredDate"),
+	            resultSet.getDate("shippedDate"),
+	            resultSet.getString("status"),
+	            resultSet.getString("comments"),
+	            resultSet.getInt("customerNumber"),
+	            resultSet.getDate("orderDate")
 
 
+	        );
+	    }
+	
 
 
     // CRUD-methods
 
 	public boolean addOrder(Order order) {
-	    String insertOrderSQL = "INSERT INTO orders(ordernumber, requireddate, shippeddate, status, comments, customernumber, orderdate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	    String insertOrderSQL = "INSERT INTO orders( requireddate, shippeddate, status, comments, customernumber, orderdate) VALUES ( ?, ?, ?, ?, ?, ?)";
 	    
 	    try (Connection conn = DataBaseConnection.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(insertOrderSQL)) {
-	        pstmt.setInt(1, order.getOrderNumber());
-	        pstmt.setDate(2, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
-	        pstmt.setDate(3, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
-	        pstmt.setString(4, order.getStatus());
-	        pstmt.setString(5, order.getComments());
-	        pstmt.setInt(6, order.getCustomerNumber());
-	        pstmt.setDate(7, new java.sql.Date(order.getOrderDate().getTime()));
+	       // pstmt.setInt(1, order.getOrderNumber());
+	        pstmt.setDate(1, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
+	        pstmt.setDate(2, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
+	        pstmt.setString(3, order.getStatus());
+	        pstmt.setString(4, order.getComments());
+	        pstmt.setInt(5, order.getCustomerNumber());
+	        pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
 
 	        int affectedRows = pstmt.executeUpdate();
 	        if (affectedRows > 0) {
@@ -97,8 +157,8 @@ public class OrderHandler {
             pstmt.setString(4, order.getComments());
             pstmt.setInt(5, order.getCustomerNumber());
             pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
-            pstmt.setString(7, order.getProductCode());
-            pstmt.setInt(8, OrderNumber);
+            //pstmt.setString(7, order.getProductCode());
+            pstmt.setInt(7, OrderNumber);
 
 
             int affectedRows = pstmt.executeUpdate();
@@ -148,9 +208,9 @@ public class OrderHandler {
                 String status = rs.getString("status");
                 String comments = rs.getString("comments");
                 int customerNumber = rs.getInt("customerNumber");
-                String productCode = rs.getString("productCode"); // Fetch the product code
+               // String productCode = rs.getString("productCode"); // Fetch the product code
 
-                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate, productCode);
+                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
             }
 
         } catch (SQLException e) {
