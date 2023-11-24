@@ -40,7 +40,7 @@ public class MenuBar {
         menuBar = new JMenuBar();
 
         // Create a File menu
-        fileMenu = new JMenu("File");
+        fileMenu = new JMenu("Menu");
 
         // Add items to the File menu
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
