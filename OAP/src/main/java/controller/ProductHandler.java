@@ -14,7 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import database.DataBaseConnection;
 import model.Products;
@@ -79,8 +81,8 @@ public class ProductHandler {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    Products product = mapResultSetToProduct(resultSet);
-                    searchResults.add(product);
+                    Products products = mapResultSetToProduct(resultSet);
+                    searchResults.add(products);
                 }
             }
 
@@ -141,7 +143,31 @@ public class ProductHandler {
             return false;
         }
     }
+    /**
+     * Retrieves the product code for a given product name.
+     * 
+     * @param productName The name of the product.
+     * @return The product code corresponding to the given product name, or null if not found.
+     */
+    public String getProductCodeByName(String productName) {
+        String query = "SELECT productCode FROM products WHERE productName = ?";
 
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, productName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("productCode");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Return null if product name is not found or if an exception occurs
+    }
+    
     /**
      * Maps a ResultSet to a Products object.
      * @param resultSet The ResultSet containing product information.
@@ -161,4 +187,27 @@ public class ProductHandler {
                 resultSet.getDouble("msrp")
         );
     }
+    /**
+     * Retrieves a mapping of product names to product codes.
+     *
+     * @return A map where the key is the product name and the value is the product code.
+     */
+    public Map<String, String> getProducts() {
+        Map<String, String> products = new HashMap<>();
+        String query = "SELECT productName, productCode FROM products";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String productName = rs.getString("productName");
+                String productCode = rs.getString("productCode");
+                products.put(productName, productCode);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
 }

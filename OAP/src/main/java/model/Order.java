@@ -176,9 +176,7 @@ public class Order {
         this.customerNumber = customerNumber;
     }
     
-   /* public String getProductCode() {
-        return this.productCode;
-    }*/
+   
     
 
    @Override
