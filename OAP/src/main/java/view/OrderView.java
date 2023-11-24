@@ -39,6 +39,7 @@ import model.Products; // Adjust the package name as necessary
 
 
 public class OrderView extends MainView {
+    private JTextField textField;
    private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
@@ -117,10 +118,13 @@ public class OrderView extends MainView {
         setupControlPanel();
         setupTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
+        add(titlePanel, BorderLayout.NORTH);
+
         // Set frame properties
        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
+        
     }
     private void setupTable() {
         String[] columnNames = {"Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments", "Customer Number"};
