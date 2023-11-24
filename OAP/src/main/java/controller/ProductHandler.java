@@ -209,5 +209,31 @@ public class ProductHandler {
         }
         return products;
     }
+    /**
+     * Retrieves detailed information for a given product name.
+     *
+     * @param productName The name of the product.
+     * @return A map containing the details of the product including quantityInStock, buyPrice, and MSRP.
+     */
+    public Map<String, Object> getProductDetailsByName(String productName) {
+        Map<String, Object> productDetails = new HashMap<>();
+        String query = "SELECT quantityInStock, buyPrice, MSRP FROM products WHERE productName = ?";
 
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, productName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    productDetails.put("quantityInStock", rs.getInt("quantityInStock"));
+                    productDetails.put("buyPrice", rs.getDouble("buyPrice"));
+                    productDetails.put("MSRP", rs.getDouble("MSRP"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return productDetails; // This map will be empty if the product is not found or if an exception occurs
+    }
 }

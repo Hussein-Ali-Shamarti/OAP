@@ -47,13 +47,21 @@ public class OrderView extends MainView {
     private JComboBox<String> productCodeDropdown;
     private ProductHandler productHandler;
     private Map<String, String> products; // Declare products here
+    private JTextField quantityInStockField;
+    private JTextField buyPriceField;
+    private JTextField msrpField;
 
     public OrderView() {
         super();
         this.orderHandler = new OrderHandler();        // Initialize OrderHandler first
         this.productHandler = new ProductHandler();    // Initialize ProductHandler
         this.products = productHandler.getProducts();  // Initialize products
+        this.quantityInStockField = new JTextField(10);
+        this.buyPriceField = new JTextField(10);
+        this.msrpField = new JTextField(10);
 
+       
+        
         setLayout(new BorderLayout());
         initializeUI();
         setupProductDropdowns();                       // Now setup the product dropdowns
@@ -80,8 +88,21 @@ public class OrderView extends MainView {
             String selectedName = (String) productNameDropdown.getSelectedItem();
             if (selectedName != null && this.products.containsKey(selectedName)) {
                 productCodeDropdown.setSelectedItem(this.products.get(selectedName));
+                // Fetch and display product details
+                Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedName);
+                if (productDetails != null && !productDetails.isEmpty()) {
+                    quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+                    buyPriceField.setText(productDetails.get("buyPrice").toString());
+                    msrpField.setText(productDetails.get("MSRP").toString());
+                } else {
+                    // Clear the fields or show a message if details are not found
+                    quantityInStockField.setText("");
+                    buyPriceField.setText("");
+                    msrpField.setText("");
+                }
             }
         });
+        
     }
 
     
@@ -194,6 +215,9 @@ public class OrderView extends MainView {
             JTextField commentsField = new JTextField(10);
             JTextField customerNumberField = new JTextField(10);
             
+            JTextField quantityInStockField = new JTextField(10);
+            JTextField buyPriceField = new JTextField(10);
+            JTextField msrpField = new JTextField(10);
 
 
             // Panel for the form
@@ -207,7 +231,26 @@ public class OrderView extends MainView {
             for (String productName : products.keySet()) {
                 productNameDropdown.addItem(productName);
             }          
-            
+            productNameDropdown.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedProductName = (String) productNameDropdown.getSelectedItem();
+                    String productCode = products.get(selectedProductName);
+                    productCodeDropdown.setSelectedItem(productCode);
+
+                    Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
+                    if (productDetails != null && !productDetails.isEmpty()) {
+                        quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+                        buyPriceField.setText(productDetails.get("buyPrice").toString());
+                        msrpField.setText(productDetails.get("MSRP").toString());
+                    } else {
+                        quantityInStockField.setText("");
+                        buyPriceField.setText("");
+                        msrpField.setText("");
+                    }
+                }
+            });
+
             // Adding labels and text fields to the panel
             panel.add(new JLabel("Order Date (yyyy-MM-dd) :"));
             panel.add(orderDateField);
@@ -225,6 +268,12 @@ public class OrderView extends MainView {
             panel.add(productNameDropdown);
             panel.add(new JLabel("Product Code:"));
             panel.add(productCodeDropdown);
+            panel.add(new JLabel("Quantity in Stock:"));
+            panel.add(quantityInStockField);
+            panel.add(new JLabel("Buy Price:"));
+            panel.add(buyPriceField);
+            panel.add(new JLabel("MSRP:"));
+            panel.add(msrpField);
 
             // Show confirm dialog with the form
             int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
@@ -240,7 +289,11 @@ public class OrderView extends MainView {
 
                     String selectedProductName = (String) productNameDropdown.getSelectedItem();
                     String productCode = productHandler.getProductCodeByName(selectedProductName);
-
+                    Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
+                    quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+                    buyPriceField.setText(productDetails.get("buyPrice").toString());
+                    msrpField.setText(productDetails.get("MSRP").toString());
+                    
                     Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
                     boolean success = orderHandler.addOrder(order);
                     if (success) {
@@ -273,6 +326,40 @@ public class OrderView extends MainView {
                         JTextField commentsField = new JTextField(existingOrder.getComments(), 10);
                         JTextField customerNumberField = new JTextField(String.valueOf(existingOrder.getCustomerNumber()), 10);
 
+                        JTextField quantityInStockField = new JTextField(10);
+                        JTextField buyPriceField = new JTextField(10);
+                        JTextField msrpField = new JTextField(10);
+
+                        JComboBox<String> productNameDropdown = new JComboBox<>();
+                        JComboBox<String> productCodeDropdown = new JComboBox<>();
+
+                        // Populate the dropdown with product data from the database
+                        Map<String, String> products = productHandler.getProducts();
+                        for (String productName : products.keySet()) {
+                            productNameDropdown.addItem(productName);
+                        }
+
+                        productNameDropdown.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                String selectedProductName = (String) productNameDropdown.getSelectedItem();
+                                String productCode = products.get(selectedProductName);
+                                productCodeDropdown.setSelectedItem(productCode);
+
+                                Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
+                                if (productDetails != null && !productDetails.isEmpty()) {
+                                    quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+                                    buyPriceField.setText(productDetails.get("buyPrice").toString());
+                                    msrpField.setText(productDetails.get("MSRP").toString());
+                                } else {
+                                    quantityInStockField.setText("");
+                                    buyPriceField.setText("");
+                                    msrpField.setText("");
+                                }
+                            }
+                        });
+
+                        // Adding labels and text fields to the panel
                         JPanel panel = new JPanel(new GridLayout(0, 2));
                         panel.add(new JLabel("Order Date (yyyy-MM-dd):"));
                         panel.add(orderDateField);
@@ -286,19 +373,16 @@ public class OrderView extends MainView {
                         panel.add(commentsField);
                         panel.add(new JLabel("Customer Number:"));
                         panel.add(customerNumberField);
-
-                        // Reset and set product dropdowns based on associated product
-                        // Fetch associated product details for the order (this part needs to be implemented)
-                        Products associatedProduct = fetchProductsForOrder(existingOrder);
-                        if (associatedProduct != null) {
-                            productNameDropdown.setSelectedItem(associatedProduct.getProductName());
-                            productCodeDropdown.setSelectedItem(associatedProduct.getProductCode());
-                        }
-
                         panel.add(new JLabel("Product Name:"));
                         panel.add(productNameDropdown);
                         panel.add(new JLabel("Product Code:"));
                         panel.add(productCodeDropdown);
+                        panel.add(new JLabel("Quantity in Stock:"));
+                        panel.add(quantityInStockField);
+                        panel.add(new JLabel("Buy Price:"));
+                        panel.add(buyPriceField);
+                        panel.add(new JLabel("MSRP:"));
+                        panel.add(msrpField);
 
                         int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details", JOptionPane.OK_CANCEL_OPTION);
                         if (result == JOptionPane.OK_OPTION) {
@@ -306,7 +390,7 @@ public class OrderView extends MainView {
                             Date orderDate = !orderDateField.getText().isEmpty() ? dateFormat.parse(orderDateField.getText()) : null;
                             Date requiredDate = !requiredDateField.getText().isEmpty() ? dateFormat.parse(requiredDateField.getText()) : null;
                             Date shippedDate = !shippedDateField.getText().isEmpty() ? dateFormat.parse(shippedDateField.getText()) : null;
-                            
+
                             // Update the Order object with the new details
                             Order updatedOrder = new Order(requiredDate, shippedDate, statusField.getText(), commentsField.getText(), Integer.parseInt(customerNumberField.getText()), orderDate);
                             boolean success = orderHandler.editOrder(updatedOrder, orderNumber);
@@ -326,15 +410,7 @@ public class OrderView extends MainView {
                 }
             }
         }
-
-        private Products fetchProductsForOrder(Order order) {
-            // Implement the logic to fetch the Product associated with the given order
-            // This should return a Product object based on your application's data model
-            // Example: return productHandler.getProductByOrder(order);
-            return null; // Replace this with actual implementation
-        }
     }
-
 
 
     private class DeleteButtonListener implements ActionListener {
