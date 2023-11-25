@@ -60,7 +60,9 @@ public class OrderDetailsView extends JFrame {
 
     private void setupTable() {
         orderDetailsTableModel = new DefaultTableModel(null, COLUMN_NAMES) {
-            @Override
+            private static final long serialVersionUID = 1L;
+
+			@Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }

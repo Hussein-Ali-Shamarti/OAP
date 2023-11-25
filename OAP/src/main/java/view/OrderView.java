@@ -174,11 +174,13 @@ public class OrderView extends MainView {
 	        controlPanel.add(addButton);
 	        controlPanel.add(editButton);
 	        controlPanel.add(deleteButton);
+	        controlPanel.add(orderDetailsButton); // Add the button to the control panel
+
 	        // Control panel for the Check Status and Check Payment Status buttons
 	        JPanel statusPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 	        statusPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 	        statusPanel.setBackground(new Color(100, 25, 150));
-	        JButton checkStatusButton = createButton("Check Status", new CheckStatusButtonListener());
+	        JButton checkStatusButton = createButton("Check Shipping Status", new CheckStatusButtonListener());
 	        JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
 	        statusPanel.add(checkStatusButton);
 	        statusPanel.add(paymentButton);
