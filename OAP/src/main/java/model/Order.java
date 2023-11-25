@@ -198,9 +198,7 @@ public class Order {
     	return "orderID: " + orderNumber +", orderDate: +" + orderDate + ", requiredDate: "+requiredDate+", shippedDate: "+shippedDate+", status: "+status+", comments: "+comments;
  
     }
-    /* public void addOrderDetail(OrderDetails orderDetail) {
-    orderDetailsList.add(orderDetail);
-}
+   
 
 public double calculateOrderTotal() {
     double total = 0.0;
@@ -210,9 +208,6 @@ public double calculateOrderTotal() {
     return total;
 }
 
-   @Override
-public String toString() {
-	return String.format("%-10d %-20s %")
-}*/
+
 
 }

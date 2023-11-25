@@ -328,7 +328,7 @@ public class OrderView extends MainView {
 	            panel.add(productNameDropdown);
 	            panel.add(new JLabel("Product Code:"));
 	            panel.add(productCodeField); // Use the JTextField for Product Code
-	            panel.add(new JLabel("QuantityOrdered:"));
+	            panel.add(new JLabel("Product Quantity:"));
 	            panel.add(quantityOrderedField);
 	            panel.add(new JLabel("Quantity in Stock:"));
 	            panel.add(quantityInStockField);
