@@ -1,20 +1,23 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import database.DataBaseConnection;
 import controller.OrderHandler;
 
-public class OrderDetailsView {
-    private static final String[] COLUMN_NAMES = {
-    	"Order Number",
+public class OrderDetailsView extends JFrame {
+    private static final long serialVersionUID = 1L;
+
+	private static final String[] COLUMN_NAMES = {
+        "Order Number",
         "Product Code",
         "Quantity Ordered",
         "Price Each",
@@ -23,24 +26,40 @@ public class OrderDetailsView {
 
     private DefaultTableModel orderDetailsTableModel;
     private JTable orderDetailsTable;
-    private OrderHandler orderHandler;
 
     public OrderDetailsView() {
-        // Create a new JFrame for the order details table
-        JFrame orderDetailsFrame = new JFrame("Order Details");
-        orderDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        orderDetailsFrame.setSize(800, 600);
+        initializeUI();
+        fetchAndDisplayOrderDetails();
+        setVisible(true);
+    }
 
-        // Initialize OrderHandler (ensure it is correctly initialized)
-        orderHandler = new OrderHandler();
+    private void initializeUI() {
+        setTitle("Order Details");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
 
-        // Create a panel to hold the order details table
-        JPanel orderDetailsPanel = new JPanel(new BorderLayout());
+        setupTitlePanel();
+        setupTable();
+        add(new JScrollPane(orderDetailsTable), BorderLayout.CENTER);
+    }
 
-        // Create a table to display the order details
+    private void setupTitlePanel() {
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(84, 11, 131));
+        JLabel titleLabel = new JLabel("Order Details");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
+        add(titlePanel, BorderLayout.NORTH);
+    }
+
+
+ 
+
+    private void setupTable() {
         orderDetailsTableModel = new DefaultTableModel(null, COLUMN_NAMES) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -49,19 +68,7 @@ public class OrderDetailsView {
 
         orderDetailsTable = new JTable(orderDetailsTableModel);
         orderDetailsTable.setPreferredScrollableViewportSize(new Dimension(750, 400));
-
-        // Add the table to a scroll pane for scrolling if needed
-        JScrollPane scrollPane = new JScrollPane(orderDetailsTable);
-        orderDetailsPanel.add(scrollPane, BorderLayout.CENTER);
-
-        // Add the panel to the order details frame
-        orderDetailsFrame.add(orderDetailsPanel);
-
-        // Fetch and display order details
-        fetchAndDisplayOrderDetails();
-
-        // Set the order details frame to be visible
-        orderDetailsFrame.setVisible(true);
+        orderDetailsTable.setFillsViewportHeight(true);
     }
 
     private void fetchAndDisplayOrderDetails() {
