@@ -168,6 +168,23 @@ public class ProductHandler {
         return null; // Return null if product name is not found or if an exception occurs
     }
     
+    public String getProductNameByCode(String productCode) {
+        String query = "SELECT productName FROM products WHERE productCode = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, productCode);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("productName");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if product code is not found or if an exception occurs
+    }
+
     /**
      * Maps a ResultSet to a Products object.
      * @param resultSet The ResultSet containing product information.

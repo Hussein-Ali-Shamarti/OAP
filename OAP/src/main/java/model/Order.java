@@ -49,7 +49,21 @@ public class Order {
         
 
     }
-
+    
+    public Order(int orderNumber, Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
+    	this.orderNumber = orderNumber;
+    	this.requiredDate = requiredDate;
+        this.shippedDate = shippedDate;	
+        this.status = status;
+        this.comments = comments;
+        this.customerNumber = customerNumber;
+        this.orderDate = orderDate;
+        //this.productCode = productCode; // Initialize the product code
+       // this.orderDetailsList = new ArrayList<>();
+        
+    
+    }
+    
     /**
      * Gets the order number.
      * 

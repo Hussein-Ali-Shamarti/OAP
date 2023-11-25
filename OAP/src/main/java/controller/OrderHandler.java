@@ -16,16 +16,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import database.DataBaseConnection;
-import model.Employee;
 import model.Order;
+import model.OrderDetails;
+
 
 
 public class OrderHandler {
@@ -68,6 +65,7 @@ public class OrderHandler {
 	
 	private static final String SEARCH_ORDER_SQL = 
 	        "SELECT * FROM orders WHERE " +
+	        "CAST(orderNumber AS CHAR) LIKE ? OR "+
 	        "CAST(orderDate AS CHAR) LIKE ? OR " +
 	        "CAST(requiredDate AS CHAR) LIKE ? OR " +
 	        "CAST(shippedDate AS CHAR )LIKE ? OR " +
@@ -82,7 +80,7 @@ public class OrderHandler {
 	        try (Connection connection = DataBaseConnection.getConnection();
 	             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_ORDER_SQL)) {
 
-	            for (int i = 1; i <= 6; i++) {
+	            for (int i = 1; i <= 7; i++) {
 	                preparedStatement.setString(i, "%" + searchCriteria + "%");
 	            }
 
@@ -101,6 +99,7 @@ public class OrderHandler {
 	    }
 	    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
 	        return new Order(
+	        		resultSet.getInt("orderNumber"),
 	        		resultSet.getDate("requiredDate"),
 	            resultSet.getDate("shippedDate"),
 	            resultSet.getString("status"),
@@ -116,21 +115,35 @@ public class OrderHandler {
 
     // CRUD-methods
 
-	public boolean addOrder(Order order) {
-	    String insertOrderSQL = "INSERT INTO orders( requireddate, shippeddate, status, comments, customernumber, orderdate) VALUES ( ?, ?, ?, ?, ?, ?)";
-	    
-	    try (Connection conn = DataBaseConnection.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(insertOrderSQL)) {
+	public boolean addOrder(Order order, OrderDetails orderDetails) {
+	    String insertOrderSQL = "INSERT INTO orders( requiredDate, shippedDate, status, comments, customerNumber, orderDate) VALUES(?, ?, ?, ?, ?, ?)";
+
+	    try {
+	    	Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(insertOrderSQL,Statement.RETURN_GENERATED_KEYS);
+
 	       // pstmt.setInt(1, order.getOrderNumber());
 	        pstmt.setDate(1, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
 	        pstmt.setDate(2, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
 	        pstmt.setString(3, order.getStatus());
 	        pstmt.setString(4, order.getComments());
 	        pstmt.setInt(5, order.getCustomerNumber());
-	        pstmt.setDate(6, new java.sql.Date(order.getOrderDate().getTime()));
+	        pstmt.setDate(6, order.getOrderDate()!= null ? new java.sql.Date(order.getOrderDate().getTime()) : null);
 
-	        int affectedRows = pstmt.executeUpdate();
-	        if (affectedRows > 0) {
+	        pstmt.executeUpdate();
+           ResultSet generatedKeys = pstmt.getGeneratedKeys();
+
+	        if (generatedKeys.next()) {
+	        	long generatedKey = generatedKeys.getLong(1);
+	    	    String insertOrderDetailsSQL = "INSERT INTO orderdetails (orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES ( ?, ?, ?, ?, ?)";
+	    	    
+	    	    PreparedStatement pstm1 = conn.prepareStatement(insertOrderDetailsSQL);
+	    	     pstm1.setInt(1, (int) generatedKey);
+	    	     pstm1.setString(2, orderDetails.getProductCode());
+	    	     pstm1.setInt(3, orderDetails.getQuantityOrdered());
+	    	     pstm1.setDouble(4, orderDetails.getPriceEach());
+	    	     pstm1.setInt(5, orderDetails.getOrderLineNr());
+	    	     pstm1.executeUpdate();
 	            return true;
 	        } else {
 	            return false;
@@ -213,7 +226,41 @@ public class OrderHandler {
 
         return order;
     }
+    
+    // Define SQL queries for the "orderDetails" table
+    private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
+    
+    // Add more SQL queries for CRUD operations if needed
 
+    // Retrieve order details by order number
+    public List<OrderDetails> getOrderDetailsByOrderNumber() {
+        List<OrderDetails> orderDetailsList = new ArrayList<>();
+
+        try (Connection conn = DataBaseConnection.getConnection();
+        	     PreparedStatement pstmt = conn.prepareStatement(SELECT_ORDER_DETAILS_SQL)) {
+
+        	    ResultSet rs = pstmt.executeQuery();
+
+        	    while (rs.next()) {
+        	        // Retrieve data from the result set and create OrderDetails objects
+        	    	int orderNumber = rs.getInt("orderNumber");
+        	        String productCode = rs.getString("productCode");
+        	        int quantityOrdered = rs.getInt("quantityOrdered");
+        	        double priceEach = rs.getDouble("priceEach");
+        	        int orderLineNumber = rs.getInt("orderLineNumber");
+
+        	        // Pass orderNumber as well when creating OrderDetails
+        	        OrderDetails orderDetails = new OrderDetails(quantityOrdered, priceEach, productCode, orderNumber, orderLineNumber);
+        	        orderDetailsList.add(orderDetails);
+        	    }
+
+        	} catch (SQLException e) {
+        	    e.printStackTrace();
+        	    // Add logging here to log the error message and details
+        	}
+        return orderDetailsList; // Return the list of order details
+    }
+    
 
     // Add this method to your OrderHandler class
     public String getOrderStatus(int orderNumber) {
@@ -263,5 +310,6 @@ public class OrderHandler {
         }
         return false;
     }
+    
 }
 
