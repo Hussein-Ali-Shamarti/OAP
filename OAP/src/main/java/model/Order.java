@@ -1,9 +1,11 @@
 package model;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents an order entity with information such as order number, dates, status, comments,
@@ -23,7 +25,9 @@ public class Order {
     private String status;
     private String comments;
     //private String productCode; // New field for product code
+    private List<OrderDetails> orderDetailsList;
 
+    
     private int customerNumber;
 
     /**
@@ -200,13 +204,26 @@ public class Order {
     }
    
 
-public double calculateOrderTotal() {
-    double total = 0.0;
-    for (OrderDetails orderDetail : orderDetailsList) {
-        total += orderDetail.calculateSubTotal();
-    }
-    return total;
-}
+
+// Constructor not shown for brevity
+
+   // Calculate the total price for the order
+   public BigDecimal calculateOrderTotal() {
+       BigDecimal total = BigDecimal.ZERO;
+       for (OrderDetails details : orderDetailsList) {
+           total = total.add(details.calculateSubTotal());
+       }
+       return total;
+   }
+
+   // Getters and setters for orderDetailsList
+   public List<OrderDetails> getOrderDetailsList() {
+       return orderDetailsList;
+   }
+
+   public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
+       this.orderDetailsList = orderDetailsList;
+   }
 
 
 

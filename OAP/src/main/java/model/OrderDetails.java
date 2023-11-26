@@ -1,5 +1,6 @@
 package model;
-
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 /**
  * Represents order details, including quantity, unit price, product code, and order line number.
  * 
@@ -10,13 +11,12 @@ package model;
  * @version 07.11.2023
  */
 public class OrderDetails {
-   
-   // Declaration of private data fields 
-   private int quantityOrdered;
-   private double priceEach;
-   private int orderLineNr;
-   private String productCode;
-   private int orderNumber;
+	   
+	   private int quantityOrdered;
+	   private double priceEach; // Kept as double to reflect the DECIMAL type in the database
+	   private int orderLineNr;
+	   private String productCode;
+	   private int orderNumber;
 
    /**
     * Constructor for OrderDetails class.
@@ -27,13 +27,14 @@ public class OrderDetails {
     * @param orderNumber     The order number.
     * @param orderLineNr     The order line number.
     */
-   public OrderDetails(int quantityOrdered, double priceEach, String productCode, int orderNumber, int orderLineNr) {
-      this.quantityOrdered = quantityOrdered;
-      this.priceEach = priceEach;
-      this.productCode = productCode;
-      this.orderNumber = orderNumber;
-      this.orderLineNr = orderLineNr;
-   }
+	// Constructor
+	   public OrderDetails(int quantityOrdered, double priceEach, String productCode, int orderNumber, int orderLineNr) {
+	      this.quantityOrdered = quantityOrdered;
+	      this.priceEach = priceEach;
+	      this.productCode = productCode;
+	      this.orderNumber = orderNumber;
+	      this.orderLineNr = orderLineNr;
+	   }
 
    public OrderDetails(int quantityOrdered, double priceEach, String productCode,  int orderLineNr) {
 	      this.quantityOrdered = quantityOrdered;
@@ -41,6 +42,8 @@ public class OrderDetails {
 	      this.productCode = productCode;
 	      this.orderLineNr = orderLineNr;
 	   }
+   
+   
    
    public int getQuantityOrdered() {
 	    return this.quantityOrdered;
@@ -111,8 +114,15 @@ public class OrderDetails {
     * 
     * @return The subtotal amount.
     */
-   public double calculateSubTotal() {
-      return quantityOrdered * priceEach;
+   /**
+    * Calculates the subtotal amount for the order detail.
+    * This converts priceEach to BigDecimal for precise calculations.
+    * 
+    * @return The subtotal amount as BigDecimal.
+    */
+   public BigDecimal calculateSubTotal() {
+       BigDecimal price = BigDecimal.valueOf(priceEach);
+       return price.multiply(BigDecimal.valueOf(quantityOrdered)).setScale(2, RoundingMode.HALF_UP);
    }
 
 public Object getquantityOrdered() {
