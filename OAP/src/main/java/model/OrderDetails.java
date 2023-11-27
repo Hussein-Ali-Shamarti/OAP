@@ -1,6 +1,3 @@
-package model;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 /**
  * Represents order details, including quantity, unit price, product code, and order line number.
  * 
@@ -10,6 +7,10 @@ import java.math.RoundingMode;
  * @author Hussein
  * @version 07.11.2023
  */
+package model;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class OrderDetails {
 	   
 	   private int quantityOrdered;
@@ -126,12 +127,10 @@ public class OrderDetails {
    }
 
 public Object getquantityOrdered() {
-	// TODO Auto-generated method stub
 	return null;
 }
 
 public Object getOrderLineNumber() {
-	// TODO Auto-generated method stub
 	return null;
 }
 }

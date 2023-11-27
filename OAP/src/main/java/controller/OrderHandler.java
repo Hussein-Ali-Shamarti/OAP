@@ -27,41 +27,6 @@ import model.OrderDetails;
 
 public class OrderHandler {
 	
-	/*public List<Order> searchOrders(String searchText) {
-		System.out.println("sjekk parameter "+searchText);
-	    List<Order> searchResults = new ArrayList<>();
-	    //String searchQuery = "SELECT * FROM orders WHERE CONCAT(orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
-	    String searchQuery = "SELECT * FROM orders WHERE orderDate LIKE ? OR requiredDate = ? OR shippedDate LIKE ? OR status LIKE ? OR comments LIKE ? OR customerNumber LIKE ?";
-	    try {
-	    	Connection conn = DataBaseConnection.getConnection();
-
-     PreparedStatement pstmt = conn.prepareStatement(searchQuery); 
-	        
-	        pstmt.setString(1, "%" + searchText + "%");
-	        ResultSet rs = pstmt.executeQuery();
-	        System.out.println(rs);
-	        Order order= null; 
-	        if (rs.next()) {
-                Date orderDate = rs.getDate("orderDate");
-                Date requiredDate = rs.getDate("requiredDate");
-                Date shippedDate = rs.getDate("shippedDate");
-                String status = rs.getString("status");
-                String comments = rs.getString("comments");
-                int customerNumber = rs.getInt("customerNumber");
-                String productCode = rs.getString("productCode"); // Fetch the product code
-
-                order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-                searchResults.add(order);
-	        }
-	        System.out.println("searchresult: "+searchResults);
-	    }catch(SQLException e) {
-	    	e.printStackTrace();
-	    }
-		return searchResults;
-
-	    
-	  
-	} */
 	
 	private static final String SEARCH_ORDER_SQL = 
 	        "SELECT * FROM orders WHERE " +
@@ -97,6 +62,8 @@ public class OrderHandler {
 
 	        return searchResults;
 	    }
+	    
+	    
 	    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
 	        return new Order(
 	        		resultSet.getInt("orderNumber"),
@@ -177,6 +144,8 @@ public class OrderHandler {
             return false;
         }
     }
+    
+    
     // Delete
     public boolean deleteOrder(int OrderNumber) {
         String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
@@ -279,6 +248,7 @@ public class OrderHandler {
         return status;
     }
     
+    
     public boolean checkPaymentStatus(int customerNumber) {
         String checkPaymentStatusSQL = "SELECT COUNT(*) FROM payments WHERE customerNumber = ? AND paymentDate IS NOT NULL";
         try (Connection conn = DataBaseConnection.getConnection();
@@ -294,6 +264,8 @@ public class OrderHandler {
         }
         return false;
     }
+    
+    
     public boolean customerExists(int customerNumber) {
         // Your code to check if the customer exists
         String checkCustomerExistsSQL = "SELECT COUNT(*) FROM customers WHERE customerNumber = ?";
