@@ -100,13 +100,13 @@ public class EmployeeView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete",new DeleteButtonListener());
-        JButton saveButton = createButton("Save to File", new SaveEmployeeButtonListener());
+        JButton saveEmployeeButton = createButton("Save to File", new SaveEmployeeButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
-        controlPanel.add(saveButton);
+        controlPanel.add(saveEmployeeButton);
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);

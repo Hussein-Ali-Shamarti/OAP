@@ -6,11 +6,16 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +23,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,6 +39,7 @@ import controller.ProductHandler;
 import model.Order;
 import model.OrderDetails;
 import model.Products; // Adjust the package name as necessary
+
 
 public class OrderView extends MainView {
 	private JTextField textField;
@@ -159,6 +166,7 @@ public class OrderView extends MainView {
 		JButton addButton = createButton("Add", new AddButtonListener());
 		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
 		JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
 		// In your OrderView class constructor or appropriate method
 
@@ -167,6 +175,7 @@ public class OrderView extends MainView {
 		controlPanel.add(addButton);
 		controlPanel.add(editButton);
 		controlPanel.add(deleteButton);
+		controlPanel.add(saveOrderButton); 
 		controlPanel.add(orderDetailsButton); // Add the button to the control panel
 
 		// Control panel for the Check Status and Check Payment Status buttons
@@ -193,34 +202,34 @@ public class OrderView extends MainView {
 		return button;
 	}
 
-	private void fetchAndDisplayOrders() {
+	List<String[]> fetchAndDisplayOrders() {
+	    List<String[]> orders = new ArrayList<>();
+	    tableModel.setRowCount(0); // Clear the existing rows
 
-		try {
-			tableModel.setRowCount(0);
-			Connection conn = database.DataBaseConnection.getConnection();
-			Statement statement = conn.createStatement();
-
-			// Adjusted query to join orders with orderDetails to fetch productCode
-			String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber  "
-					+ // od.productCode
-					"FROM orders o ";
-			ResultSet ordersResultSet = statement.executeQuery(ordersSql);
-
-			// Iterate through the orders and display the data
-			while (ordersResultSet.next()) {
-				Object[] row = { ordersResultSet.getString("OrderNumber"), ordersResultSet.getDate("orderDate"),
-						ordersResultSet.getDate("requiredDate"), ordersResultSet.getDate("shippedDate"),
-						ordersResultSet.getString("status"), ordersResultSet.getString("comments"),
-						ordersResultSet.getInt("customerNumber"), // Assuming customerNumber is an int
-
-				};
-				tableModel.addRow(row);
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(this, "Error fetching order data: " + e.getMessage(), "Database Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+	    try (Connection conn = database.DataBaseConnection.getConnection();
+	         Statement statement = conn.createStatement()) {
+	        String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber "
+	                         + "FROM orders o ";
+	        ResultSet ordersResultSet = statement.executeQuery(ordersSql);
+	        while (ordersResultSet.next()) {
+	            String[] order = {
+	                ordersResultSet.getString("OrderNumber"),
+	                ordersResultSet.getDate("orderDate").toString(),
+	                ordersResultSet.getDate("requiredDate").toString(),
+	                ordersResultSet.getDate("shippedDate") != null ? ordersResultSet.getDate("shippedDate").toString() : "N/A",
+	                ordersResultSet.getString("status"),
+	                ordersResultSet.getString("comments"),
+	                String.valueOf(ordersResultSet.getInt("customerNumber"))
+	            };
+	            tableModel.addRow(order); // Add row to the table model
+	            orders.add(order); // Add to the list
+	        }
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, "Error fetching order data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	    return orders;
 	}
+
 
 	private class AddButtonListener implements ActionListener {
 		@Override
@@ -680,5 +689,43 @@ public class OrderView extends MainView {
 			new OrderDetailsView(); // You can pass -1 or any default value
 		}
 	}
+	
+	private void saveOrdersToFile() {
+	    JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Specify a CSV file to save");
+	    fileChooser.setSelectedFile(new File("Orders.csv")); // Set default file name
+
+	    int userSelection = fileChooser.showSaveDialog(null);
+
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File fileToSave = fileChooser.getSelectedFile();
+
+	        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+	            List<String[]> orders = fetchAndDisplayOrders(); // Fetch order data
+
+	            // Write header row (optional)
+	            writer.write("Order Number, Order Date, Required Date, Shipped Date, Status, Comments, Customer Number");
+	            writer.newLine();
+
+	            // Write data rows
+	            for (String[] order : orders) {
+	                String line = String.join(",", order); // Comma as delimiter
+	                writer.write(line);
+	                writer.newLine();
+	            }
+	            JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
+	        } catch (IOException ex) {
+	            JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	}
+	private class SaveOrderButtonListener implements ActionListener {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        saveOrdersToFile();
+	    }
+	}
+
+
 
 }
