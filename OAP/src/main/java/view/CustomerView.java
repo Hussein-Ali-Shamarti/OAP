@@ -115,47 +115,18 @@ public class CustomerView extends MainView {
         return button;
     }
     
-    void fetchAndDisplayCustomers() {
-        tableModel.setRowCount(0);
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
-                    "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
-                    "salesRepEmployeeNumber, creditLimit FROM customers";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                Object[] row = {
-                        resultSet.getString("customerNumber"),
-                        resultSet.getString("customerName"),
-                        resultSet.getString("contactLastName"),
-                        resultSet.getString("contactFirstName"),
-                        resultSet.getString("phone"),
-                        resultSet.getString("addressLine1"),
-                        resultSet.getString("addressLine2"),
-                        resultSet.getString("city"),
-                        resultSet.getString("state"),
-                        resultSet.getString("postalCode"),
-                        resultSet.getString("country"),
-                        resultSet.getString("salesRepEmployeeNumber"),
-                        resultSet.getString("creditLimit")
-                };
-                tableModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    List<String[]> fetchCustomersForFile() {
+    List<String[]> fetchAndDisplayCustomers() {
         List<String[]> customers = new ArrayList<>();
+        tableModel.setRowCount(0); // Clear the existing rows
+
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
             String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
-                    "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
-                    "salesRepEmployeeNumber, creditLimit FROM customers";
+                         "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
+                         "salesRepEmployeeNumber, creditLimit FROM customers";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                customers.add(new String[]{
+                String[] customer = {
                     resultSet.getString("customerNumber"),
                     resultSet.getString("customerName"),
                     resultSet.getString("contactLastName"),
@@ -169,7 +140,9 @@ public class CustomerView extends MainView {
                     resultSet.getString("country"),
                     resultSet.getString("salesRepEmployeeNumber"),
                     resultSet.getString("creditLimit")
-                });
+                };
+                tableModel.addRow(customer); // Add row to the table model
+                customers.add(customer); // Add to the list
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -458,7 +431,7 @@ public class CustomerView extends MainView {
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> customers = fetchCustomersForFile();
+                List<String[]> customers = fetchAndDisplayCustomers(); // Fetch customer data
                 for (String[] customer : customers) {
                     writer.write(String.join(", ", customer));
                     writer.newLine();
@@ -469,7 +442,7 @@ public class CustomerView extends MainView {
             }
         }
     }
-   }
+}
 
 
 
