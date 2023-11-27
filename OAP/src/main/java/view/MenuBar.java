@@ -41,7 +41,7 @@ public class MenuBar {
         menuBar = new JMenuBar();
 
         // Create a File menu
-        fileMenu = new JMenu("file/menu");
+        fileMenu = new JMenu("file");
 
         // Add items to the File menu
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
@@ -83,15 +83,15 @@ public class MenuBar {
 
     private void addExtendedMenuItems() {
         // Add extended menu items
-        JMenuItem saveItem = new JMenuItem("Save");
+        
         JMenuItem saveToFileItem = new JMenuItem("Save to File");
 
         // Add action listeners
-        saveItem.addActionListener(new SaveListener());
+       
         saveToFileItem.addActionListener(new SaveToFileListener());
 
         // Add items to the File menu
-        fileMenu.add(saveItem);
+        
         fileMenu.add(saveToFileItem);
     }
 
@@ -123,15 +123,7 @@ public class MenuBar {
         }
     }
 
-    // Action listener for saving data
-    private class SaveListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Add your logic to save data here
-            JOptionPane.showMessageDialog(null, "Data saved successfully!");
-        }
-    }
-
+   
     // Action listener for saving to a file
     private class SaveToFileListener implements ActionListener {
         @Override
