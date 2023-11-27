@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import database.DataBaseConnection;
 import model.Order;
 
@@ -52,9 +53,14 @@ public class BulkImportOrders {
         String sql = "INSERT INTO orders (orderDate, requiredDate, shippedDate, status, comments, customerNumber) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = DataBaseConnection.prepareStatement(sql)) {
             for (Order order : orders) {
-                statement.setDate(1, (Date) order.getOrderDate());
-                statement.setDate(2, (Date) order.getRequiredDate());
-                statement.setDate(3, (Date) order.getShippedDate());
+                // Convert java.util.Date to java.sql.Date
+                java.sql.Date sqlOrderDate = new java.sql.Date(order.getOrderDate().getTime());
+                java.sql.Date sqlRequiredDate = new java.sql.Date(order.getRequiredDate().getTime());
+                java.sql.Date sqlShippedDate = new java.sql.Date(order.getShippedDate().getTime());
+
+                statement.setDate(1, sqlOrderDate);
+                statement.setDate(2, sqlRequiredDate);
+                statement.setDate(3, sqlShippedDate);
                 statement.setString(4, order.getStatus());
                 statement.setString(5, order.getComments());
                 statement.setInt(6, order.getCustomerNumber());
@@ -64,4 +70,5 @@ public class BulkImportOrders {
             return counts.length == orders.size();
         } // try-with-resources will auto-close the statement and connection
     }
+
 }
