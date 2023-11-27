@@ -9,7 +9,7 @@
  */
 
 
-package controller;
+package model;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,12 +20,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import database.DataBaseConnection;
-import model.Order;
-import model.OrderDetails;
 
 
 
-public class OrderHandler {
+public class OrderDAO {
 	
 	/*public List<Order> searchOrders(String searchText) {
 		System.out.println("sjekk parameter "+searchText);

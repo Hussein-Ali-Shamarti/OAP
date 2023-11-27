@@ -30,8 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.ProductHandler;
 import database.DataBaseConnection;
+import model.ProductDAO;
 import model.Products;
 
 public class ProductView extends MainView {
@@ -152,7 +152,7 @@ public class ProductView extends MainView {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Create an instance of ProductHandler
-            ProductHandler productHandler = new ProductHandler();
+            ProductDAO productHandler = new ProductDAO();
 
             // Implement the logic for the "Add" button here
             // For example, you can open a dialog to input product details
@@ -447,7 +447,7 @@ public class ProductView extends MainView {
         private List<Products> performSearch(String searchCriteria) {
             // Placeholder logic: You should implement the actual database search here
             // This code assumes you have a ProductHandler class to handle database operations
-            ProductHandler productHandler = new ProductHandler();
+            ProductDAO productHandler = new ProductDAO();
             List<Products> searchResults = productHandler.searchProducts(searchCriteria);
 
             return searchResults;

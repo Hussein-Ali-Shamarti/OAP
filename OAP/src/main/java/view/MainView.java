@@ -1,8 +1,5 @@
 package view;
 
-import Listners.EmployeesListener;
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -10,11 +7,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import controller.EmployeeHandler;
+import view.MainMenu;
+
 
 
 public class MainView extends JFrame {
@@ -76,6 +78,8 @@ public class MainView extends JFrame {
 
         // Center the window on the screen
         setLocationRelativeTo(null);
+        
+        JButton employeesButton = new JButton("Employees");
 
         // Create ProductsListener for "Products" button in MainMenu
         ProductsListener productsListener = new ProductsListener();
@@ -87,10 +91,11 @@ public class MainView extends JFrame {
         CustomersListener customersListener = new CustomersListener();
 
         // Create EmployeesListener for "Employees" button in MainMenu
-        EmployeesListener employeesListener = new EmployeesListener();
+        EmployeeHandler employeeHandler = new EmployeeHandler();
+        employeesButton.addActionListener(employeeHandler);
 
         // Add MainMenu panel at the top
-        MainMenu mainMenu = new MainMenu(productsListener, orderListener, customersListener, employeesListener);
+        MainMenu mainMenu = new MainMenu(productsListener, orderListener, customersListener, employeeHandler);
         add(mainMenu, BorderLayout.SOUTH);
 
         // Center the window on the screen
