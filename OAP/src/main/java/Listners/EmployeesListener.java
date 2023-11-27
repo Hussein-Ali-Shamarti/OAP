@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 import view.EmployeeView;
 
-class EmployeesListener implements ActionListener {
+public class EmployeesListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Open EmployeeView when "Employees" button is pressed
