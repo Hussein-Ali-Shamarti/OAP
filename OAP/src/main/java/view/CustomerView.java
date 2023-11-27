@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List; // Ensure this import for generic Lists
 
 
@@ -33,7 +34,7 @@ public class CustomerView extends MainView {
 
         setLayout(new BorderLayout());
         initializeUI();
-        fetchAndDisplayCustomers();
+        fetchCustomers();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 500);
         setLocationRelativeTo(null);
@@ -108,8 +109,8 @@ public class CustomerView extends MainView {
         return button;
     }
     
-    void fetchAndDisplayCustomers() {
-        tableModel.setRowCount(0);
+    List<String[]> fetchCustomers() {
+        List<String[]> customers = new ArrayList<>();
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
             String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
@@ -117,27 +118,28 @@ public class CustomerView extends MainView {
                     "salesRepEmployeeNumber, creditLimit FROM customers";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                Object[] row = {
-                        resultSet.getString("customerNumber"),
-                        resultSet.getString("customerName"),
-                        resultSet.getString("contactLastName"),
-                        resultSet.getString("contactFirstName"),
-                        resultSet.getString("phone"),
-                        resultSet.getString("addressLine1"),
-                        resultSet.getString("addressLine2"),
-                        resultSet.getString("city"),
-                        resultSet.getString("state"),
-                        resultSet.getString("postalCode"),
-                        resultSet.getString("country"),
-                        resultSet.getString("salesRepEmployeeNumber"),
-                        resultSet.getString("creditLimit")
-                };
-                tableModel.addRow(row);
+                customers.add(new String[]{
+                    resultSet.getString("customerNumber"),
+                    resultSet.getString("customerName"),
+                    resultSet.getString("contactLastName"),
+                    resultSet.getString("contactFirstName"),
+                    resultSet.getString("phone"),
+                    resultSet.getString("addressLine1"),
+                    resultSet.getString("addressLine2"),
+                    resultSet.getString("city"),
+                    resultSet.getString("state"),
+                    resultSet.getString("postalCode"),
+                    resultSet.getString("country"),
+                    resultSet.getString("salesRepEmployeeNumber"),
+                    resultSet.getString("creditLimit")
+                });
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+        return customers;
     }
+
 
     
     private class AddButtonListener implements ActionListener {
