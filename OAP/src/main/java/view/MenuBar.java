@@ -8,6 +8,7 @@ import database.DataBaseConnection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,16 +136,32 @@ public class MenuBar {
     private class SaveToFileListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Add your logic to save data to a file here
-            // For demonstration purposes, let's write a sample file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
-                writer.write("This is a sample file content.");
-                JOptionPane.showMessageDialog(null, "File saved successfully!");
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Specify a file to save");
+
+            // Uncomment the following line if you want the user to select directories only.
+            // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            int userSelection = fileChooser.showSaveDialog(null);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                
+                // Ensure the file has a .txt extension
+                if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
+                    fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+                }
+
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                    writer.write("This is a sample file content.");
+                    JOptionPane.showMessageDialog(null, "File saved successfully at " + fileToSave.getAbsolutePath());
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
+
     
     private class TestConnectionListener implements ActionListener {
         @Override
