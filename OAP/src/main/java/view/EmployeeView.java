@@ -7,14 +7,20 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.EmployeeHandler;
 import model.Employee;
+
 
 public class EmployeeView extends MainView {
 
@@ -93,11 +100,13 @@ public class EmployeeView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete",new DeleteButtonListener());
+        JButton saveButton = createButton("Save to File", new SaveEmployeeButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(saveButton);
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -116,29 +125,34 @@ public class EmployeeView extends MainView {
         return button;
     }
 	
-	void fetchAndDisplayEmployees() {
-	    tableModel.setRowCount(0);
+	List<String[]> fetchAndDisplayEmployees() {
+	    List<String[]> employees = new ArrayList<>();
+	    tableModel.setRowCount(0); // Clear the existing rows
+
 	    try (Connection conn = database.DataBaseConnection.getConnection();
 	         Statement statement = conn.createStatement()) {
 	        String sql = "SELECT employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle FROM employees";
 	        ResultSet resultSet = statement.executeQuery(sql);
 	        while (resultSet.next()) {
-	            Object[] row = {
-	                    resultSet.getString("employeeNumber"),
-	                    resultSet.getString("firstName"),
-	                    resultSet.getString("lastName"),
-	                    resultSet.getString("extension"),
-	                    resultSet.getString("email"),
-	                    resultSet.getString("officeCode"),
-	                    resultSet.getString("reportsTo"),
-	                    resultSet.getString("jobTitle")
+	            String[] employee = {
+	                resultSet.getString("employeeNumber"),
+	                resultSet.getString("firstName"),
+	                resultSet.getString("lastName"),
+	                resultSet.getString("extension"),
+	                resultSet.getString("email"),
+	                resultSet.getString("officeCode"),
+	                resultSet.getString("reportsTo"),
+	                resultSet.getString("jobTitle")
 	            };
-	            tableModel.addRow(row);
+	            tableModel.addRow(employee); // Add row to the table model
+	            employees.add(employee); // Add to the list
 	        }
 	    } catch (SQLException e) {
-	        JOptionPane.showMessageDialog(this, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+	        JOptionPane.showMessageDialog(null, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
 	    }
+	    return employees;
 	}
+
 
 
     // Action listener for "Add New" button
@@ -360,6 +374,45 @@ public class EmployeeView extends MainView {
             tableModel.addRow(row);
         }
     }
+    
+    private class SaveEmployeeButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveEmployeesToFile();
+        }
+    };
+    
+    private void saveEmployeesToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a CSV file to save");
+        fileChooser.setSelectedFile(new File("Employees.csv")); // Set default file name
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                List<String[]> employees = fetchAndDisplayEmployees(); // Fetch employee data
+
+                // Write header row (optional)
+                writer.write("Employee Number, First Name, Last Name, Extension, Email, Office Code, Reports To, Job Title");
+                writer.newLine();
+
+                // Write data rows
+                for (String[] employee : employees) {
+                    String line = String.join(",", employee); // Comma as delimiter
+                    writer.write(line);
+                    writer.newLine();
+                }
+                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    
     
         
     }

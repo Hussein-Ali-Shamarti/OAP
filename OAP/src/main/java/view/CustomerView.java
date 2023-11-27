@@ -92,7 +92,7 @@ public class CustomerView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
-        JButton saveButton = createButton("Save to File", new SaveButtonListener());
+        JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -411,7 +411,7 @@ public class CustomerView extends MainView {
             }
         }
     }
-   private class SaveButtonListener implements ActionListener {
+   private class SaveCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             saveCustomersToFile();
