@@ -80,6 +80,7 @@ public class MenuBar {
     public JMenuBar getMenuBar() {
         return menuBar;
     }
+    
 
     private void addExtendedMenuItems() {
         // Add extended menu items
