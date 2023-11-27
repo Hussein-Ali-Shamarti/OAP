@@ -9,6 +9,10 @@ import model.Customer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -87,11 +91,13 @@ public class CustomerView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton saveButton = createButton("Save to File", new SaveButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(saveButton);
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -396,6 +402,40 @@ public class CustomerView extends MainView {
                     customer.getCreditLimit()
                 };
                 tableModel.addRow(row);
+            }
+        }
+    }
+   private class SaveButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveCustomersToFile();
+        }
+    };
+    
+    private void saveCustomersToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save");
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            // Ensure the file has a .txt extension
+            if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                List<String[]> customers = fetchCustomers();
+                for (String[] customer : customers) {
+                    String line = String.join(", ", customer);
+                    writer.write(line);
+                    writer.newLine();
+                }
+                JOptionPane.showMessageDialog(null, "Customers saved successfully at " + fileToSave.getAbsolutePath());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
