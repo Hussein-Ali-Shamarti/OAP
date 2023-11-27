@@ -87,11 +87,13 @@ public class CustomerView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton saveButton = createButton("Save to File", new SaveButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(saveButton);
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -399,6 +401,12 @@ public class CustomerView extends MainView {
             }
         }
     }
+   private class SaveButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveCustomersToFile();
+        }
+    });
    
  }
 

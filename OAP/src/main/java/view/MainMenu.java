@@ -23,7 +23,6 @@ public class MainMenu extends JPanel {
         JButton ordersButton = createButton("Orders", orderListener);
         JButton customersButton = createButton("Customers", customersListener);
         JButton employeesButton = createButton("Employees", employeesListener);
-
         // Add buttons in a horizontal row
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         add(productsButton);
