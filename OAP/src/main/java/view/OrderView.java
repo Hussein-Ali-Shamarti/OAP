@@ -230,11 +230,11 @@ public class OrderView extends MainView {
 	    return orders;
 	}
 
+	private JPanel panel = new JPanel(new GridLayout(0, 2));
 
 	private class AddButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JPanel panel = new JPanel(new GridLayout(0, 2));
 
 			// Fields for customer details
 			JTextField orderDateField = new JTextField(10);
@@ -338,6 +338,10 @@ public class OrderView extends MainView {
 			panel.add(msrpField);
 			panel.add(new JLabel("orderLineNumber:"));
 			panel.add(orderLineNumberField);
+			
+			JButton addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
+			panel.add(addMultipleProducts);
+			
 			// Show confirm dialog with the form
 			int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Order Details",
 					JOptionPane.OK_CANCEL_OPTION);
@@ -476,6 +480,7 @@ public class OrderView extends MainView {
 						panel.add(new JLabel("orderLineNumber:"));
 						panel.add(orderLineNumberField);
 
+						
 						int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
 								JOptionPane.OK_CANCEL_OPTION);
 						if (result == JOptionPane.OK_OPTION) {
@@ -725,7 +730,26 @@ public class OrderView extends MainView {
 	        saveOrdersToFile();
 	    }
 	}
-
+	
+	private class AddMultipleProductsButtonListener implements ActionListener {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	    	
+			panel.add(new JLabel("Product Name:"));
+			panel.add(productNameDropdown);
+			panel.add(new JLabel("Product Code:"));
+			panel.add(productCodeField); // Use the JTextField for Product Code
+			panel.add(new JLabel("Product Quantity:"));
+			panel.add(quantityOrderedField);
+			panel.add(new JLabel("Quantity in Stock:"));
+			panel.add(quantityInStockField);
+			panel.add(new JLabel("Buy Price:"));
+			panel.add(buyPriceField);
+			panel.add(new JLabel("MSRP:"));
+			panel.add(msrpField);
+			panel.add(new JLabel("orderLineNumber:"));
+			panel.add(orderLineNumberField);	    }
+	}
 
 
 }

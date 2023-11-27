@@ -1,22 +1,46 @@
 package view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import database.DataBaseConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 
-public class OrderDetailsView extends JFrame {
-    private static final long serialVersionUID = 1L;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import controller.OrderHandler;
+import controller.ProductHandler;
+import database.DataBaseConnection;
+import model.Order;
+import view.OrderView.UpdateButtonListener;
+import model.OrderDetails;
+import model.Products; // Adjust the package name as necessary
+
+public class OrderDetailsView extends MainView {
+	private static final long serialVersionUID = 1L;
     private JLabel totalLabel; // Label for displaying the total
     private JTextField orderNumberInput;
     private JButton calculateButton;
-    
+	private JTextField quantityInStockField;
+	private JTextField buyPriceField;
+	private JTextField msrpField;
+	private JTextField textField;
+	private DefaultTableModel tableModel;
+	private OrderHandler orderHandler = new OrderHandler();
+	private JComboBox<String> productNameDropdown;
+	private JComboBox<String> productCodeDropdown;
+	private ProductHandler productHandler;
+	private Map<String, String> products; // Declare products here
+
     private static final String[] COLUMN_NAMES = {
         "Order Number",
         "Product Code",
@@ -29,16 +53,62 @@ public class OrderDetailsView extends JFrame {
     private JTable orderDetailsTable;
 
     public OrderDetailsView() {
+		super();
+        this.orderHandler = new OrderHandler(); // Initialize OrderHandler first
+		this.productHandler = new ProductHandler();
+		this.products = productHandler.getProducts(); // Initialize products
         initializeUI();
+		setupProductDropdowns(); // Now setup the product dropdowns
         fetchAndDisplayOrderDetails();
         setVisible(true);
     }
+	private void setupProductDropdowns() {
+		productNameDropdown = new JComboBox<>();
+		productCodeDropdown = new JComboBox<>();
 
+		// Use the 'products' field that's already populated in the constructor
+		Map<String, String> products = productHandler.getProducts(); // Fetch products
+
+		for (String productName : products.keySet()) {
+			productNameDropdown.addItem(productName);
+			productCodeDropdown.addItem(products.get(productName));
+		}
+
+		// Make the productCodeDropdown non-editable and disable user input
+		productCodeDropdown.setEditable(false);
+		productCodeDropdown.setFocusable(false); // Add this line
+		((JTextField) productCodeDropdown.getEditor().getEditorComponent()).setDisabledTextColor(Color.BLACK);
+
+		productCodeDropdown.addActionListener(e -> {
+			String selectedCode = (String) productCodeDropdown.getSelectedItem();
+			String productName = findProductNameByCode(selectedCode); // Implement this method
+			if (productName != null) {
+				productNameDropdown.setSelectedItem(productName);
+				// Fetch and display product details
+				Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName);
+				if (productDetails != null && !productDetails.isEmpty()) {
+					quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+					buyPriceField.setText(productDetails.get("buyPrice").toString());
+					msrpField.setText(productDetails.get("MSRP").toString());
+				} else {
+					// Clear the fields or show a message if details are not found
+					quantityInStockField.setText("");
+					buyPriceField.setText("");
+					msrpField.setText("");
+				}
+			}
+		});
+	}
+	private String findProductNameByCode(String code) {
+		return productHandler.getProductNameByCode(code); // Use the new method from ProductHandler
+	}
+	
     private void initializeUI() {
         setTitle("Order Details");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
+		//setupControlPanel();
 
         setupTitlePanel();
         setupOrderInput();
@@ -74,6 +144,30 @@ public class OrderDetailsView extends JFrame {
         inputLabel.setForeground(Color.WHITE); // Set the text color to white
 
     }
+    
+	/*private void setupControlPanel() {
+		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
+		controlPanel.setBackground(new Color(90, 23, 139));
+		
+		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
+		controlPanel.add(editButton);
+		
+		JPanel panelHolder = new JPanel(new BorderLayout());
+		panelHolder.add(controlPanel, BorderLayout.SOUTH);
+		this.add(panelHolder, BorderLayout.SOUTH);
+
+	}*/
+	
+	private JButton createButton(String text, ActionListener listener) {
+		JButton button = new JButton(text);
+		button.setForeground(Color.BLACK);
+		button.setBackground(new Color(84, 11, 131));
+		button.setFocusPainted(false);
+		button.addActionListener(listener);
+		return button;
+	}
+	
     private void setupTable() {
         orderDetailsTableModel = new DefaultTableModel(null, COLUMN_NAMES) {
             private static final long serialVersionUID = 1L;
@@ -95,12 +189,22 @@ public class OrderDetailsView extends JFrame {
         totalLabel.setHorizontalAlignment(SwingConstants.CENTER);
         totalLabel.setForeground(Color.WHITE); // Set the text color to white
 
-        JPanel totalPanel = new JPanel(new BorderLayout());
-        totalPanel.setBackground(new Color(84, 11, 131)); // Ensure this is the color you want for the background
-        totalPanel.add(totalLabel, BorderLayout.CENTER);
+		
+		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
+		controlPanel.add(editButton);
+		
+	//	JPanel panelHolder = new JPanel(new BorderLayout());
+		//panelHolder.add(controlPanel, BorderLayout.SOUTH);
+	//	this.add(panelHolder, BorderLayout.SOUTH);
 
-        add(totalPanel, BorderLayout.SOUTH);
+        controlPanel.setBackground(new Color(84, 11, 131)); // Ensure this is the color you want for the background
+        controlPanel.add(totalLabel, BorderLayout.CENTER);
+        controlPanel.add(editButton, BorderLayout.SOUTH);
+        add(controlPanel, BorderLayout.SOUTH);
+        
     }
+   
+    private JPanel controlPanel = new JPanel(new BorderLayout());
 
     
     private void calculateAndDisplayTotalForOrder() {
@@ -181,4 +285,26 @@ public class OrderDetailsView extends JFrame {
     private void updateOrderTotal(BigDecimal total) {
         totalLabel.setText("Total: $" + total.setScale(2, RoundingMode.HALF_UP).toPlainString());
     }
+    
+    
+    
+    
+    
+    public class UpdateButtonListener implements ActionListener {
+
+		public UpdateButtonListener(OrderHandler orderHandler, ProductHandler productHandler) {
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+    
+    }
+    
+    
+    
+
 }
