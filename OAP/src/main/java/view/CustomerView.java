@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List; // Ensure this import for generic Lists
 
 
@@ -144,6 +145,38 @@ public class CustomerView extends MainView {
             JOptionPane.showMessageDialog(this, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    List<String[]> fetchCustomersForFile() {
+        List<String[]> customers = new ArrayList<>();
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
+                    "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
+                    "salesRepEmployeeNumber, creditLimit FROM customers";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                customers.add(new String[]{
+                    resultSet.getString("customerNumber"),
+                    resultSet.getString("customerName"),
+                    resultSet.getString("contactLastName"),
+                    resultSet.getString("contactFirstName"),
+                    resultSet.getString("phone"),
+                    resultSet.getString("addressLine1"),
+                    resultSet.getString("addressLine2"),
+                    resultSet.getString("city"),
+                    resultSet.getString("state"),
+                    resultSet.getString("postalCode"),
+                    resultSet.getString("country"),
+                    resultSet.getString("salesRepEmployeeNumber"),
+                    resultSet.getString("creditLimit")
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return customers;
+    }
+
 
     
     private class AddButtonListener implements ActionListener {
@@ -420,17 +453,14 @@ public class CustomerView extends MainView {
 
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
-
-            // Ensure the file has a .txt extension
             if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
                 fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> customers = fetchCustomers();
+                List<String[]> customers = fetchCustomersForFile();
                 for (String[] customer : customers) {
-                    String line = String.join(", ", customer);
-                    writer.write(line);
+                    writer.write(String.join(", ", customer));
                     writer.newLine();
                 }
                 JOptionPane.showMessageDialog(null, "Customers saved successfully at " + fileToSave.getAbsolutePath());
@@ -439,8 +469,8 @@ public class CustomerView extends MainView {
             }
         }
     }
-   
- }
+   }
+
 
 
 
