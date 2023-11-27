@@ -7,7 +7,7 @@
  * @version 08.11.2023
  */
 
-package model;
+package controller;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,9 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import database.DataBaseConnection;
+import model.Products;
 
 
-public class ProductDAO {
+public class ProductHandler {
 
     /**
      * Adds a new product to the database.

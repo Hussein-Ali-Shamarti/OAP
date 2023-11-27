@@ -32,8 +32,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.EmployeeHandler;
 import model.Employee;
-import model.EmployeeDAO;
 
 
 public class EmployeeView extends MainView {
@@ -205,7 +205,7 @@ public class EmployeeView extends MainView {
                
                    
 
-                    EmployeeDAO handler = new EmployeeDAO();
+                    EmployeeHandler handler = new EmployeeHandler();
                     boolean success = handler.addEmployee("employees", employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
 
                     if (success) {
@@ -230,7 +230,7 @@ public class EmployeeView extends MainView {
                 try {
                     int employeeNumber = Integer.parseInt(employeeNumberStr);
 
-                    EmployeeDAO handler = new EmployeeDAO();
+                    EmployeeHandler handler = new EmployeeHandler();
                     Employee employee = handler.fetchEmployeeData(employeeNumber);
 
                     if (employee != null) {
@@ -282,7 +282,7 @@ public class EmployeeView extends MainView {
             int reportsTo = Integer.parseInt(reportsToField.getText());
             String jobTitle = jobTitleField.getText();
 
-            EmployeeDAO handler = new EmployeeDAO();
+            EmployeeHandler handler = new EmployeeHandler();
             boolean success = handler.editEmployeeInDatabase("employees", employee.getEmployeeNumber(), firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
 
             if (success) {
@@ -307,7 +307,7 @@ public class EmployeeView extends MainView {
                 try {
                     int employeeNumber = Integer.parseInt(employeeNumberStr);
 
-                    EmployeeDAO handler = new EmployeeDAO();
+                    EmployeeHandler handler = new EmployeeHandler();
                     Employee employee = handler.fetchEmployeeData(employeeNumber);
 
                     if (employee != null) {
@@ -349,7 +349,7 @@ public class EmployeeView extends MainView {
                                                        "Search Employees", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 String searchCriteria = searchField.getText().trim();
-                EmployeeDAO handler = new EmployeeDAO();
+                EmployeeHandler handler = new EmployeeHandler();
                 List<Employee> searchResults = handler.searchEmployees(searchCriteria);
                 updateTableWithSearchResults(searchResults);
             }

@@ -2,6 +2,10 @@ package view;
 
 import javax.swing.*;
 
+
+import controller.CustomerHandler;
+import model.Customer;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,9 +24,6 @@ import java.util.List; // Ensure this import for generic Lists
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import model.Customer;
-import model.CustomerDAO;
 
 
 
@@ -220,7 +221,7 @@ public class CustomerView extends MainView {
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
                     // Call to CustomerHandler to add customer
-                    boolean success = CustomerDAO.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
+                    boolean success = CustomerHandler.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
                                                                  phone, addressLine1, addressLine2, city, state, postalCode, country, 
                                                                  salesRepEmployeeNumber, creditLimit);
                     if (success) {
@@ -246,7 +247,7 @@ public class CustomerView extends MainView {
                 try {
                     int customerNumber = Integer.parseInt(customerNumberStr);
 
-                    CustomerDAO handler = new CustomerDAO();
+                    CustomerHandler handler = new CustomerHandler();
                     Customer customer = handler.fetchCustomerData(customerNumber);
 
                     if (customer != null) {
@@ -319,7 +320,7 @@ public class CustomerView extends MainView {
                 	int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
                 	BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
-            CustomerDAO handler = new CustomerDAO();
+            CustomerHandler handler = new CustomerHandler();
             boolean success = handler.editCustomer(customer.getCustomerNumber(), customerName, contactLastName, contactFirstName, 
             phone, addressLine1, addressLine2, city, state, postalCode, country, 
             salesRepEmployeeNumber, creditLimit); // other parameters
@@ -340,7 +341,7 @@ public class CustomerView extends MainView {
                 try {
                     int customerNumber = Integer.parseInt(customerNumberStr);
 
-                    CustomerDAO handler = new CustomerDAO();
+                    CustomerHandler handler = new CustomerHandler();
                     Customer customer = handler.fetchCustomerData(customerNumber);
 
                     if (customer != null) {
@@ -382,7 +383,7 @@ public class CustomerView extends MainView {
                                                        "Search Customers", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 String searchCriteria = searchField.getText().trim();
-                List<Customer> searchResults = new CustomerDAO().searchCustomers(searchCriteria);
+                List<Customer> searchResults = new CustomerHandler().searchCustomers(searchCriteria);
                 updateTableWithSearchResults(searchResults);
             }
         }

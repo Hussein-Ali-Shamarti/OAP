@@ -7,7 +7,7 @@
  * @version 09.11.2023
  */
 
-package model;
+package controller;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -18,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.DataBaseConnection;
+import model.Customer;
 
- public class CustomerDAO {
+ public class CustomerHandler {
     
     // Define the SQL query as a constant for searching customers in the database.
     // This SQL query utilizes a SELECT statement with multiple conditions to filter results based on different customer attributes.

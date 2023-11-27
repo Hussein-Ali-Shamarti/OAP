@@ -7,7 +7,7 @@
  * @version 09.11.2023
  */
 
-package model;
+package controller;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import database.DataBaseConnection;
 
 
-public class DeliveryDAO {
+public class DeliveryHandler {
     
     /**
      * Checks the status of a shipment based on the order number.
