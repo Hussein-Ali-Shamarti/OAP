@@ -420,23 +420,33 @@ public class CustomerView extends MainView {
     
     private void saveCustomersToFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Specify a file to save");
+        fileChooser.setDialogTitle("Specify a CSV file to save");
+        fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
 
         int userSelection = fileChooser.showSaveDialog(null);
 
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
-            if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+            if (!fileToSave.getAbsolutePath().endsWith(".csv")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".csv");
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
                 List<String[]> customers = fetchAndDisplayCustomers(); // Fetch customer data
+
+                // Write header row (optional)
+                writer.write("Customer Number, Customer Name, Contact Last Name, Contact First Name, " +
+                             "Phone, Address Line 1, Address Line 2, City, State, Postal Code, Country, " +
+                             "Sales Rep Employee Number, Credit Limit");
+                writer.newLine();
+
+                // Write data rows
                 for (String[] customer : customers) {
-                    writer.write(String.join(", ", customer));
+                    String line = String.join(",", customer); // Comma as delimiter
+                    writer.write(line);
                     writer.newLine();
                 }
-                JOptionPane.showMessageDialog(null, "Customers saved successfully at " + fileToSave.getAbsolutePath());
+                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
