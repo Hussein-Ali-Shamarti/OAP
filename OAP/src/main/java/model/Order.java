@@ -1,3 +1,12 @@
+/**
+ * Represents an order entity with information such as order number, dates, status, comments,
+ * customer number, and associated order date.
+ * 
+ * <p>Orders may also contain order details, which are not implemented in this version.</p>
+ * 
+ * @author Kim
+ * @version 07.11.2023
+ */
 package model;
 
 import java.math.BigDecimal;
@@ -7,15 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Represents an order entity with information such as order number, dates, status, comments,
- * customer number, and associated order date.
- * 
- * <p>Orders may also contain order details, which are not implemented in this version.</p>
- * 
- * @author Hussein
- * @version 07.11.2023
- */
+
 public class Order {
 
     private int orderNumber;

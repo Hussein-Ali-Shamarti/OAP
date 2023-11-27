@@ -9,6 +9,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +23,7 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,6 +38,7 @@ import javax.swing.table.DefaultTableModel;
 import database.DataBaseConnection;
 import model.ProductDAO;
 import model.Products;
+
 
 public class ProductView extends MainView {
 
@@ -100,11 +106,14 @@ public class ProductView extends MainView {
         JButton addButton = createButton("Add", new AddButtonListener());
         JButton editButton = createButton("Edit", new UpdateButtonListener());
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton saveProductButton = createButton("Save to File", new SaveProductButtonListener());
+		
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
         controlPanel.add(deleteButton);
+        controlPanel.add(saveProductButton);
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
@@ -121,31 +130,36 @@ public class ProductView extends MainView {
         return button;
     }
 
-    void fetchAndDisplayProducts() {
-        tableModel.setRowCount(0);
+    List<String[]> fetchAndDisplayProducts() {
+        List<String[]> products = new ArrayList<>();
+        tableModel.setRowCount(0); // Clear the existing rows
+
         try (Connection conn = database.DataBaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
             String sql = "SELECT productCode, productName, productLine, productScale, productVendor, " +
-                    "productDescription, quantityInStock, buyPrice, msrp FROM products";
+                         "productDescription, quantityInStock, buyPrice, msrp FROM products";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                Object[] row = {
-                        resultSet.getString("productCode"),
-                        resultSet.getString("productName"),
-                        resultSet.getString("productLine"),
-                        resultSet.getString("productScale"),
-                        resultSet.getString("productVendor"),
-                        resultSet.getString("productDescription"),
-                        resultSet.getInt("quantityInStock"),
-                        resultSet.getDouble("buyPrice"),
-                        resultSet.getDouble("msrp")
+                String[] product = {
+                    resultSet.getString("productCode"),
+                    resultSet.getString("productName"),
+                    resultSet.getString("productLine"),
+                    resultSet.getString("productScale"),
+                    resultSet.getString("productVendor"),
+                    resultSet.getString("productDescription"),
+                    String.valueOf(resultSet.getInt("quantityInStock")),
+                    String.valueOf(resultSet.getDouble("buyPrice")),
+                    String.valueOf(resultSet.getDouble("msrp"))
                 };
-                tableModel.addRow(row);
+                tableModel.addRow(product); // Add row to the table model
+                products.add(product); // Add to the list
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error fetching product data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error fetching product data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+        return products;
     }
+
 
  // Action listener for "Add" button
     private class AddButtonListener implements ActionListener {
@@ -529,6 +543,43 @@ public class ProductView extends MainView {
                 e.printStackTrace();
                 return false;
             }
+        }
+    }
+    
+    private void saveProductsToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a CSV file to save");
+        fileChooser.setSelectedFile(new File("Products.csv")); // Set default file name
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                List<String[]> products = fetchAndDisplayProducts(); // Fetch product data
+
+                // Write header row (optional)
+                writer.write("Product Code, Product Name, Product Line, Product Scale, Product Vendor, " +
+                             "Product Description, Quantity In Stock, Buy Price, MSRP");
+                writer.newLine();
+
+                // Write data rows
+                for (String[] product : products) {
+                    String line = String.join(",", product); // Comma as delimiter
+                    writer.write(line);
+                    writer.newLine();
+                }
+                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    private class SaveProductButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveProductsToFile();
         }
     }
 

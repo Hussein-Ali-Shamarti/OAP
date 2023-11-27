@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import Listners.BulkImportOrders;
 import database.DataBaseConnection;
 
 import java.awt.event.ActionEvent;
@@ -85,15 +86,15 @@ public class MenuBar {
     private void addExtendedMenuItems() {
         // Add extended menu items
         
-        JMenuItem saveToFileItem = new JMenuItem("Save to File");
+        JMenuItem uploadCsv = new JMenuItem("Upload Csv");
 
         // Add action listeners
        
-        saveToFileItem.addActionListener(new SaveToFileListener());
+       uploadCsv.addActionListener(new UploadCsvListener());
 
         // Add items to the File menu
         
-        fileMenu.add(saveToFileItem);
+        fileMenu.add(uploadCsv);
     }
 
     private JMenuItem createMenuItem(String text, String filePath) {
@@ -125,35 +126,27 @@ public class MenuBar {
     }
 
    
-    // Action listener for saving to a file
-    private class SaveToFileListener implements ActionListener {
+    private class UploadCsvListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Specify a file to save");
+            fileChooser.setDialogTitle("Select a CSV file for bulk import");
+            int result = fileChooser.showOpenDialog(null);
 
-            // Uncomment the following line if you want the user to select directories only.
-            // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-            int userSelection = fileChooser.showSaveDialog(null);
-
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File fileToSave = fileChooser.getSelectedFile();
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                BulkImportOrders bulkImport = new BulkImportOrders();
+                boolean success = bulkImport.importOrders(selectedFile);
                 
-                // Ensure the file has a .txt extension
-                if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
-                    fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
-                }
-
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                    writer.write("This is a sample file content.");
-                    JOptionPane.showMessageDialog(null, "File saved successfully at " + fileToSave.getAbsolutePath());
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Orders imported successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Failed to import orders.");
                 }
             }
         }
     }
+
 
     
     private class TestConnectionListener implements ActionListener {
