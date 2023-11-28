@@ -25,7 +25,7 @@ import view.OrderView.UpdateButtonListener;
 import model.OrderDetails;
 import model.Products; // Adjust the package name as necessary
 
-public class OrderDetailsView extends MainView {
+public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
     private JLabel totalLabel; // Label for displaying the total
     private JTextField orderNumberInput;
