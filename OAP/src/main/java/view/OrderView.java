@@ -34,14 +34,39 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.OrderHandler;
-import controller.ProductHandler;
 import model.Order;
 import model.OrderDetails;
-import model.Products; // Adjust the package name as necessary
+import model.OrderDAO;
+import model.ProductDAO;
+import model.Products;
 
 
 public class OrderView extends MainView {
+<<<<<<< HEAD
+    private JTextField textField;
+    private static final long serialVersionUID = 1L;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private OrderDAO orderHandler = new OrderDAO();
+    private JComboBox<String> productNameDropdown;
+    private JComboBox<String> productCodeDropdown;
+    private ProductDAO productHandler;
+    private Map<String, String> products; // Declare products here
+    private JTextField quantityInStockField;
+    private JTextField buyPriceField;
+    private JTextField msrpField;
+    
+ 
+
+    public OrderView() {
+        super();
+        this.orderHandler = new OrderDAO();        // Initialize OrderHandler first
+        this.productHandler = new ProductDAO();    // Initialize ProductHandler
+        this.products = productHandler.getProducts();  // Initialize products
+        this.quantityInStockField = new JTextField(10);
+        this.buyPriceField = new JTextField(10);
+        this.msrpField = new JTextField(10);
+=======
 	private JTextField textField;
 	private static final long serialVersionUID = 1L;
 	private DefaultTableModel tableModel;
@@ -66,6 +91,7 @@ public class OrderView extends MainView {
 		this.quantityInStockField = new JTextField(10);
 		this.buyPriceField = new JTextField(10);
 		this.msrpField = new JTextField(10);
+>>>>>>> 299ad0bce36240246f9f22d4c9849579449cffe8
 
 		setLayout(new BorderLayout());
 		initializeUI();
