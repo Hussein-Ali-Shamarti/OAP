@@ -6,9 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DataBaseConnection {
-    protected static String dbUrl = "jdbc:mysql://127.0.0.1:3306/classicmodels";
-    protected static String user = "student";
-    protected static String password = "student";
+    protected static String dbUrl = "jdbc:mysql://sql11.freesqldatabase.com:3306/sql11665772";
+    protected static String user = "sql11665772";
+    protected static String password = "m5kZbc2aMA";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(dbUrl, user, password);
