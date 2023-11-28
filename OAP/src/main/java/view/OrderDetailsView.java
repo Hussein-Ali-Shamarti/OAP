@@ -246,7 +246,7 @@ public class OrderDetailsView extends MainView {
             orderDetailsTableModel.setRowCount(0); // Clear existing data
 
             Connection conn = DataBaseConnection.getConnection();
-            String orderDetailsSql = "SELECT * FROM orderDetails ";
+            String orderDetailsSql = "SELECT * FROM orderdetails ";
             PreparedStatement pstmt = conn.prepareStatement(orderDetailsSql);
             ResultSet orderDetailsResultSet = pstmt.executeQuery();
 
