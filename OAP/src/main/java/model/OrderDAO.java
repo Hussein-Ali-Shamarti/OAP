@@ -7,12 +7,7 @@
  * @version 09.11.2023
  */
 
-<<<<<<< HEAD:OAP/src/main/java/model/OrderDAO.java
-
 package model;
-=======
-package controller;
->>>>>>> 299ad0bce36240246f9f22d4c9849579449cffe8:OAP/src/main/java/controller/OrderHandler.java
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -24,21 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import database.DataBaseConnection;
 
-<<<<<<< HEAD:OAP/src/main/java/model/OrderDAO.java
-
 
 public class OrderDAO {
-	
-	/*public List<Order> searchOrders(String searchText) {
-		System.out.println("sjekk parameter "+searchText);
-	    List<Order> searchResults = new ArrayList<>();
-	    //String searchQuery = "SELECT * FROM orders WHERE CONCAT(orderDate, requiredDate, shippedDate, status, comments, customerNumber) LIKE ?";
-	    String searchQuery = "SELECT * FROM orders WHERE orderDate LIKE ? OR requiredDate = ? OR shippedDate LIKE ? OR status LIKE ? OR comments LIKE ? OR customerNumber LIKE ?";
-	    try {
-	    	Connection conn = DataBaseConnection.getConnection();
-=======
-public class OrderHandler {
->>>>>>> 299ad0bce36240246f9f22d4c9849579449cffe8:OAP/src/main/java/controller/OrderHandler.java
 
 	private static final String SEARCH_ORDER_SQL = "SELECT * FROM orders WHERE "
 			+ "CAST(orderNumber AS CHAR) LIKE ? OR " + "CAST(orderDate AS CHAR) LIKE ? OR "

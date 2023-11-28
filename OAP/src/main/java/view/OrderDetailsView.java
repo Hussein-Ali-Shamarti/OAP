@@ -17,8 +17,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.OrderHandler;
-import controller.ProductHandler;
+import model.OrderDAO;
+import model.ProductDAO;
 import database.DataBaseConnection;
 import model.Order;
 import view.OrderView.UpdateButtonListener;
@@ -35,10 +35,10 @@ public class OrderDetailsView extends MainView {
 	private JTextField msrpField;
 	private JTextField textField;
 	private DefaultTableModel tableModel;
-	private OrderHandler orderHandler = new OrderHandler();
+	private OrderDAO orderDAO = new OrderDAO();
 	private JComboBox<String> productNameDropdown;
 	private JComboBox<String> productCodeDropdown;
-	private ProductHandler productHandler;
+	private ProductDAO productHandler;
 	private Map<String, String> products; // Declare products here
 
     private static final String[] COLUMN_NAMES = {
@@ -54,8 +54,8 @@ public class OrderDetailsView extends MainView {
 
     public OrderDetailsView() {
 		super();
-        this.orderHandler = new OrderHandler(); // Initialize OrderHandler first
-		this.productHandler = new ProductHandler();
+        this.orderDAO = new OrderDAO(); // Initialize OrderHandler first
+		this.productHandler = new ProductDAO();
 		this.products = productHandler.getProducts(); // Initialize products
         initializeUI();
 		setupProductDropdowns(); // Now setup the product dropdowns
@@ -190,7 +190,7 @@ public class OrderDetailsView extends MainView {
         totalLabel.setForeground(Color.WHITE); // Set the text color to white
 
 		
-		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
+		JButton editButton = createButton("Edit", new UpdateButtonListener(orderDAO, productHandler));
 		controlPanel.add(editButton);
 		
 	//	JPanel panelHolder = new JPanel(new BorderLayout());
@@ -292,7 +292,7 @@ public class OrderDetailsView extends MainView {
     
     public class UpdateButtonListener implements ActionListener {
 
-		public UpdateButtonListener(OrderHandler orderHandler, ProductHandler productHandler) {
+		public UpdateButtonListener(OrderDAO orderHandler, ProductDAO productHandler) {
 			// TODO Auto-generated constructor stub
 		}
 

@@ -34,47 +34,22 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import model.ProductDAO;
+import model.OrderDAO;
 import model.Order;
 import model.OrderDetails;
-import model.OrderDAO;
-import model.ProductDAO;
-import model.Products;
+import model.Products; // Adjust the package name as necessary
 
 
 public class OrderView extends MainView {
-<<<<<<< HEAD
-    private JTextField textField;
-    private static final long serialVersionUID = 1L;
-    private DefaultTableModel tableModel;
-    private JTable table;
-    private OrderDAO orderHandler = new OrderDAO();
-    private JComboBox<String> productNameDropdown;
-    private JComboBox<String> productCodeDropdown;
-    private ProductDAO productHandler;
-    private Map<String, String> products; // Declare products here
-    private JTextField quantityInStockField;
-    private JTextField buyPriceField;
-    private JTextField msrpField;
-    
- 
-
-    public OrderView() {
-        super();
-        this.orderHandler = new OrderDAO();        // Initialize OrderHandler first
-        this.productHandler = new ProductDAO();    // Initialize ProductHandler
-        this.products = productHandler.getProducts();  // Initialize products
-        this.quantityInStockField = new JTextField(10);
-        this.buyPriceField = new JTextField(10);
-        this.msrpField = new JTextField(10);
-=======
 	private JTextField textField;
 	private static final long serialVersionUID = 1L;
 	private DefaultTableModel tableModel;
 	private JTable table;
-	private OrderHandler orderHandler = new OrderHandler();
+	private OrderDAO OrderDAO = new OrderDAO();
 	private JComboBox<String> productNameDropdown;
 	private JComboBox<String> productCodeDropdown;
-	private ProductHandler productHandler;
+	private ProductDAO ProductDAO;
 	private Map<String, String> products; // Declare products here
 	private JTextField quantityInStockField;
 	private JTextField buyPriceField;
@@ -85,13 +60,12 @@ public class OrderView extends MainView {
 
 	public OrderView() {
 		super();
-		this.orderHandler = new OrderHandler(); // Initialize OrderHandler first
-		this.productHandler = new ProductHandler(); // Initialize ProductHandler
-		this.products = productHandler.getProducts(); // Initialize products
+		this.OrderDAO = new OrderDAO(); // Initialize OrderDAO first
+		this.ProductDAO = new ProductDAO(); // Initialize ProductDAO
+		this.products = ProductDAO.getProducts(); // Initialize products
 		this.quantityInStockField = new JTextField(10);
 		this.buyPriceField = new JTextField(10);
 		this.msrpField = new JTextField(10);
->>>>>>> 299ad0bce36240246f9f22d4c9849579449cffe8
 
 		setLayout(new BorderLayout());
 		initializeUI();
@@ -103,7 +77,7 @@ public class OrderView extends MainView {
 		setLocationRelativeTo(null);
 		pack(); // Adjusts the frame to fit the components
 		setVisible(true); // Make sure the frame is visible
-		UpdateButtonListener updateButtonListener = new UpdateButtonListener(orderHandler, productHandler);
+		UpdateButtonListener updateButtonListener = new UpdateButtonListener(OrderDAO, ProductDAO);
 
 	}
 
@@ -112,7 +86,7 @@ public class OrderView extends MainView {
 		productCodeDropdown = new JComboBox<>();
 
 		// Use the 'products' field that's already populated in the constructor
-		Map<String, String> products = productHandler.getProducts(); // Fetch products
+		Map<String, String> products = ProductDAO.getProducts(); // Fetch products
 
 		for (String productName : products.keySet()) {
 			productNameDropdown.addItem(productName);
@@ -130,7 +104,7 @@ public class OrderView extends MainView {
 			if (productName != null) {
 				productNameDropdown.setSelectedItem(productName);
 				// Fetch and display product details
-				Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName);
+				Map<String, Object> productDetails = ProductDAO.getProductDetailsByName(productName);
 				if (productDetails != null && !productDetails.isEmpty()) {
 					quantityInStockField.setText(productDetails.get("quantityInStock").toString());
 					buyPriceField.setText(productDetails.get("buyPrice").toString());
@@ -146,7 +120,7 @@ public class OrderView extends MainView {
 	}
 
 	private String findProductNameByCode(String code) {
-		return productHandler.getProductNameByCode(code); // Use the new method from ProductHandler
+		return ProductDAO.getProductNameByCode(code); // Use the new method from ProductDAO
 	}
 
 	private void initializeUI() {
@@ -190,7 +164,7 @@ public class OrderView extends MainView {
 		controlPanel.setBackground(new Color(90, 23, 139));
 		JButton searchButton = createButton("Search", new SearchButtonListener());
 		JButton addButton = createButton("Add", new AddButtonListener());
-		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
+		JButton editButton = createButton("Edit", new UpdateButtonListener(OrderDAO, ProductDAO));
 		JButton deleteButton = createButton("Delete", new DeleteButtonListener());
 		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
@@ -288,8 +262,8 @@ public class OrderView extends MainView {
 			// Panel for the form
 
 			// Populate the dropdown with product data from the database using an instance
-			// of ProductHandler
-			Map<String, String> products = productHandler.getProducts(); // Use the instance
+			// of ProductDAO
+			Map<String, String> products = ProductDAO.getProducts(); // Use the instance
 			for (String productName : products.keySet()) {
 				productNameDropdown.addItem(productName);
 				productCodeDropdown.addItem(products.get(productName));
@@ -304,7 +278,7 @@ public class OrderView extends MainView {
 
 					updateProductDetailsFields(selectedProductName);
 
-					Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
+					Map<String, Object> productDetails = ProductDAO.getProductDetailsByName(selectedProductName);
 					if (productDetails != null && !productDetails.isEmpty()) {
 						quantityInStockField.setText(productDetails.get("quantityInStock").toString());
 						buyPriceField.setText(productDetails.get("buyPrice").toString());
@@ -390,7 +364,7 @@ public class OrderView extends MainView {
 					Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
 					OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode,
 							orderLineNumber);
-					boolean success = orderHandler.addOrder(order, orderDetails);
+					boolean success = OrderDAO.addOrder(order, orderDetails);
 					if (success) {
 						JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
 					} else {
@@ -403,7 +377,7 @@ public class OrderView extends MainView {
 		}
 
 		private void updateProductDetailsFields(String productName) {
-			Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName);
+			Map<String, Object> productDetails = ProductDAO.getProductDetailsByName(productName);
 			if (productDetails != null && !productDetails.isEmpty()) {
 				quantityInStockField.setText(productDetails.get("quantityInStock").toString());
 				buyPriceField.setText(productDetails.get("buyPrice").toString());
@@ -418,12 +392,12 @@ public class OrderView extends MainView {
 
 	public class UpdateButtonListener implements ActionListener {
 
-		private OrderHandler orderHandler; // Assuming you have an OrderHandler class
-		private ProductHandler productHandler; // Assuming you have a ProductHandler class
+		private OrderDAO OrderDAO; // Assuming you have an OrderDAO class
+		private ProductDAO ProductDAO; // Assuming you have a ProductDAO class
 
-		public UpdateButtonListener(OrderHandler orderHandler, ProductHandler productHandler) {
-			this.orderHandler = orderHandler;
-			this.productHandler = productHandler;
+		public UpdateButtonListener(OrderDAO OrderDAO, ProductDAO ProductDAO) {
+			this.OrderDAO = OrderDAO;
+			this.ProductDAO = ProductDAO;
 		}
 
 		@Override
@@ -432,7 +406,7 @@ public class OrderView extends MainView {
 			if (orderNumberString != null && !orderNumberString.isEmpty()) {
 				try {
 					int orderNumber = Integer.parseInt(orderNumberString);
-					Order existingOrder = orderHandler.getOrder(orderNumber);
+					Order existingOrder = OrderDAO.getOrder(orderNumber);
 
 					if (existingOrder != null) {
 						JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -451,7 +425,7 @@ public class OrderView extends MainView {
 						productCodeField.setFocusable(false);
 						productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
 						
-						Map<String, String> products = productHandler.getProducts();
+						Map<String, String> products = ProductDAO.getProducts();
 						JComboBox<String> productNameDropdown = new JComboBox<>();
 						for (String productName : products.keySet()) {
 							productNameDropdown.addItem(productName);
@@ -464,7 +438,7 @@ public class OrderView extends MainView {
 								String productCode = products.get(selectedProductName);
 								productCodeDropdown.setSelectedItem(productCode);
 
-								Map<String, Object> productDetails = productHandler
+								Map<String, Object> productDetails = ProductDAO
 										.getProductDetailsByName(selectedProductName);
 								if (productDetails != null && !productDetails.isEmpty()) {
 									quantityInStockField.setText(productDetails.get("quantityInStock").toString());
@@ -529,7 +503,7 @@ public class OrderView extends MainView {
 							existingOrder.setComments(comments);
 							existingOrder.setCustomerNumber(customerNumber);
 
-							boolean success = orderHandler.editOrder(existingOrder, orderNumber);
+							boolean success = OrderDAO.editOrder(existingOrder, orderNumber);
 							if (success) {
 								JOptionPane.showMessageDialog(null, "Order updated successfully!");
 							} else {
@@ -571,8 +545,8 @@ public class OrderView extends MainView {
 							JOptionPane.YES_NO_OPTION);
 
 					if (confirmResult == JOptionPane.YES_OPTION) {
-						// Call the OrderHandler to delete the order
-						boolean success = orderHandler.deleteOrder(orderNumber);
+						// Call the OrderDAO to delete the order
+						boolean success = OrderDAO.deleteOrder(orderNumber);
 
 						if (success) {
 							JOptionPane.showMessageDialog(OrderView.this,
@@ -598,7 +572,7 @@ public class OrderView extends MainView {
 			if (searchParameter != "" && !searchParameter.isEmpty()) {
 				try {
 					tableModel.setRowCount(0);
-					List<Order> filter = orderHandler.searchOrder(searchParameter);
+					List<Order> filter = OrderDAO.searchOrder(searchParameter);
 					for (Order o : filter) {
 						Vector<Object> row = new Vector<>();
 						row.add(o.getOrderNumber());
@@ -626,9 +600,9 @@ public class OrderView extends MainView {
 	 * if (searchParameter != "" && !searchParameter.isEmpty()) { try { // int
 	 * orderNumber = Integer.parseInt(orderNumberString);
 	 * 
-	 * // Call the OrderHandler to retrieve the order // Order order =
-	 * orderHandler.searchOrders(); List<Order> filter =
-	 * orderHandler.searchOrders(searchParameter); tableModel.setRowCount(0);
+	 * // Call the OrderDAO to retrieve the order // Order order =
+	 * OrderDAO.searchOrders(); List<Order> filter =
+	 * OrderDAO.searchOrders(searchParameter); tableModel.setRowCount(0);
 	 * for(Order o:filter) { tableModel.ad; } // Display the order details
 	 * StringBuilder resultMessage = new StringBuilder("Search result:\n");
 	 * resultMessage.append("Order Number: ").append(filter.getOrderNumber()).append
@@ -662,8 +636,8 @@ public class OrderView extends MainView {
 				try {
 					int orderNumber = Integer.parseInt(orderNumberString);
 
-					// Call the OrderHandler to retrieve the order status
-					String status = orderHandler.getOrderStatus(orderNumber);
+					// Call the OrderDAO to retrieve the order status
+					String status = OrderDAO.getOrderStatus(orderNumber);
 
 					if (status != null) {
 						// Display the order status
@@ -692,8 +666,8 @@ public class OrderView extends MainView {
 					int customerNumber = Integer.parseInt(customerNumberString);
 
 					// Check if the customer exists before checking payment status
-					if (orderHandler.customerExists(customerNumber)) {
-						boolean paid = orderHandler.checkPaymentStatus(customerNumber);
+					if (OrderDAO.customerExists(customerNumber)) {
+						boolean paid = OrderDAO.checkPaymentStatus(customerNumber);
 
 						if (paid) {
 							JOptionPane.showMessageDialog(OrderView.this,
