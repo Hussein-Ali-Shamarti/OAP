@@ -252,4 +252,40 @@ public class ProductDAO {
 
         return productDetails; // This map will be empty if the product is not found or if an exception occurs
     }
+    
+    
+    /**
+     * Check if the entered product line exists in the database.
+     *
+     * @param productLine The product line to check.
+     * @return true if the product line exists; false otherwise.
+     */
+    public boolean isProductLineExists(String productLine) {
+        try {
+            // create a PreparedStatement
+            try (PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?")) {
+                preparedStatement.setString(1, productLine);
+
+                // Execute the query
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    // Check if a row with the product line exists
+                    if (resultSet.next() && resultSet.getInt(1) > 0) {
+                        return true; // Product line exists
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            // Log the exception or handle it based on your application's requirements
+            ex.printStackTrace();
+            
+            // Provide a user-friendly error message
+            String errorMessage = "Error checking product line existence. Please try again later or contact support.";
+            // Rethrow the exception as a runtime exception with the user-friendly message
+            throw new RuntimeException(errorMessage, ex);
+        }
+
+        return false; // Product line doesn't exist or an error occurred
+    }
+
+
 }

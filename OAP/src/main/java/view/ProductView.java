@@ -37,6 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddProductButtonListener;
+import controller.UpdateProductButtonListener;
 import database.DataBaseConnection;
 import model.ProductDAO;
 import model.Products;
@@ -106,7 +107,7 @@ public class ProductView extends MainView {
 
         JButton searchButton = createButton("Search",new SearchButtonListener());
         JButton addButton = createButton("Add", new AddProductButtonListener(null));
-        JButton editButton = createButton("Edit", new UpdateButtonListener());
+        JButton editButton = createButton("Edit", new UpdateProductButtonListener(null));
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
         JButton saveProductButton = createButton("Save to File", new SaveProductButtonListener());
 		
@@ -168,171 +169,9 @@ public class ProductView extends MainView {
 
 
 
-    private class UpdateButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Get the selected row from the table
-            int selectedRow = table.getSelectedRow();
 
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(ProductView.this, "Please select a product to update.");
-                return;
-            }
-
-            String productCode = table.getValueAt(selectedRow, 0).toString();
-            Products productToUpdate = fetchProductFromDatabase(productCode);
-
-            if (productToUpdate == null) {
-                JOptionPane.showMessageDialog(ProductView.this, "Product not found in the database.");
-                return;
-            }
-
-            JTextField productNameField = new JTextField(productToUpdate.getProductName());
-            JTextField productLineField = new JTextField(productToUpdate.getProductLine());
-            JTextField productScaleField = new JTextField(productToUpdate.getProductScale());
-            JTextField productVendorField = new JTextField(productToUpdate.getProductVendor());
-            JTextArea productDescriptionArea = new JTextArea(productToUpdate.getProductDescription(), 5, 20);
-            productDescriptionArea.setLineWrap(true);
-            productDescriptionArea.setWrapStyleWord(true);
-            JScrollPane productDescriptionScrollPane = new JScrollPane(productDescriptionArea);
-            JTextField quantityInStockField = new JTextField(String.valueOf(productToUpdate.getQuantityInStock()));
-            JTextField buyPriceField = new JTextField(String.valueOf(productToUpdate.getBuyPrice()));
-            JTextField msrpField = new JTextField(String.valueOf(productToUpdate.getMsrp()));
-
-            JPanel panel = new JPanel(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1;
-            gbc.insets = new Insets(5, 5, 5, 5);
-
-            panel.add(new JLabel("Product Name:"), gbc);
-            panel.add(productNameField, gbc);
-            panel.add(new JLabel("Product Line:"), gbc);
-            panel.add(productLineField, gbc);
-            panel.add(new JLabel("Product Scale:"), gbc);
-            panel.add(productScaleField, gbc);
-            panel.add(new JLabel("Product Vendor:"), gbc);
-            panel.add(productVendorField, gbc);
-            panel.add(new JLabel("Product Description:"), gbc);
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.weighty = 1;
-            panel.add(productDescriptionScrollPane, gbc);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weighty = 0;
-            panel.add(new JLabel("Quantity in Stock:"), gbc);
-            panel.add(quantityInStockField, gbc);
-            panel.add(new JLabel("Buy Price:"), gbc);
-            panel.add(buyPriceField, gbc);
-            panel.add(new JLabel("MSRP:"), gbc);
-            panel.add(msrpField, gbc);
-
-            int result = JOptionPane.showConfirmDialog(null, panel, "Edit Product Details", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    productToUpdate.setProductName(productNameField.getText());
-                    productToUpdate.setProductLine(productLineField.getText());
-                    productToUpdate.setProductScale(productScaleField.getText());
-                    productToUpdate.setProductVendor(productVendorField.getText());
-                    productToUpdate.setProductDescription(productDescriptionArea.getText());
-                    productToUpdate.setQuantityInStock(Integer.parseInt(quantityInStockField.getText()));
-                    productToUpdate.setBuyPrice(Double.parseDouble(buyPriceField.getText()));
-                    productToUpdate.setMsrp(Double.parseDouble(msrpField.getText()));
-
-                    boolean success = updateProductInDatabase(productToUpdate);
-
-                    if (success) {
-                        JOptionPane.showMessageDialog(ProductView.this, "Product updated successfully!");
-                        // Add your method to refresh the product list if you have one
-                    } else {
-                        JOptionPane.showMessageDialog(ProductView.this, "Failed to update product.");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(ProductView.this, "Invalid input format.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(ProductView.this, "Error: " + ex.getMessage());
-                }
-            }
-        }
-    }
-
- // Fetch product details from the database based on the product code
-    private Products fetchProductFromDatabase(String productCode) {
-        try {
-            // Assuming you have a connection to the database
-            Connection conn = DataBaseConnection.getConnection();
-            
-            // Define your SQL query to fetch the product details based on the product code
-            String sql = "SELECT * FROM products WHERE productCode = ?";
-            
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                // Set the product code as a parameter in the SQL query
-                pstmt.setString(1, productCode);
-                
-                // Execute the query and retrieve the result set
-                ResultSet resultSet = pstmt.executeQuery();
-                
-                // Check if a record was found
-                if (resultSet.next()) {
-                    // Retrieve the product details from the result set and create a Products object
-                    String productName = resultSet.getString("productName");
-                    String productLine = resultSet.getString("productLine");
-                    String productScale = resultSet.getString("productScale");
-                    String productVendor = resultSet.getString("productVendor");
-                    String productDescription = resultSet.getString("productDescription");
-                    int quantityInStock = resultSet.getInt("quantityInStock");
-                    double buyPrice = resultSet.getDouble("buyPrice");
-                    double msrp = resultSet.getDouble("msrp");
-                    
-                    Products product = new Products(productCode, productName, productLine, productScale, productVendor,
-                            productDescription, quantityInStock, buyPrice, msrp);
-                    
-                    return product;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        // Return null if the product was not found or an error occurred
-        return null;
-    }
-
- // Update product details in the database
-    private boolean updateProductInDatabase(Products product) {
-        try {
-            // Assuming you have a connection to the database
-            Connection conn = DataBaseConnection.getConnection();
-            
-            // Define your SQL update query to update the product details
-            String sql = "UPDATE products SET productName = ?, productLine = ?, productScale = ?, productVendor = ?, " +
-                    "productDescription = ?, quantityInStock = ?, buyPrice = ?, msrp = ? WHERE productCode = ?";
-            
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                // Set the updated product details as parameters in the SQL query
-                pstmt.setString(1, product.getProductName());
-                pstmt.setString(2, product.getProductLine());
-                pstmt.setString(3, product.getProductScale());
-                pstmt.setString(4, product.getProductVendor());
-                pstmt.setString(5, product.getProductDescription());
-                pstmt.setInt(6, product.getQuantityInStock());
-                pstmt.setDouble(7, product.getBuyPrice());
-                pstmt.setDouble(8, product.getMsrp());
-                pstmt.setString(9, product.getProductCode());
-                
-                // Execute the update query
-                int affectedRows = pstmt.executeUpdate();
-                
-                // Check if the update was successful
-                return affectedRows > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        // Return false if the update failed or an error occurred
-        return false;
-    }
+ 
+ 
 
  // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {

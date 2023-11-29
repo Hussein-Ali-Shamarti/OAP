@@ -17,23 +17,35 @@ import model.ProductDAO;
 import model.Products;
 import view.ProductView;
 
-
+/**
+ * ActionListener for the "Add" button in the ProductView.
+ * Allows users to input product details and adds a new product to the database.
+ */
 public class AddProductButtonListener implements ActionListener {
-	private final ProductView productView;
+    private final ProductView productView;
+    private final ProductDAO productDAO;
 
+    /**
+     * Constructs an AddProductButtonListener with a reference to the associated ProductView.
+     *
+     * @param productView The ProductView associated with this listener.
+     */
     public AddProductButtonListener(ProductView productView) {
         this.productView = productView;
-        
+		this.productDAO = new ProductDAO();
     }
+
+    /**
+     * Invoked when the "Add" button is pressed. Opens a dialog for entering product details
+     * and adds the new product to the database.
+     *
+     * @param e The ActionEvent triggered by the "Add" button.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         // Create an instance of ProductHandler
         ProductDAO productHandler = new ProductDAO();
 
-        // Implement the logic for the "Add" button here
-        // For example, you can open a dialog to input product details
-        // and then call the addProduct method on the productHandler instance
-        // Here's a simple example using JOptionPane for input:
         JTextField productCodeField = new JTextField(10);
         JTextField productNameField = new JTextField(20);
         JTextField productLineField = new JTextField(20);
@@ -78,7 +90,7 @@ public class AddProductButtonListener implements ActionListener {
                 double msrp = Double.parseDouble(msrpField.getText());
 
                 // Check if the entered product line exists in the database
-                if (!isProductLineExists(productLine)) {
+                if (!productDAO.isProductLineExists(productLine)) {
                     JOptionPane.showMessageDialog(productView, "Product line doesn't exist.", "Error", JOptionPane.ERROR_MESSAGE);
                     return; // Exit without adding the product
                 }
@@ -104,25 +116,4 @@ public class AddProductButtonListener implements ActionListener {
         }
     }
 
-    // Check if the entered product line exists in the database
-    private boolean isProductLineExists(String productLine) {
-        try {
-            // Assuming you have a database connection established, create a PreparedStatement
-            PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?");
-            preparedStatement.setString(1, productLine);
-
-            // Execute the query
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // Check if a row with the product line exists
-            if (resultSet.next() && resultSet.getInt(1) > 0) {
-                return true; // Product line exists
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace(); // Handle the exception properly in your code
-        }
-
-        return false; // Product line doesn't exist or an error occurred
-    }
 }
-
