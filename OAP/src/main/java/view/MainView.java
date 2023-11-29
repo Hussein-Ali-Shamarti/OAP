@@ -16,6 +16,8 @@ import javax.swing.SwingUtilities;
 
 import controller.CustomerListener;
 import controller.OrderListener;
+import controller.EmployeeListener;
+import controller.ProductListener;
 import view.MainMenu;
 
 
@@ -83,13 +85,13 @@ public class MainView extends JFrame {
         JButton employeesButton = new JButton("Employees");
 
         // Create ProductsListener for "Products" button in MainMenu
-        ProductsListener productsListener = new ProductsListener();
+        ProductListener productsListener = new ProductListener();
 
         // Create OrderListener for "Orders" button in MainMenu
         OrderListener orderListener = new OrderListener();
 
         // Create CustomersListener for "Customers" button in MainMenu
-        CustomersListener customersListener = new CustomersListener();
+        CustomerListener customersListener = new CustomerListener();
 
         // Create EmployeesListener for "Employees" button in MainMenu
         CustomerListener employeeHandler = new CustomerListener ();
@@ -103,35 +105,10 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
     }
 
-	// Static inner class for "Products" button in MainMenu
-	private static class ProductsListener implements ActionListener {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	        // Open ProductView when "Products" button is pressed
-	        SwingUtilities.invokeLater(() -> {
-	            // Create ProductView and set it visible
-	            ProductView productView = new ProductView();
-	            productView.setVisible(true);
-	            
-	        });
-	    }
-	}
+
 	
 
-    // Static inner class for "Customers" button in MainMenu
-    private static class CustomersListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Open CustomerView when "Customers" button is pressed
-            SwingUtilities.invokeLater(() -> {
-                CustomerView customerView = new CustomerView();
-                customerView.setVisible(true);
-               
-            });
-        }
-    }
-
-
+    
     
   }
 
