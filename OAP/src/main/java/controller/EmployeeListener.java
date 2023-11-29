@@ -5,18 +5,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
-import view.CustomerView;
 
-public class EmployeeListener {
-	
-    private static class CustomersListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Open CustomerView when "Customers" button is pressed
-            SwingUtilities.invokeLater(() -> {
-                CustomerView customerView = new CustomerView();
-                customerView.setVisible(true);
-               
+import view.EmployeeView;
+
+public class EmployeeListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+    // Open EmployeeView when "Employees" button is pressed
+    SwingUtilities.invokeLater(() -> {
+        EmployeeView employeeView = new EmployeeView();
+        employeeView.setVisible(true);
+
+
+              		
             });
         }
     }

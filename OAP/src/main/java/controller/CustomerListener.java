@@ -1,20 +1,22 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
-import view.EmployeeView;
+import view.CustomerView;
+
 
 public class CustomerListener implements ActionListener {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Open EmployeeView when "Employees" button is pressed
-        SwingUtilities.invokeLater(() -> {
-            EmployeeView employeeView = new EmployeeView();
-            employeeView.setVisible(true);
+	  @Override
+      public void actionPerformed(ActionEvent e) {
+          // Open CustomerView when "Customers" button is pressed
+          SwingUtilities.invokeLater(() -> {
+              CustomerView customerView = new CustomerView();
+              customerView.setVisible(true);
         });
     }
 }
