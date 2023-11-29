@@ -14,7 +14,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import controller.EmployeeHandler;
+import controller.CustomerListener;
+import controller.OrderListener;
 import view.MainMenu;
 
 
@@ -91,7 +92,7 @@ public class MainView extends JFrame {
         CustomersListener customersListener = new CustomersListener();
 
         // Create EmployeesListener for "Employees" button in MainMenu
-        EmployeeHandler employeeHandler = new EmployeeHandler();
+        CustomerListener employeeHandler = new CustomerListener ();
         employeesButton.addActionListener(employeeHandler);
 
         // Add MainMenu panel at the top
@@ -115,18 +116,7 @@ public class MainView extends JFrame {
 	        });
 	    }
 	}
-	// Static inner class for "Orders" button in MainMenu
-    private static class OrderListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Open OrderView when "Orders" button is pressed
-            SwingUtilities.invokeLater(() -> {
-                OrderView orderView = new OrderView();
-                orderView.setVisible(true);
-               
-            });
-        }
-    }
+	
 
     // Static inner class for "Customers" button in MainMenu
     private static class CustomersListener implements ActionListener {

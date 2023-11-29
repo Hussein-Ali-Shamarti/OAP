@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 
 import view.EmployeeView;
 
-public class EmployeeHandler implements ActionListener {
+public class CustomerListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
