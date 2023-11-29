@@ -94,7 +94,7 @@ public class MainView extends JFrame {
         CustomerListener customersListener = new CustomerListener();
 
         // Create EmployeesListener for "Employees" button in MainMenu
-        CustomerListener employeeHandler = new CustomerListener ();
+        EmployeeListener employeeHandler = new EmployeeListener ();
         employeesButton.addActionListener(employeeHandler);
 
         // Add MainMenu panel at the top
