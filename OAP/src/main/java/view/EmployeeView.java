@@ -37,6 +37,7 @@ import javax.swing.table.DefaultTableModel;
 
 import model.Employee;
 import model.EmployeeDAO;
+import controller.AddEmployeeButtonListener;
 import controller.CustomerListener;
 
 
@@ -103,7 +104,7 @@ public class EmployeeView extends MainView {
      
         
         JButton searchButton = createButton("Search",new SearchButtonListener());
-        JButton addButton = createButton("Add", new AddButtonListener());
+        JButton addButton = createButton("Add", new AddEmployeeButtonListener(null));
         JButton editButton = createButton("Edit", new CustomerListener());
         JButton deleteButton = createButton("Delete",new DeleteButtonListener());
         
