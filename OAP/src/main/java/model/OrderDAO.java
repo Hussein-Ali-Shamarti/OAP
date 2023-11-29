@@ -58,6 +58,32 @@ public class OrderDAO {
 
 		);
 	}
+	// Add this method in your OrderDAO class
+	public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
+	    String sql = "SELECT * FROM orderdetails WHERE orderNumber = ? AND orderLineNumber = ?";
+
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, orderNumber);
+	        pstmt.setInt(2, orderLineNumber);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                // Assuming you have a constructor in OrderDetails class that accepts these parameters
+	                return new OrderDetails(
+	                    rs.getInt("quantityOrdered"),
+	                    rs.getDouble("priceEach"),
+	                    rs.getString("productCode"),
+	                    orderNumber,
+	                    orderLineNumber
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null; // or handle this case as needed
+	}
 
 	// CRUD-methods
 

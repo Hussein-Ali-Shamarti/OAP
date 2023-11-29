@@ -60,48 +60,55 @@ public class OrderDetailsView extends JFrame {
         this.orderDAO = new OrderDAO(); // Initialize OrderHandler first
 		this.productHandler = new ProductDAO();
 		this.products = productHandler.getProducts(); // Initialize products
+        productHandler = new ProductDAO();
+
         initializeUI();
 		setupProductDropdowns(); // Now setup the product dropdowns
         fetchAndDisplayOrderDetails();
         setVisible(true);
     }
-	private void setupProductDropdowns() {
+    private void setupProductDropdowns() {
+        // Use the 'products' field that's already populated in the constructor
+        Map<String, String> products = productHandler.getProducts(); // Fetch products
 
-		// Use the 'products' field that's already populated in the constructor
-		Map<String, String> products = productHandler.getProducts(); // Fetch products
+        for (String productName : products.keySet()) {
+            productNameDropdown.addItem(productName);
+            productCodeDropdown.addItem(products.get(productName));
+        }
 
-		for (String productName : products.keySet()) {
-			productNameDropdown.addItem(productName);
-			productCodeDropdown.addItem(products.get(productName));
-		}
+        // Make the productCodeDropdown non-editable and disable user input
+        productCodeDropdown.setEditable(false);
+        productCodeDropdown.setFocusable(false);
+        ((JTextField) productCodeDropdown.getEditor().getEditorComponent()).setDisabledTextColor(Color.BLACK);
 
-		// Make the productCodeDropdown non-editable and disable user input
-		productCodeDropdown.setEditable(false);
-		productCodeDropdown.setFocusable(false); // Add this line
-		((JTextField) productCodeDropdown.getEditor().getEditorComponent()).setDisabledTextColor(Color.BLACK);
-
-		productCodeDropdown.addActionListener(e -> {
-			String selectedCode = (String) productCodeDropdown.getSelectedItem();
-			String productName = findProductNameByCode(selectedCode); // Implement this method
-			if (productName != null) {
-				productNameDropdown.setSelectedItem(productName);
-				// Fetch and display product details
-				Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName);
-				if (productDetails != null && !productDetails.isEmpty()) {
-					productCodeField.setText(productDetails.get("productCode").toString());
-					System.out.println();
-					quantityInStockField.setText(String.valueOf(productDetails.get("quantityInStock")));
-					buyPriceField.setText(productDetails.get("buyPrice").toString());
-					msrpField.setText(productDetails.get("MSRP").toString());
-				} else {
-					// Clear the fields or show a message if details are not found
-					quantityInStockField.setText("");
-					buyPriceField.setText("");
-					msrpField.setText("");
-				}
-			}
-		});
-	}
+        productNameDropdown.addActionListener(e -> {
+            String selectedProductName = (String) productNameDropdown.getSelectedItem();
+            if (selectedProductName != null) {
+                String productCode = findProductNameByCode(selectedProductName);
+                if (productCode != null) {
+                    productCodeField.setText(productCode);
+                    // Fetch and display product details
+                    Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
+                    if (productDetails != null && !productDetails.isEmpty()) {
+                        quantityInStockField.setText(String.valueOf(productDetails.get("quantityInStock")));
+                        buyPriceField.setText(productDetails.get("buyPrice").toString());
+                        msrpField.setText(productDetails.get("MSRP").toString());
+                    } else {
+                        // Clear the fields or show a message if details are not found
+                        quantityInStockField.setText("");
+                        buyPriceField.setText("");
+                        msrpField.setText("");
+                    }
+                } else {
+                    System.out.println("Product code not found for: " + selectedProductName);
+                    productCodeField.setText("");
+                }
+            } else {
+                System.out.println("No product name selected");
+            }
+        });
+    }
+	
 	private String findProductNameByCode(String code) {
 		return productHandler.getProductNameByCode(code); // Use the new method from ProductHandler
 	}
@@ -196,9 +203,9 @@ public class OrderDetailsView extends JFrame {
 		JButton editButton = createButton("Edit", new UpdateButtonListener(orderDAO, productHandler));
 		controlPanel.add(editButton);
 		
-	//	JPanel panelHolder = new JPanel(new BorderLayout());
+		//JPanel panelHolder = new JPanel(new BorderLayout());
 		//panelHolder.add(controlPanel, BorderLayout.SOUTH);
-	//	this.add(panelHolder, BorderLayout.SOUTH);
+		//this.add(panelHolder, BorderLayout.SOUTH);
 
         controlPanel.setBackground(new Color(84, 11, 131)); // Ensure this is the color you want for the background
         controlPanel.add(totalLabel, BorderLayout.CENTER);
@@ -291,92 +298,79 @@ public class OrderDetailsView extends JFrame {
     
     
     
-	public class UpdateButtonListener implements ActionListener {
+    public class UpdateButtonListener implements ActionListener {
+        private OrderDAO orderDAO;
+        private ProductDAO productDAO;
 
-		private OrderDAO OrderDAO; // Assuming you have an OrderDAO class
-		private ProductDAO ProductDAO; // Assuming you have a ProductDAO class
+        public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
+            this.orderDAO = orderDAO;
+            this.productDAO = productDAO;
+        }
 
-		public UpdateButtonListener(OrderDAO OrderDAO, ProductDAO ProductDAO) {
-			this.OrderDAO = OrderDAO;
-			this.ProductDAO = ProductDAO;
-		}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
+            String orderLineNumberString = JOptionPane.showInputDialog("Enter Order Line Number:");
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
-			if (orderNumberString != null && !orderNumberString.isEmpty()) {
-				try {
-					int orderNumber = Integer.parseInt(orderNumberString);
-					Order existingOrder = OrderDAO.getOrder(orderNumber);
+            if (orderNumberString != null && !orderNumberString.isEmpty() &&
+                orderLineNumberString != null && !orderLineNumberString.isEmpty()) {
+                try {
+                    int orderNumber = Integer.parseInt(orderNumberString);
+                    int orderLineNumber = Integer.parseInt(orderLineNumberString);
 
-					if (existingOrder != null) {
-			JPanel panel = new JPanel(new GridLayout(0, 2));
+                    // Check if getOrderDetails method exists and is implemented correctly
+                    OrderDetails orderDetails = orderDAO.getOrderDetails(orderNumber, orderLineNumber);
+                    if (orderDetails != null) {
+                        JPanel panel = new JPanel(new GridLayout(0, 2));
+                        JTextField productCodeField = new JTextField(orderDetails.getProductCode(), 10);
+                        JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNumber()), 10);
+                        JTextField quantityOrderedField = new JTextField(String.valueOf(orderDetails.getQuantityOrdered()), 10);
 
-			 productCodeField = new JTextField(10);
-			JTextField orderLineNumberField = new JTextField(10);
-			 quantityOrderedField = new JTextField(10);
-			 quantityInStockField = new JTextField(10);
-			 buyPriceField = new JTextField(10);
-			 msrpField = new JTextField(10);
-			productCodeField.setEditable(false);
-			productCodeField.setFocusable(false);
-			productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
-			
-			Map<String, String> products = ProductDAO.getProducts();
-			JComboBox<String> productNameDropdown = new JComboBox<>();
-			for (String productName : products.keySet()) {
-				productNameDropdown.addItem(productName);
-			}
-			
-			productNameDropdown.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String selectedProductName = (String) productNameDropdown.getSelectedItem();
-					String productCode = products.get(selectedProductName);
-					productCodeDropdown.setSelectedItem(productCode);
+                        productCodeField.setEditable(false);
+                        productCodeField.setFocusable(false);
+                        productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
 
-					Map<String, Object> productDetails = ProductDAO
-							.getProductDetailsByName(selectedProductName);
-					if (productDetails != null && !productDetails.isEmpty()) {
-						quantityInStockField.setText(productDetails.get("quantityInStock").toString());
-						buyPriceField.setText(productDetails.get("buyPrice").toString());
-						msrpField.setText(productDetails.get("MSRP").toString());
-					} else {
-						quantityInStockField.setText("");
-						buyPriceField.setText("");
-						msrpField.setText("");
-					}
-				}
-			});
+                        String productName = productDAO.getProductNameByCode(orderDetails.getProductCode()); // Assuming this method exists
+                        Map<String, Object> productDetails = productDAO.getProductDetailsByName(productName);
 
-			panel.add(new JLabel("Product Name:"));
-			panel.add(productNameDropdown);
-			panel.add(new JLabel("Product Code:"));
-			panel.add(productCodeField); // Use the JTextField for Product Code
-			panel.add(new JLabel("Product Quantity:"));
-			panel.add(quantityOrderedField);
-			panel.add(new JLabel("Quantity in Stock:"));
-			panel.add(quantityInStockField);
-			panel.add(new JLabel("Buy Price:"));
-			panel.add(buyPriceField);
-			panel.add(new JLabel("MSRP:"));
-			panel.add(msrpField);
-			panel.add(new JLabel("orderLineNumber:"));
-			panel.add(orderLineNumberField);
-		
-			
-			
-			int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
-					JOptionPane.OK_CANCEL_OPTION);
-					}
-					
-			
-			
-			}catch (NumberFormatException ex) {
-		}
-    }
-    
+                        JTextField quantityInStockField;
+                        JTextField buyPriceField;
+                        JTextField msrpField;
+                        if (productDetails != null && !productDetails.isEmpty()) {
+                            quantityInStockField = new JTextField(String.valueOf(productDetails.get("quantityInStock")), 10);
+                            buyPriceField = new JTextField(productDetails.get("buyPrice").toString(), 10);
+                            msrpField = new JTextField(productDetails.get("MSRP").toString(), 10);
+                        } else {
+                            quantityInStockField = new JTextField("", 10);
+                            buyPriceField = new JTextField("", 10);
+                            msrpField = new JTextField("", 10);
+                        }
 
-    }
+                        // Add components to the panel
+                        panel.add(new JLabel("Product Code:"));
+                        panel.add(productCodeField);
+                        panel.add(new JLabel("Order Line Number:"));
+                        panel.add(orderLineNumberField);
+                        panel.add(new JLabel("Quantity Ordered:"));
+                        panel.add(quantityOrderedField);
+                        panel.add(new JLabel("Quantity in Stock:"));
+                        panel.add(quantityInStockField);
+                        panel.add(new JLabel("Buy Price:"));
+                        panel.add(buyPriceField);
+                        panel.add(new JLabel("MSRP:"));
+                        panel.add(msrpField);
+
+                        int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details", JOptionPane.OK_CANCEL_OPTION);
+                        if (result == JOptionPane.OK_OPTION) {
+                            // Update logic here, if necessary
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Order details not found for the given Order Number and Order Line Number.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid input format. Please enter numeric values.");
+                }
+            }
+        }
     }
 }
