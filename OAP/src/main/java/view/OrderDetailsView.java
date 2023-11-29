@@ -25,7 +25,7 @@ import view.OrderView.UpdateButtonListener;
 import model.OrderDetails;
 import model.Products; // Adjust the package name as necessary
 
-public class OrderDetailsView extends MainView {
+public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
     private JLabel totalLabel; // Label for displaying the total
     private JTextField orderNumberInput;
@@ -34,10 +34,13 @@ public class OrderDetailsView extends MainView {
 	private JTextField buyPriceField;
 	private JTextField msrpField;
 	private JTextField textField;
+	private JTextField productCodeField;
+	private JTextField quantityOrderedField;
 	private DefaultTableModel tableModel;
 	private OrderDAO orderDAO = new OrderDAO();
-	private JComboBox<String> productNameDropdown;
-	private JComboBox<String> productCodeDropdown;
+	private JComboBox<String> productNameDropdown=new JComboBox<>();
+	private JComboBox<String> productCodeDropdown = new JComboBox<>();
+
 	private ProductDAO productHandler;
 	private Map<String, String> products; // Declare products here
 
@@ -63,8 +66,6 @@ public class OrderDetailsView extends MainView {
         setVisible(true);
     }
 	private void setupProductDropdowns() {
-		productNameDropdown = new JComboBox<>();
-		productCodeDropdown = new JComboBox<>();
 
 		// Use the 'products' field that's already populated in the constructor
 		Map<String, String> products = productHandler.getProducts(); // Fetch products
@@ -87,7 +88,9 @@ public class OrderDetailsView extends MainView {
 				// Fetch and display product details
 				Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName);
 				if (productDetails != null && !productDetails.isEmpty()) {
-					quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+					productCodeField.setText(productDetails.get("productCode").toString());
+					System.out.println();
+					quantityInStockField.setText(String.valueOf(productDetails.get("quantityInStock")));
 					buyPriceField.setText(productDetails.get("buyPrice").toString());
 					msrpField.setText(productDetails.get("MSRP").toString());
 				} else {
@@ -288,23 +291,92 @@ public class OrderDetailsView extends MainView {
     
     
     
-    
-    
-    public class UpdateButtonListener implements ActionListener {
+	public class UpdateButtonListener implements ActionListener {
 
-		public UpdateButtonListener(OrderDAO orderHandler, ProductDAO productHandler) {
-			// TODO Auto-generated constructor stub
+		private OrderDAO OrderDAO; // Assuming you have an OrderDAO class
+		private ProductDAO ProductDAO; // Assuming you have a ProductDAO class
+
+		public UpdateButtonListener(OrderDAO OrderDAO, ProductDAO ProductDAO) {
+			this.OrderDAO = OrderDAO;
+			this.ProductDAO = ProductDAO;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
+			if (orderNumberString != null && !orderNumberString.isEmpty()) {
+				try {
+					int orderNumber = Integer.parseInt(orderNumberString);
+					Order existingOrder = OrderDAO.getOrder(orderNumber);
+
+					if (existingOrder != null) {
+			JPanel panel = new JPanel(new GridLayout(0, 2));
+
+			 productCodeField = new JTextField(10);
+			JTextField orderLineNumberField = new JTextField(10);
+			 quantityOrderedField = new JTextField(10);
+			 quantityInStockField = new JTextField(10);
+			 buyPriceField = new JTextField(10);
+			 msrpField = new JTextField(10);
+			productCodeField.setEditable(false);
+			productCodeField.setFocusable(false);
+			productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
 			
+			Map<String, String> products = ProductDAO.getProducts();
+			JComboBox<String> productNameDropdown = new JComboBox<>();
+			for (String productName : products.keySet()) {
+				productNameDropdown.addItem(productName);
+			}
+			
+			productNameDropdown.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String selectedProductName = (String) productNameDropdown.getSelectedItem();
+					String productCode = products.get(selectedProductName);
+					productCodeDropdown.setSelectedItem(productCode);
+
+					Map<String, Object> productDetails = ProductDAO
+							.getProductDetailsByName(selectedProductName);
+					if (productDetails != null && !productDetails.isEmpty()) {
+						quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+						buyPriceField.setText(productDetails.get("buyPrice").toString());
+						msrpField.setText(productDetails.get("MSRP").toString());
+					} else {
+						quantityInStockField.setText("");
+						buyPriceField.setText("");
+						msrpField.setText("");
+					}
+				}
+			});
+
+			panel.add(new JLabel("Product Name:"));
+			panel.add(productNameDropdown);
+			panel.add(new JLabel("Product Code:"));
+			panel.add(productCodeField); // Use the JTextField for Product Code
+			panel.add(new JLabel("Product Quantity:"));
+			panel.add(quantityOrderedField);
+			panel.add(new JLabel("Quantity in Stock:"));
+			panel.add(quantityInStockField);
+			panel.add(new JLabel("Buy Price:"));
+			panel.add(buyPriceField);
+			panel.add(new JLabel("MSRP:"));
+			panel.add(msrpField);
+			panel.add(new JLabel("orderLineNumber:"));
+			panel.add(orderLineNumberField);
+		
+			
+			
+			int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
+					JOptionPane.OK_CANCEL_OPTION);
+					}
+					
+			
+			
+			}catch (NumberFormatException ex) {
 		}
-    
     }
     
-    
-    
 
+    }
+    }
 }

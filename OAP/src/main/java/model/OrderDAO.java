@@ -178,7 +178,7 @@ public class OrderDAO {
 	}
 
 	// Define SQL queries for the "orderDetails" table
-	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderdetails";
+	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
 
 	// Add more SQL queries for CRUD operations if needed
 

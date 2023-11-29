@@ -339,6 +339,8 @@ public class OrderView extends MainView {
 			panel.add(new JLabel("orderLineNumber:"));
 			panel.add(orderLineNumberField);
 			
+			
+			//adding multiple products
 			JButton addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
 			panel.add(addMultipleProducts);
 			
@@ -465,6 +467,7 @@ public class OrderView extends MainView {
 						panel.add(commentsField);
 						panel.add(new JLabel("Customer Number:"));
 						panel.add(customerNumberField);
+						/*
 						panel.add(new JLabel("Product Name:"));
 						panel.add(productNameDropdown);
 						panel.add(new JLabel("Product Code:"));
@@ -479,7 +482,7 @@ public class OrderView extends MainView {
 						panel.add(msrpField);
 						panel.add(new JLabel("orderLineNumber:"));
 						panel.add(orderLineNumberField);
-
+*/
 						
 						int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
 								JOptionPane.OK_CANCEL_OPTION);
@@ -731,6 +734,8 @@ public class OrderView extends MainView {
 	    }
 	}
 	
+	
+	//adding multiple products
 	private class AddMultipleProductsButtonListener implements ActionListener {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -748,7 +753,10 @@ public class OrderView extends MainView {
 			panel.add(new JLabel("MSRP:"));
 			panel.add(msrpField);
 			panel.add(new JLabel("orderLineNumber:"));
-			panel.add(orderLineNumberField);	    }
+			panel.add(orderLineNumberField);	   
+			
+	    }
+	    
 	}
 
 
