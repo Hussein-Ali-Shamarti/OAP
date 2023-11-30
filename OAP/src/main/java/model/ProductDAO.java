@@ -305,6 +305,27 @@ public class ProductDAO {
 
         return false; // Product line doesn't exist or an error occurred
     }
+    /**
+     * Retrieves all product names from the database.
+     * @return A list of all product names.
+     */
+    public List<String> getAllProductNames() {
+        List<String> productNames = new ArrayList<>();
+        String query = "SELECT productName FROM products";
+
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                productNames.add(resultSet.getString("productName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception
+        }
+
+        return productNames;
+    }
 
 
 }
