@@ -255,21 +255,7 @@ public class OrderView extends MainView {
 	    return orders;
 	}
 
-    private class BorderlessTextField extends JTextField {
-        public BorderlessTextField(int columns) {
-            super(columns);
-            setBorder(BorderFactory.createEmptyBorder());
-        }
 
-        @Override
-        public void updateUI() {
-        	
-            super.updateUI();
-            setBorder(BorderFactory.createEmptyBorder());
-            
-        }
-    }
-    
 	private class AddButtonListener implements ActionListener {
 	    private JButton addMultipleProducts; // Class attribute for the button
 	    private JScrollPane scrollPane; // This will contain your panel and provide scrolling
