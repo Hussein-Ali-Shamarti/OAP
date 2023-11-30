@@ -12,8 +12,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import database.DataBaseConnection;
 
 /**
@@ -169,7 +173,7 @@ public class EmployeeDAO {
 	                rs.getString("officeCode"),
 	                rs.getInt("reportsTo"),
 	                rs.getString("jobTitle")
-	            );
+	            ); 
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -192,7 +196,7 @@ public class EmployeeDAO {
 	        return affectedRows > 0;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	        return false;
+	        return false;  
 	    }
 	}
 
@@ -227,4 +231,29 @@ public class EmployeeDAO {
 	    }
 	    return employees;
 	}
+	
+	 public List<String[]> fetchEmployees() {
+	        List<String[]> employees = new ArrayList<>();
+	        try (Connection conn = database.DataBaseConnection.getConnection();
+	             Statement statement = conn.createStatement()) {
+	            String sql = "SELECT employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle FROM employees";
+	            ResultSet resultSet = statement.executeQuery(sql);
+	            while (resultSet.next()) {
+	                String[] employee = {
+	                    resultSet.getString("employeeNumber"),
+	                    resultSet.getString("firstName"),
+	                    resultSet.getString("lastName"),
+	                    resultSet.getString("extension"),
+	                    resultSet.getString("email"),
+	                    resultSet.getString("officeCode"),
+	                    resultSet.getString("reportsTo"),
+	                    resultSet.getString("jobTitle")
+	                };
+	                employees.add(employee);
+	            }
+	        } catch (SQLException e) {
+	            JOptionPane.showMessageDialog(null, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	        return employees;
+	    }
 }

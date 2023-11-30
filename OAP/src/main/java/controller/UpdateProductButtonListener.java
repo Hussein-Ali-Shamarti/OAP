@@ -36,7 +36,7 @@ public class UpdateProductButtonListener implements ActionListener {
             JOptionPane.showMessageDialog(productView, "Please select a product to update.");
             return;
         }
-
+   
         String productCode = table.getValueAt(selectedRow, 0).toString();
         Products productToUpdate = fetchProductFromDatabase(productCode);
 
