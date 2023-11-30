@@ -121,6 +121,25 @@ public class ProductDAO {
             return false;
         }
     }
+    
+    public Products fetchProductFromDatabase(String productCode) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM products WHERE productCode = ?")) {
+
+            preparedStatement.setString(1, productCode);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToProduct(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     /**
      * Deletes a product from the database based on the product code.

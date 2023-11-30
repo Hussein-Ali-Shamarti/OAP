@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.GridBagConstraints;
+
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -13,23 +14,28 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import database.DataBaseConnection;
+import model.ProductDAO;
 import model.Products;
 import view.ProductView;
 
 public class UpdateProductButtonListener implements ActionListener {
 	private ProductView productView;
-
-	public UpdateProductButtonListener(ProductView productView) {
+	private ProductDAO productDAO;
+			
+	public UpdateProductButtonListener(ProductView productView,ProductDAO productDAO) {
         this.productView = productView;
+        this.productDAO = productDAO;
     }
 	
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Get the selected row from the table
+    	 JTable table = productView.getTable();
+		// Get the selected row from the table
         int selectedRow = table.getSelectedRow();
 
         if (selectedRow == -1) {
@@ -38,7 +44,7 @@ public class UpdateProductButtonListener implements ActionListener {
         }
    
         String productCode = table.getValueAt(selectedRow, 0).toString();
-        Products productToUpdate = fetchProductFromDatabase(productCode);
+        Products productToUpdate = productDAO.fetchProductFromDatabase(productCode);
 
         if (productToUpdate == null) {
             JOptionPane.showMessageDialog(productView, "Product not found in the database.");
