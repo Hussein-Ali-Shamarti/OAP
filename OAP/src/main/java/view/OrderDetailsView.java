@@ -1,29 +1,38 @@
+/**
+ * Represents an order entity with information such as order number, dates, status, comments,
+ * customer number, and associated order date.
+ * 
+ * <p>Orders may also contain order details, which are not implemented in this version.</p>
+ * 
+ * @author Hussein
+ * @version 07.11.2023
+ */
 package view;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.border.EmptyBorder;
 
 import model.OrderDAO;
 import model.ProductDAO;
 import database.DataBaseConnection;
-import model.Order;
-import view.OrderView.UpdateButtonListener;
 import model.OrderDetails;
-import model.Products; // Adjust the package name as necessary
+import model.Products;
+import view.OrderView.UpdateButtonListener;
 
 public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -34,13 +43,15 @@ public class OrderDetailsView extends JFrame {
 	private JTextField buyPriceField;
 	private JTextField msrpField;
 	private JTextField textField;
-	private JTextField productCodeField;
-	private JTextField quantityOrderedField;
+    private JTextField orderLineNumberField;
+    private JTextField productCodeField;
+    private JTextField quantityOrderedField;
 	private DefaultTableModel tableModel;
 	private OrderDAO orderDAO = new OrderDAO();
-	private JComboBox<String> productNameDropdown=new JComboBox<>();
-	private JComboBox<String> productCodeDropdown = new JComboBox<>();
-
+	private JComboBox<String> productNameDropdown;
+	private JComboBox<String> productCodeDropdown;
+	private JTextField searchField; 
+	private JButton searchButton;  
 	private ProductDAO productHandler;
 	private Map<String, String> products; // Declare products here
 
@@ -61,56 +72,64 @@ public class OrderDetailsView extends JFrame {
 		this.productHandler = new ProductDAO();
 		this.products = productHandler.getProducts(); // Initialize products
         productHandler = new ProductDAO();
-
+        
+        orderNumberInput = new JTextField(10);
+        orderLineNumberField = new JTextField(10);
+        quantityOrderedField = new JTextField(10);
+        productCodeField = new JTextField(10);
+        
         initializeUI();
-		setupProductDropdowns(); // Now setup the product dropdowns
+        setupSearchComponents();
         fetchAndDisplayOrderDetails();
         setVisible(true);
-    }
-    private void setupProductDropdowns() {
-        // Use the 'products' field that's already populated in the constructor
-        Map<String, String> products = productHandler.getProducts(); // Fetch products
+                
+        JPanel dummyPanel = new JPanel();
+        add(dummyPanel);
+        dummyPanel.requestFocusInWindow();
+		UpdateButtonListener updateButtonListener = new UpdateButtonListener(orderDAO, productHandler);
 
+    }
+    
+    private void setupProductDropdowns() {
+        productNameDropdown = new JComboBox<>();
+        productCodeDropdown = new JComboBox<>();
+
+        // Populate dropdowns using the productDAO instance
+        Map<String, String> products = productHandler.getProducts(); // Use instance of ProductDAO
         for (String productName : products.keySet()) {
             productNameDropdown.addItem(productName);
             productCodeDropdown.addItem(products.get(productName));
         }
 
-        // Make the productCodeDropdown non-editable and disable user input
         productCodeDropdown.setEditable(false);
         productCodeDropdown.setFocusable(false);
         ((JTextField) productCodeDropdown.getEditor().getEditorComponent()).setDisabledTextColor(Color.BLACK);
 
-        productNameDropdown.addActionListener(e -> {
-            String selectedProductName = (String) productNameDropdown.getSelectedItem();
-            if (selectedProductName != null) {
-                String productCode = findProductNameByCode(selectedProductName);
-                if (productCode != null) {
-                    productCodeField.setText(productCode);
-                    // Fetch and display product details
-                    Map<String, Object> productDetails = productHandler.getProductDetailsByName(selectedProductName);
-                    if (productDetails != null && !productDetails.isEmpty()) {
-                        quantityInStockField.setText(String.valueOf(productDetails.get("quantityInStock")));
-                        buyPriceField.setText(productDetails.get("buyPrice").toString());
-                        msrpField.setText(productDetails.get("MSRP").toString());
-                    } else {
-                        // Clear the fields or show a message if details are not found
-                        quantityInStockField.setText("");
-                        buyPriceField.setText("");
-                        msrpField.setText("");
-                    }
-                } else {
-                    System.out.println("Product code not found for: " + selectedProductName);
-                    productCodeField.setText("");
-                }
-            } else {
-                System.out.println("No product name selected");
+        productCodeDropdown.addActionListener(e -> {
+            String selectedCode = (String) productCodeDropdown.getSelectedItem();
+            String productName = productHandler.getProductNameByCode(selectedCode); // Use instance of ProductDAO
+            if (productName != null) {
+                productNameDropdown.setSelectedItem(productName);
+                Map<String, Object> productDetails = productHandler.getProductDetailsByName(productName); // Use instance of ProductDAO
+                updateProductDetailsFields(productDetails);
             }
         });
+        
+    }
+    private void updateProductDetailsFields(Map<String, Object> productDetails) {
+        if (productDetails != null && !productDetails.isEmpty()) {
+            quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+            buyPriceField.setText(productDetails.get("buyPrice").toString());
+            msrpField.setText(productDetails.get("MSRP").toString());
+        } else {
+            quantityInStockField.setText("");
+            buyPriceField.setText("");
+            msrpField.setText("");
+        }
     }
 	
-	private String findProductNameByCode(String code) {
-		return productHandler.getProductNameByCode(code); // Use the new method from ProductHandler
+	private String findProductCodeByName(String code) {
+		return productHandler.getProductNameByCode(code); // Use the new method from ProductDAO
 	}
 	
     private void initializeUI() {
@@ -120,8 +139,9 @@ public class OrderDetailsView extends JFrame {
         setLocationRelativeTo(null);
 		//setupControlPanel();
 
+        
         setupTitlePanel();
-        setupOrderInput();
+        setupSearchComponents();
         setupTable();
         setupTotalLabel();
         add(new JScrollPane(orderDetailsTable), BorderLayout.CENTER);
@@ -138,36 +158,102 @@ public class OrderDetailsView extends JFrame {
         add(titlePanel, BorderLayout.NORTH);
     }
     
-    private void setupOrderInput() {
-        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel inputLabel = new JLabel("Enter Order Number:");
-        orderNumberInput = new JTextField(10);
+    private void setupSearchComponents() {
+        // Create a panel for search components and calculate order
+        JPanel searchAndCalculatePanel = new JPanel(new BorderLayout());
+
+        // Create a sub-panel for search components
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        // Create the search field
+        searchField = new JTextField(20);
+        searchPanel.add(searchField);
+
+        // Create the search button
+        searchButton = new JButton("Search");
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchOrderDetails();
+            }
+        });
+        searchPanel.add(searchButton);
+
+        // Add the search panel to the left side
+        searchAndCalculatePanel.add(searchPanel, BorderLayout.WEST);
+
+        // Create a sub-panel for the "Calculate Order" field and button
+        JPanel calculateOrderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        // Initialize your JTextField with a "placeholder" text
+        orderNumberInput = new JTextField("Enter Order Number To Calculate", 17);
+        // Set the foreground color to a lighter shade to mimic placeholder style
+        orderNumberInput.setForeground(Color.GRAY);
+
+        // Add focus listener to clear the "placeholder" when the field gains focus
+        orderNumberInput.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                JTextField source = (JTextField) e.getComponent();
+                source.setText("");
+                orderNumberInput.setFont(new Font(orderNumberInput.getFont().getName(), Font.PLAIN, 12));
+                source.setForeground(Color.BLACK); // Reset to default color when focused
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                JTextField source = (JTextField) e.getComponent();
+                if (source.getText().isEmpty()) {
+                    source.setForeground(Color.GRAY);
+                    source.setText("Enter Order Number To Calculate");
+                }
+            }
+        });
+
         calculateButton = new JButton("Calculate Total Order");
         calculateButton.addActionListener(e -> calculateAndDisplayTotalForOrder());
-        inputPanel.add(inputLabel);
-        inputPanel.add(orderNumberInput);
-        inputPanel.add(calculateButton);
 
-        // Place the input panel at the top, above the title panel
-        getContentPane().add(inputPanel, BorderLayout.NORTH);
-        inputPanel.setBackground(new Color(84, 11, 131));
-        inputLabel.setForeground(Color.WHITE); // Set the text color to white
+        // Add the JTextField and Calculate button to the sub-panel
+        calculateOrderPanel.add(orderNumberInput);
+        calculateOrderPanel.add(calculateButton);
 
+        // Add the "Calculate Order" sub-panel to the right side
+        searchAndCalculatePanel.add(calculateOrderPanel, BorderLayout.EAST);
+
+        // Add the search and calculate panel to the frame's NORTH region
+        getContentPane().add(searchAndCalculatePanel, BorderLayout.NORTH);
+
+        // Set background and other properties
+        searchAndCalculatePanel.setBackground(new Color(84, 11, 131));
+        searchPanel.setBackground(new Color(84, 11, 131));
+        calculateOrderPanel.setBackground(new Color(84, 11, 131));
     }
     
-	/*private void setupControlPanel() {
-		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
-		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
-		controlPanel.setBackground(new Color(90, 23, 139));
-		
-		JButton editButton = createButton("Edit", new UpdateButtonListener(orderHandler, productHandler));
-		controlPanel.add(editButton);
-		
-		JPanel panelHolder = new JPanel(new BorderLayout());
-		panelHolder.add(controlPanel, BorderLayout.SOUTH);
-		this.add(panelHolder, BorderLayout.SOUTH);
+    private void searchOrderDetails() {
+        String searchCriteria = searchField.getText();
+        // Call the search method from OrderDAO and display the results
+        List<OrderDetails> searchResults = orderDAO.searchOrderDetails(searchCriteria);
 
-	}*/
+        // Assuming you have a method to update the table with search results, update it here
+        updateOrderDetailsTable(searchResults);
+    }
+
+    // Method to update the order details table with search results
+    private void updateOrderDetailsTable(List<OrderDetails> searchResults) {
+        DefaultTableModel model = (DefaultTableModel) orderDetailsTable.getModel();
+        model.setRowCount(0); // Clear the existing rows
+
+        for (OrderDetails orderDetail : searchResults) {
+            // Assuming you have appropriate getters in the OrderDetails class
+            model.addRow(new Object[]{
+                    orderDetail.getOrderNumber(),
+                    orderDetail.getProductCode(),
+                    orderDetail.getQuantityOrdered(),
+                    orderDetail.getPriceEach(),
+                    orderDetail.getOrderLineNumber()
+            });
+        }
+    }
 	
 	private JButton createButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
@@ -322,6 +408,14 @@ public class OrderDetailsView extends JFrame {
                     OrderDetails orderDetails = orderDAO.getOrderDetails(orderNumber, orderLineNumber);
                     if (orderDetails != null) {
                         JPanel panel = new JPanel(new GridLayout(0, 2));
+                        orderLineNumberField.setText(String.valueOf(orderDetails.getOrderLineNumber()));
+                        JComboBox<String> productDropdown = new JComboBox<>();
+                        List<String> productNames = productDAO.getAllProductNames(); // Assuming this method exists
+                        for (String productName : productNames) {
+                            productDropdown.addItem(productName);
+                        }
+                        productDropdown.setSelectedItem(productDAO.getProductNameByCode(orderDetails.getProductCode()));
+
                         JTextField productCodeField = new JTextField(orderDetails.getProductCode(), 10);
                         JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNumber()), 10);
                         JTextField quantityOrderedField = new JTextField(String.valueOf(orderDetails.getQuantityOrdered()), 10);
@@ -330,9 +424,18 @@ public class OrderDetailsView extends JFrame {
                         productCodeField.setFocusable(false);
                         productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
 
+                        JComboBox<String> productNameDropdown = new JComboBox<>();
+            			JComboBox<String> productCodeDropdown = new JComboBox<>();
+
+                        
                         String productName = productDAO.getProductNameByCode(orderDetails.getProductCode()); // Assuming this method exists
                         Map<String, Object> productDetails = productDAO.getProductDetailsByName(productName);
+						for (String productName1 : products.keySet()) {
+							productNameDropdown.addItem(productName1);
+							productCodeDropdown.addItem(products.get(productName));
 
+						}
+						
                         JTextField quantityInStockField;
                         JTextField buyPriceField;
                         JTextField msrpField;
@@ -347,6 +450,8 @@ public class OrderDetailsView extends JFrame {
                         }
 
                         // Add components to the panel
+                        panel.add(new JLabel("Product Name:"));
+						panel.add(productNameDropdown);
                         panel.add(new JLabel("Product Code:"));
                         panel.add(productCodeField);
                         panel.add(new JLabel("Order Line Number:"));

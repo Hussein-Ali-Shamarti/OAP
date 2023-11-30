@@ -4,7 +4,8 @@
  * <p>This class contains a constructor, getter and setter methods, and a method to calculate
  * the subtotal price of an order.</p>
  * 
- * @author Hussein
+ * @Author Hussein
+ * @CoAuthor Kim
  * @version 07.11.2023
  */
 package model;
@@ -15,7 +16,7 @@ public class OrderDetails {
 	   
 	   private int quantityOrdered;
 	   private double priceEach; // Kept as double to reflect the DECIMAL type in the database
-	   private int orderLineNr;
+	   private int orderLineNumber;
 	   private String productCode;
 	   private int orderNumber;
 
@@ -29,19 +30,19 @@ public class OrderDetails {
     * @param orderLineNr     The order line number.
     */
 	// Constructor
-	   public OrderDetails(int quantityOrdered, double priceEach, String productCode, int orderNumber, int orderLineNr) {
+	   public OrderDetails(int quantityOrdered, double priceEach, String productCode, int orderNumber, int orderLineNumber) {
 	      this.quantityOrdered = quantityOrdered;
 	      this.priceEach = priceEach;
 	      this.productCode = productCode;
 	      this.orderNumber = orderNumber;
-	      this.orderLineNr = orderLineNr;
+	      this.orderLineNumber = orderLineNumber;
 	   }
 
-   public OrderDetails(int quantityOrdered, double priceEach, String productCode,  int orderLineNr) {
+   public OrderDetails(int quantityOrdered, double priceEach, String productCode,  int orderLineNumber) {
 	      this.quantityOrdered = quantityOrdered;
 	      this.priceEach = priceEach;
 	      this.productCode = productCode;
-	      this.orderLineNr = orderLineNr;
+	      this.orderLineNumber = orderLineNumber;
 	   }
    
    
@@ -55,7 +56,7 @@ public class OrderDetails {
 	}
 
 	public int getOrderLineNr() {
-	    return this.orderLineNr;
+	    return this.orderLineNumber;
 	}
 
 	public String getProductCode() {
@@ -88,8 +89,8 @@ public class OrderDetails {
     * 
     * @param orderLineNr The order line number to set.
     */
-   public void setOrderLineNr(int orderLineNr) {
-      this.orderLineNr = orderLineNr;
+   public void setOrderLineNumber(int orderLineNumber) {
+      this.orderLineNumber = orderLineNumber;
    }
    
    /**
@@ -133,4 +134,5 @@ public Object getquantityOrdered() {
 public Object getOrderLineNumber() {
 	return null;
 }
+
 }

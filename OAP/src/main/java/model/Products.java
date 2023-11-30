@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Represents information about a product, including its code, name, scale, vendor, description,
  * stock quantity, buy price, and MSRP (Manufacturer's Suggested Retail Price).
@@ -45,6 +47,16 @@ public class Products {
         this.quantityInStock = quantityInStock;
         this.buyPrice = buyPrice;
         this.msrp = msrp;
+    }
+    
+    public List<String> getAllProductNames() {
+        // Implementation goes here
+        return null;
+    }
+
+    public String getProductNameByCode(String productCode) {
+        // Implementation goes here
+        return "";
     }
 
 
@@ -211,4 +223,5 @@ public class Products {
     public void setMsrp(double msrp) {
         this.msrp = msrp;
     }   
+    
 }

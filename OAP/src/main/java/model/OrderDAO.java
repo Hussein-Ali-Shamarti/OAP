@@ -287,5 +287,43 @@ public class OrderDAO {
 		}
 		return false;
 	}
+	
+	// Add this method to the OrderDAO class
+	public List<OrderDetails> searchOrderDetails(String searchCriteria) {
+	    List<OrderDetails> searchResults = new ArrayList<>();
+	    String searchOrderDetailsSQL = "SELECT * FROM orderdetails WHERE " +
+	        "CAST(orderNumber AS CHAR) LIKE ? OR " +
+	        "productCode LIKE ? OR " +
+	        "CAST(quantityOrdered AS CHAR) LIKE ? OR " +
+	        "CAST(priceEach AS CHAR) LIKE ? OR " +
+	        "CAST(orderLineNumber AS CHAR) LIKE ?";
+
+	    try (Connection connection = DataBaseConnection.getConnection();
+	         PreparedStatement preparedStatement = connection.prepareStatement(searchOrderDetailsSQL)) {
+	        
+	        // Setting the search criteria for all the placeholders
+	        for (int i = 1; i <= 5; i++) {
+	            preparedStatement.setString(i, "%" + searchCriteria + "%");
+	        }
+
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            while (resultSet.next()) {
+	                OrderDetails orderDetails = new OrderDetails(
+	                    resultSet.getInt("quantityOrdered"),
+	                    resultSet.getDouble("priceEach"),
+	                    resultSet.getString("productCode"),
+	                    resultSet.getInt("orderNumber"),
+	                    resultSet.getInt("orderLineNumber")
+	                );
+	                searchResults.add(orderDetails);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return searchResults;
+	}
+
 
 }
