@@ -54,7 +54,7 @@ public class EmployeeView extends MainView {
     public EmployeeView() {
     	
         super();
-        employeeDAO = new EmployeeDAO();
+        this.employeeDAO = new EmployeeDAO();
         setLayout(new BorderLayout());
         initializeUI();
         fetchAndDisplayEmployees();
@@ -111,7 +111,7 @@ public class EmployeeView extends MainView {
         
         JButton searchButton = createButton("Search",new SearchButtonListener());
         JButton addButton = createButton("Add", new AddEmployeeButtonListener(null));
-        JButton editButton = createButton("Edit", new UpdateEmployeeButtonListener(null,null));
+        JButton editButton = createButton("Edit", new UpdateEmployeeButtonListener(this, this.employeeDAO)); 
         JButton deleteButton = createButton("Delete",new DeleteButtonListener());
         JButton saveEmployeeButton = createButton("Save to File", new SaveEmployeeButtonListener());
 
