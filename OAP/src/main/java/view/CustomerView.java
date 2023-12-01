@@ -22,13 +22,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddCustomerButtonListener;
+import controller.UpdateCustomerButtonListener;
 import model.Customer;
 import model.CustomerDAO;
+import model.EmployeeDAO;
 
 
 
 public class CustomerView extends MainView {
-
+	
+	private CustomerDAO customerDAO;
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
@@ -90,7 +93,7 @@ public class CustomerView extends MainView {
 
         JButton searchButton = createButton("Search", new SearchButtonListener());
         JButton addButton = createButton("Add", new AddCustomerButtonListener(null));
-        JButton editButton = createButton("Edit", new UpdateButtonListener());
+        JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
         JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
 
@@ -155,30 +158,8 @@ public class CustomerView extends MainView {
     
 
 
-    private class UpdateButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String customerNumberStr = JOptionPane.showInputDialog(CustomerView.this, "Enter Customer Number to edit:");
-            if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
-                try {
-                    int customerNumber = Integer.parseInt(customerNumberStr);
 
-                    CustomerDAO handler = new CustomerDAO();
-                    Customer customer = handler.fetchCustomerData(customerNumber);
-
-                    if (customer != null) {
-                        displayEditForm(customer);
-                    } else {
-                        JOptionPane.showMessageDialog(CustomerView.this, "Customer not found.");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(CustomerView.this, "Invalid customer number format.");
-                }
-            }
-        }
-    }
-
-    private void displayEditForm(Customer customer) {
+    public void displayEditForm(Customer customer) {
         
         JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
