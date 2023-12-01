@@ -5,9 +5,7 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,11 +38,8 @@ public class AddCustomerButtonListener implements ActionListener {
             JTextField stateField = new JTextField(10);
             JTextField postalCodeField = new JTextField(10);
             JTextField countryField = new JTextField(10);
+            JTextField salesRepEmployeeNumberField = new JTextField(10);
             JTextField creditLimitField = new JTextField(10);
-            // Fetch the list of Sales Rep Employee Numbers
-            CustomerDAO customerDAO = new CustomerDAO();
-            List<Integer> salesRepEmployeeNumbers = customerDAO.fetchSalesRepEmployeeNumbers();
-            JComboBox<Integer> salesRepEmployeeNumberField = new JComboBox<>(salesRepEmployeeNumbers.toArray(new Integer[0]));
 
             // Panel for the form
             JPanel panel = new JPanel(new GridLayout(0, 2));
@@ -81,7 +76,7 @@ public class AddCustomerButtonListener implements ActionListener {
             int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    // Retrieving values from text fields and JComboBox
+                    // Retrieving values from text fields
                     int customerNumber = Integer.parseInt(customerNumberField.getText());
                     String customerName = customerNameField.getText();
                     String contactLastName = contactLastNameField.getText();
@@ -93,8 +88,9 @@ public class AddCustomerButtonListener implements ActionListener {
                     String state = stateField.getText();
                     String postalCode = postalCodeField.getText();
                     String country = countryField.getText();
-                    int salesRepEmployeeNumber = (int) salesRepEmployeeNumberField.getSelectedItem();
+                    int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
                     BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
+
                     // Call to CustomerHandler to add customer
                     boolean success = CustomerDAO.addCustomer(customerNumber, customerName, contactLastName, contactFirstName, 
                                                                  phone, addressLine1, addressLine2, city, state, postalCode, country, 
