@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -237,4 +238,42 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
             return false;
         }
     }
+    
+
+    public List<Integer> fetchSalesRepEmployeeNumbers() {
+        List<Integer> salesRepNumbers = new ArrayList<>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // Use DataBaseConnection class to get the connection
+            conn = DataBaseConnection.getConnection();
+            stmt = conn.createStatement();
+
+            // SQL query to fetch distinct sales rep employee numbers
+            String sql = "SELECT DISTINCT salesRepEmployeeNumber FROM customers";
+
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                salesRepNumbers.add(rs.getInt("salesRepEmployeeNumber"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Or use your preferred error handling
+        } finally {
+            // Close resources
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace(); // Or use your preferred error handling
+            }
+        }
+        return salesRepNumbers;
+    }
+
+
+    
+    
 }
