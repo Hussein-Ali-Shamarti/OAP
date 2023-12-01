@@ -37,6 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddProductButtonListener;
+import controller.DeleteProductButtonListener;
 import controller.UpdateProductButtonListener;
 import model.ProductDAO;
 import model.Products;
@@ -116,7 +117,7 @@ public class ProductView extends MainView {
         JButton searchButton = createButton("Search",new SearchButtonListener());
         JButton addButton = createButton("Add", new AddProductButtonListener(null));
         JButton editButton = createButton("Edit", new UpdateProductButtonListener(this,this.productDAO));
-        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton deleteButton = createButton("Delete", new DeleteProductButtonListener(this,this.productDAO));
         JButton saveProductButton = createButton("Save to File", new SaveProductButtonListener());
 		
 
@@ -141,7 +142,7 @@ public class ProductView extends MainView {
         return button;
     }
 
-    private List<String[]> fetchAndDisplayProducts() {
+    public List<String[]> fetchAndDisplayProducts() {
         List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
         tableModel.setRowCount(0); // Clear existing rows
 
@@ -211,35 +212,9 @@ public class ProductView extends MainView {
 
 
 
- // Action listener for "Delete" button
-    private class DeleteButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Get the selected row(s) in the table
-            int[] selectedRows = table.getSelectedRows();
-
-            if (selectedRows.length == 0) {
-                JOptionPane.showMessageDialog(ProductView.this, "Please select a product to delete.", "Delete Product", JOptionPane.WARNING_MESSAGE);
-            } else {
-                int confirmResult = JOptionPane.showConfirmDialog(ProductView.this, "Are you sure you want to delete selected product(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-
-                if (confirmResult == JOptionPane.YES_OPTION) {
-                    // Delete the selected product(s) from the database
-                    boolean success = deleteSelectedProducts(selectedRows);
-
-                    if (success) {
-                        JOptionPane.showMessageDialog(ProductView.this, "Product(s) deleted successfully.");
-                        // Refresh the product list or take any other necessary action
-                        fetchAndDisplayProducts(); // Refresh the product list after deletion
-                    } else {
-                        JOptionPane.showMessageDialog(ProductView.this, "Failed to delete product(s).", "Delete Product", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        }
 
         // Implement the logic to delete selected products from the database
-        private boolean deleteSelectedProducts(int[] selectedRows) {
+        public boolean deleteSelectedProducts(int[] selectedRows) {
             try {
                 Connection conn = database.DataBaseConnection.getConnection();
                 String deleteSQL = "DELETE FROM products WHERE productCode = ?";
@@ -264,7 +239,7 @@ public class ProductView extends MainView {
                 return false;
             }
         }
-    }
+    
     
     private void saveProductsToFile() {
         JFileChooser fileChooser = new JFileChooser();

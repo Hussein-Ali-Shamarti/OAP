@@ -179,16 +179,24 @@ public class ProductDAO {
      * @param productCode The product code of the product to be deleted.
      * @return True if the product is deleted successfully, false otherwise.
      */
-    public boolean deleteProduct(String productCode) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "DELETE FROM products WHERE productCode = ?")) {
+ // ProductDAO
+    public boolean deleteProducts(List<String> productCodes) {
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE productCode = ?")) {
 
-            preparedStatement.setString(1, productCode);
+            for (String productCode : productCodes) {
+                pstmt.setString(1, productCode);
+                pstmt.addBatch();
+            }
 
-            int affectedRows = preparedStatement.executeUpdate();
+            int[] deleteCounts = pstmt.executeBatch();
+            for (int count : deleteCounts) {
+                if (count != 1) {
+                    return false;
+                }
+            }
 
-            return affectedRows > 0;
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
