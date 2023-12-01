@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.ProductDAO;
 import model.Products;
 import view.ProductView;
 
@@ -19,7 +19,7 @@ public class SearchProductsButtonListener implements ActionListener {
 	 private ProductView productView;
 	   
 
-	    public SearchProductsButtonListener(ProductView productView, ProductDAO productDAO) {
+	    public SearchProductsButtonListener(ProductView productView) {
 	        this.productView = productView;
 	       
 	    }

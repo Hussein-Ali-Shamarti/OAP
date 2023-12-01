@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.AddProductButtonListener;
 import controller.DeleteProductButtonListener;
+import controller.SaveProductsButtonListener;
 import controller.SearchProductsButtonListener;
 import controller.UpdateProductButtonListener;
 import model.ProductDAO;
@@ -106,11 +107,11 @@ public class ProductView extends MainView {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search",new SearchProductsButtonListener(this, this.productDAO));
+        JButton searchButton = createButton("Search",new SearchProductsButtonListener(this));
         JButton addButton = createButton("Add", new AddProductButtonListener(this, this.productDAO));
         JButton editButton = createButton("Edit", new UpdateProductButtonListener(this,this.productDAO));
         JButton deleteButton = createButton("Delete", new DeleteProductButtonListener(this,this.productDAO));
-        JButton saveProductButton = createButton("Save to File", new SaveProductButtonListener());
+        JButton saveProductButton = createButton("Save to File", new SaveProductsButtonListener(this));
 		
 
         controlPanel.add(searchButton);
@@ -323,7 +324,7 @@ public class ProductView extends MainView {
 
     
     
-    private void saveProductsToFile() {
+    public void saveProductsToFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Products.csv")); // Set default file name
@@ -352,12 +353,7 @@ public class ProductView extends MainView {
                 JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-    private class SaveProductButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveProductsToFile();
-        }
-    }
 
+    }
 }
+   
