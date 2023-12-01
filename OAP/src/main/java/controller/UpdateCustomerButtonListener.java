@@ -7,22 +7,21 @@ import view.CustomerView;
 
 
 
-import java.awt.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class UpdateCustomerButtonListener implements ActionListener {
 	private CustomerView customerView;
 	private CustomerDAO customerDAO;
+		
 	
-	
-	 public UpdateCustomerButtonListener(CustomerView customerView, CustomerDAO customerDAO) {
+	public UpdateCustomerButtonListener(CustomerView customerView, CustomerDAO customerDAO) {
         this.customerView = customerView;
         this.customerDAO = customerDAO;
         
     }
-    
-  
+   
         @Override
         public void actionPerformed(ActionEvent e) {
             String customerNumberStr = JOptionPane.showInputDialog(customerView, "Enter Customer Number to edit:");
