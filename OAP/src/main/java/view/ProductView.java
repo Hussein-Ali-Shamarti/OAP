@@ -134,7 +134,7 @@ public class ProductView extends MainView {
         return button;
     }
     
-    public Products gatherUserInputForProduct() {
+    public Products gatherUserInputForAddProduct() {
         JTextField productCodeField = new JTextField(10);
         JTextField productNameField = new JTextField(20);
         JTextField productLineField = new JTextField(20);
@@ -187,7 +187,60 @@ public class ProductView extends MainView {
 
         return null; // Return null if the user cancels or an error occurs
     }
+    
+    public Products gatherUserInputForUpdate(Products existingProduct) {
+        JTextField productCodeField = new JTextField(existingProduct.getProductCode(), 10);
+        JTextField productNameField = new JTextField(existingProduct.getProductName(), 20);
+        JTextField productLineField = new JTextField(existingProduct.getProductLine(), 20);
+        JTextField productScaleField = new JTextField(existingProduct.getProductScale(), 10);
+        JTextField productVendorField = new JTextField(existingProduct.getProductVendor(), 20);
+        JTextField productDescriptionField = new JTextField(existingProduct.getProductDescription(), 20);
+        JTextField quantityInStockField = new JTextField(String.valueOf(existingProduct.getQuantityInStock()), 5);
+        JTextField buyPriceField = new JTextField(String.valueOf(existingProduct.getBuyPrice()), 10);
+        JTextField msrpField = new JTextField(String.valueOf(existingProduct.getMsrp()), 10);
 
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("Product Code:"));
+        panel.add(productCodeField);
+        panel.add(new JLabel("Product Name:"));
+        panel.add(productNameField);
+        panel.add(new JLabel("Product Line:"));
+        panel.add(productLineField);
+        panel.add(new JLabel("Product Scale:"));
+        panel.add(productScaleField);
+        panel.add(new JLabel("Product Vendor:"));
+        panel.add(productVendorField);
+        panel.add(new JLabel("Product Description:"));
+        panel.add(productDescriptionField);
+        panel.add(new JLabel("Quantity in Stock:"));
+        panel.add(quantityInStockField);
+        panel.add(new JLabel("Buy Price:"));
+        panel.add(buyPriceField);
+        panel.add(new JLabel("MSRP:"));
+        panel.add(msrpField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Update Product Details", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String productCode = productCodeField.getText();
+                String productName = productNameField.getText();
+                String productLine = productLineField.getText();
+                String productScale = productScaleField.getText();
+                String productVendor = productVendorField.getText();
+                String productDescription = productDescriptionField.getText();
+                int quantityInStock = Integer.parseInt(quantityInStockField.getText());
+                double buyPrice = Double.parseDouble(buyPriceField.getText());
+                double msrp = Double.parseDouble(msrpField.getText());
+
+                return new Products(productCode, productName, productLine, productScale, productVendor,
+                        productDescription, quantityInStock, buyPrice, msrp);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input format.");
+            }
+        }
+
+        return null; // Return null if the user cancels or an error occurs
+    }
 
     public List<String[]> fetchAndDisplayProducts() {
         List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO

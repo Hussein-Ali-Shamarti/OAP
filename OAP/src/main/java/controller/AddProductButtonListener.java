@@ -19,7 +19,7 @@ public class AddProductButtonListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Products product = productView.gatherUserInputForProduct();
+        Products product = productView.gatherUserInputForAddProduct();
 
         if (product != null) {
             boolean success = productDAO.addProduct(product);
