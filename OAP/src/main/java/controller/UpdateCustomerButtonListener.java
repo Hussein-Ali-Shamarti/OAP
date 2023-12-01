@@ -33,7 +33,7 @@ public class UpdateCustomerButtonListener implements ActionListener {
                     Customer customer = handler.fetchCustomerData(customerNumber);
 
                     if (customer != null) {
-                        customerView.displayEditForm(customer);
+                        customerView.gatherUserInputForAddProduct(customer);
                     } else {
                         JOptionPane.showMessageDialog(customerView, "Customer not found.");
                     }

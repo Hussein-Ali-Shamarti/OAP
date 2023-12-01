@@ -153,13 +153,7 @@ public class CustomerView extends MainView {
         return customers;
     }
 
-
-    
-    
-
-
-
-    public void displayEditForm(Customer customer) {
+    public void gatherUserInputForAddProduct(Customer customer) {
         
         JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
