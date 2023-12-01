@@ -202,6 +202,9 @@ public class ProductDAO {
             return false;
         }
     }
+    
+ 
+    
     /**
      * Retrieves the product code for a given product name.
      * 
