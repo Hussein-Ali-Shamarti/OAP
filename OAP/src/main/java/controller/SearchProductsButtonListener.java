@@ -17,11 +17,11 @@ import view.ProductView;
 public class SearchProductsButtonListener implements ActionListener {
 	
 	 private ProductView productView;
-	    private ProductDAO productDAO;
+	   
 
 	    public SearchProductsButtonListener(ProductView productView, ProductDAO productDAO) {
 	        this.productView = productView;
-	        this.productDAO = productDAO;
+	       
 	    }
     @Override
     public void actionPerformed(ActionEvent e) {

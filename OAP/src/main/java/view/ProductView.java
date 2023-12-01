@@ -11,7 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -240,6 +240,36 @@ public class ProductView extends MainView {
         }
 
         return null; // Return null if the user cancels or an error occurs
+    }
+    
+    public List<String> gatherUserInputForDelete() {
+        JTable table = getTable();
+        int[] selectedRows = table.getSelectedRows();
+
+        if (selectedRows.length == 0) {
+            JOptionPane.showMessageDialog(this, "Please select a product to delete.", "Delete Product", JOptionPane.WARNING_MESSAGE);
+            return null;
+        } else {
+            int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete selected product(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+
+            if (confirmResult == JOptionPane.YES_OPTION) {
+                return getProductCodesFromRows(selectedRows);
+            }
+        }
+
+        return null;
+    }
+
+    private List<String> getProductCodesFromRows(int[] selectedRows) {
+        JTable table = getTable();
+        List<String> productCodes = new ArrayList<>();
+
+        for (int rowIndex : selectedRows) {
+            String productCode = (String) table.getValueAt(rowIndex, 0);
+            productCodes.add(productCode);
+        }
+
+        return productCodes;
     }
 
     public List<String[]> fetchAndDisplayProducts() {
