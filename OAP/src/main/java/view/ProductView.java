@@ -106,7 +106,6 @@ public class ProductView extends MainView {
         table = new JTable(tableModel);
         //customizeTableAppearance();//
         
-        
     }
 
     private void setupControlPanel() {
@@ -142,45 +141,18 @@ public class ProductView extends MainView {
         return button;
     }
 
-    List<String[]> fetchAndDisplayProducts() {
-        List<String[]> products = new ArrayList<>();
-        tableModel.setRowCount(0); // Clear the existing rows
+    private List<String[]> fetchAndDisplayProducts() {
+        List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
+        tableModel.setRowCount(0); // Clear existing rows
 
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT productCode, productName, productLine, productScale, productVendor, " +
-                         "productDescription, quantityInStock, buyPrice, msrp FROM products";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                String[] product = {
-                    resultSet.getString("productCode"),
-                    resultSet.getString("productName"),
-                    resultSet.getString("productLine"),
-                    resultSet.getString("productScale"),
-                    resultSet.getString("productVendor"),
-                    resultSet.getString("productDescription"),
-                    String.valueOf(resultSet.getInt("quantityInStock")),
-                    String.valueOf(resultSet.getDouble("buyPrice")),
-                    String.valueOf(resultSet.getDouble("msrp"))
-                };
-                tableModel.addRow(product); // Add row to the table model
-                products.add(product); // Add to the list
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error fetching product data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        for (String[] product : products) {
+            tableModel.addRow(product); // Add rows to the table model
         }
-        return products;
+
+        return products; // If you need to use the products elsewhere in your class
     }
 
 
- // Action listener for "Add" button
-   
-
-
-
-
- 
- 
 
  // Action listener for "Search" button
     private class SearchButtonListener implements ActionListener {
@@ -237,7 +209,7 @@ public class ProductView extends MainView {
         }
     }
 
-    
+
 
  // Action listener for "Delete" button
     private class DeleteButtonListener implements ActionListener {

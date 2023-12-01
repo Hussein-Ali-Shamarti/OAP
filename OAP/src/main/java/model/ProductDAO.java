@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +92,38 @@ public class ProductDAO {
 
         return searchResults;
     }
+    
+    
+    
+    public List<String[]> fetchProducts() {
+        List<String[]> products = new ArrayList<>();
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String sql = "SELECT productCode, productName, productLine, productScale, productVendor, " +
+                         "productDescription, quantityInStock, buyPrice, msrp FROM products";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String[] product = {
+                    resultSet.getString("productCode"),
+                    resultSet.getString("productName"),
+                    resultSet.getString("productLine"),
+                    resultSet.getString("productScale"),
+                    resultSet.getString("productVendor"),
+                    resultSet.getString("productDescription"),
+                    String.valueOf(resultSet.getInt("quantityInStock")),
+                    String.valueOf(resultSet.getDouble("buyPrice")),
+                    String.valueOf(resultSet.getDouble("msrp"))
+                };
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+        }
+
+        return products;
+    }
+
 
     /**
      * Updates an existing product's information in the database.
