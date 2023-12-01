@@ -1,10 +1,16 @@
+
 /**
- * File: ProductHandler.java
- * Description: This class is responsible for handling CRUD operations related to products.
- * It provides methods for adding, searching, updating, and deleting products in the database.
- * The class interacts with the model (Products) and the database to manage product-related operations.
+ * File: ProductDAO.java
+ * Description: This class serves as the Data Access Object (DAO) for managing CRUD (Create, Read, Update, Delete) operations
+ * related to products in the database. It acts as an intermediary between the application's model (Products) and the database,
+ * providing methods to add, search, update, and delete products. The class encapsulates the database interactions and ensures
+ * proper handling of database connections and SQL queries.
+ * The methods in this class are designed to handle various aspects of product management, such as adding new products,
+ * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
+ * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
  * @author Ole
  * @version 08.11.2023
+ 
  */
 
 package model;
@@ -20,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import database.DataBaseConnection;
-
 
 public class ProductDAO {
 
@@ -92,8 +97,6 @@ public class ProductDAO {
 
         return searchResults;
     }
-    
-    
     
     public List<String[]> fetchProducts() {
         List<String[]> products = new ArrayList<>();
@@ -179,7 +182,6 @@ public class ProductDAO {
      * @param productCode The product code of the product to be deleted.
      * @return True if the product is deleted successfully, false otherwise.
      */
- // ProductDAO
     public boolean deleteProducts(List<String> productCodes) {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE productCode = ?")) {
@@ -202,12 +204,9 @@ public class ProductDAO {
             return false;
         }
     }
-    
- 
-    
+
     /**
      * Retrieves the product code for a given product name.
-     * 
      * @param productName The name of the product.
      * @return The product code corresponding to the given product name, or null if not found.
      */
@@ -266,9 +265,9 @@ public class ProductDAO {
                 resultSet.getDouble("msrp")
         );
     }
+
     /**
      * Retrieves a mapping of product names to product codes.
-     *
      * @return A map where the key is the product name and the value is the product code.
      */
     public Map<String, String> getProducts() {
@@ -288,9 +287,9 @@ public class ProductDAO {
         }
         return products;
     }
+
     /**
      * Retrieves detailed information for a given product name.
-     *
      * @param productName The name of the product.
      * @return A map containing the details of the product including quantityInStock, buyPrice, and MSRP.
      */
@@ -313,13 +312,11 @@ public class ProductDAO {
             e.printStackTrace();
         }
 
-        return productDetails; // This map will be empty if the product is not found or if an exception occurs
+        return productDetails;
     }
-    
-    
+
     /**
      * Check if the entered product line exists in the database.
-     *
      * @param productLine The product line to check.
      * @return true if the product line exists; false otherwise.
      */
@@ -349,6 +346,7 @@ public class ProductDAO {
 
         return false; // Product line doesn't exist or an error occurred
     }
+
     /**
      * Retrieves all product names from the database.
      * @return A list of all product names.
@@ -391,7 +389,6 @@ public class ProductDAO {
         return productDetails;
     }
 
-
     public Map<String, Object> getProductDetailsByCode(String productCode) {
         Map<String, Object> productDetails = new HashMap<>();
         Connection connection = null; // Initialize connection
@@ -430,7 +427,7 @@ public class ProductDAO {
 
         return productDetails;
     }
-    
+
     public Map<String, String> getProductNamesToCodes() {
         Map<String, String> productNamesToCodes = new HashMap<>();
         String query = "SELECT productName, productCode FROM products";
@@ -450,6 +447,4 @@ public class ProductDAO {
 
         return productNamesToCodes;
     }
-
-
-}
+    }

@@ -17,8 +17,8 @@ import javax.swing.SwingUtilities;
 import controller.CustomerListener;
 import controller.OrderListener;
 import controller.EmployeeListener;
-import controller.ProductListener;
-import view.MainMenu;
+
+
 
 
 
@@ -26,6 +26,8 @@ public class MainView extends JFrame {
 
     private static final long serialVersionUID = 1L;
     protected JMenuBar menuBar;
+    
+    
 
     public MainView() {
         super("Model Perfect");
@@ -43,8 +45,8 @@ public class MainView extends JFrame {
 
         // Set the menu bar for the frame
         setJMenuBar(menuBar.getMenuBar()); // Use the instance to get the JMenuBar
-
-
+        
+        
         // Create panel for company name and logo
         
         
@@ -83,10 +85,13 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
         
         JButton employeesButton = new JButton("Employees");
+        
+        
 
         // Create ProductsListener for "Products" button in MainMenu
         ProductListener productsListener = new ProductListener();
-
+        
+        
         // Create OrderListener for "Orders" button in MainMenu
         OrderListener orderListener = new OrderListener();
 
@@ -105,11 +110,29 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    public class ProductListener implements ActionListener {
 
+        /**
+         * Invoked when an action occurs, in this case, opens the {@link ProductView}.
+         *
+         * @param e The event representing the user's action.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open ProductView when "Products" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                // Create ProductView and set it visible
+                ProductView productView = new ProductView();
+                productView.setVisible(true);
+            });
+        }
+}
+
+}
 	
 
     
     
-  }
+  
 
 

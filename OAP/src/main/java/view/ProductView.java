@@ -1,22 +1,25 @@
+/**
+ * ProductView class represents the graphical user interface for managing products.
+ * It extends the MainView class and provides functionality for displaying, adding, updating, and deleting products in a table format.
+ * The class interacts with the controller (ProductHandler) and the model (ProductDAO and Products) to facilitate user actions
+ * and maintain the consistency of product data.
+ * 
+ * @author Ole
+ * @version 1.0
+ */
+
+
 package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-
-
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,12 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import controller.AddProductButtonListener;
-import controller.DeleteProductButtonListener;
-import controller.SaveProductsButtonListener;
-import controller.SearchProductsButtonListener;
-import controller.UpdateProductButtonListener;
+import controller.ProductHandler;
 import model.ProductDAO;
 import model.Products;
 
@@ -42,17 +40,26 @@ public class ProductView extends MainView {
     private DefaultTableModel tableModel;
     private JTable table;
     private ProductDAO productDAO;
+    private ProductHandler productHandler;
 
-
+    /**
+     * Gets the JTable component.
+     *
+     * @return The JTable component.
+     */
     public JTable getTable() {
         return table;
     }
 
- 
- 
+    /**
+     * Constructor for the ProductView class.
+     * Initializes the UI components, sets up the table, and fetches and displays the products.
+     */
     public ProductView() {
         super();
         this.productDAO = new ProductDAO();
+        this.productHandler = new ProductHandler(this, this.productDAO);
+
         table = new JTable(tableModel);
         setLayout(new BorderLayout());
         initializeUI();
@@ -64,6 +71,9 @@ public class ProductView extends MainView {
         setVisible(true); // Make sure the frame is visible
     }
 
+    /**
+     * Initializes the UI components, including the title panel, table, and control panel.
+     */
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(84, 11, 131));
@@ -85,8 +95,11 @@ public class ProductView extends MainView {
         setLocationRelativeTo(null); // Center on screen
     }
 
+    /**
+     * Sets up the table with column names and customization options.
+     */
     private void setupTable() {
-        String[] columnNames = {"Product Code", "Product Name","product Line", "Product Scale", "Product Vendor",
+        String[] columnNames = {"Product Code", "Product Name", "Product Line", "Product Scale", "Product Vendor",
                 "Product Description", "Quantity In Stock", "Buy Price", "MSRP"};
         tableModel = new DefaultTableModel(null, columnNames) {
             private static final long serialVersionUID = 1L;
@@ -98,21 +111,21 @@ public class ProductView extends MainView {
         };
 
         table = new JTable(tableModel);
-        //customizeTableAppearance();//
-        
     }
 
-    private void setupControlPanel() {
+    /**
+     * Sets up the control panel with buttons for search, add, edit, delete, and save operations.
+     */
+    public void setupControlPanel() {
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search",new SearchProductsButtonListener(this));
-        JButton addButton = createButton("Add", new AddProductButtonListener(this, this.productDAO));
-        JButton editButton = createButton("Edit", new UpdateProductButtonListener(this,this.productDAO));
-        JButton deleteButton = createButton("Delete", new DeleteProductButtonListener(this,this.productDAO));
-        JButton saveProductButton = createButton("Save to File", new SaveProductsButtonListener(this));
-		
+        JButton searchButton = createButton("Search", productHandler.getSearchProductsButtonListener());
+        JButton addButton = createButton("Add", productHandler.getAddProductButtonListener());
+        JButton editButton = createButton("Edit", productHandler.getUpdateProductButtonListener());
+        JButton deleteButton = createButton("Delete", productHandler.getDeleteProductButtonListener());
+        JButton saveProductButton = createButton("Save to File", productHandler.getSaveProductsButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -126,6 +139,13 @@ public class ProductView extends MainView {
         this.add(buttonPanelHolder, BorderLayout.SOUTH);
     }
 
+    /**
+     * Creates a JButton with specified text, foreground color, background color, and an ActionListener.
+     *
+     * @param text     The text to be displayed on the button.
+     * @param listener The ActionListener for the button.
+     * @return The created JButton.
+     */
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
@@ -134,7 +154,12 @@ public class ProductView extends MainView {
         button.addActionListener(listener);
         return button;
     }
-    
+
+    /**
+     * Gathers user input for adding a new product through a dialog.
+     *
+     * @return The Products object created from the user's input.
+     */
     public Products gatherUserInputForAddProduct() {
         JTextField productCodeField = new JTextField(10);
         JTextField productNameField = new JTextField(20);
@@ -188,7 +213,13 @@ public class ProductView extends MainView {
 
         return null; // Return null if the user cancels or an error occurs
     }
-    
+
+    /**
+     * Gathers user input for updating an existing product through a dialog.
+     *
+     * @param existingProduct The existing Products object to be updated.
+     * @return The updated Products object based on the user's input.
+     */
     public Products gatherUserInputForUpdate(Products existingProduct) {
         JTextField productCodeField = new JTextField(existingProduct.getProductCode(), 10);
         JTextField productNameField = new JTextField(existingProduct.getProductName(), 20);
@@ -242,7 +273,12 @@ public class ProductView extends MainView {
 
         return null; // Return null if the user cancels or an error occurs
     }
-    
+
+    /**
+     * Gathers user input for deleting selected products through confirmation dialogs.
+     *
+     * @return The list of product codes to be deleted, or null if the user cancels the operation.
+     */
     public List<String> gatherUserInputForDelete() {
         JTable table = getTable();
         int[] selectedRows = table.getSelectedRows();
@@ -261,6 +297,12 @@ public class ProductView extends MainView {
         return null;
     }
 
+    /**
+     * Retrieves product codes from selected rows in the table.
+     *
+     * @param selectedRows The array of selected row indices.
+     * @return The list of product codes corresponding to the selected rows.
+     */
     private List<String> getProductCodesFromRows(int[] selectedRows) {
         JTable table = getTable();
         List<String> productCodes = new ArrayList<>();
@@ -273,87 +315,88 @@ public class ProductView extends MainView {
         return productCodes;
     }
 
-    public List<String[]> fetchAndDisplayProducts() {
-        List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
-        tableModel.setRowCount(0); // Clear existing rows
+    /**
+     * Gathers user input for searching products through a dialog.
+     *
+     * @return The search criteria entered by the user, or null if the user cancels the operation.
+     */
+    public String gatherInputForSearch() {
+        JTextField searchField = new JTextField(20);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Search Products:"));
+        panel.add(searchField);
 
+        int result = JOptionPane.showConfirmDialog(null, panel, "Search Products", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            return searchField.getText().trim();
+        } else {
+            return null; // User canceled the operation
+        }
+    }
+
+    /**
+     * Performs a search based on user input and updates the table with the search results.
+     *
+     * @param searchCriteria The search criteria entered by the user.
+     */
+    public List<Products> performSearch(String searchCriteria) {
+        // Placeholder logic: You should implement the actual database search here
+        // This code assumes you have a ProductHandler class to handle database operations
+        ProductDAO productHandler = new ProductDAO();
+        List<Products> searchResults = productHandler.searchProducts(searchCriteria);
+
+        return searchResults;
+    }
+    
+    // Update the table with the search results
+    public void updateTableWithSearchResults(List<Products> searchResults) {
+        tableModel.setRowCount(0); // Clear existing rows from the table
+
+        // Populate the table with the search results
+        for (Products product : searchResults) {
+            Object[] row = {
+                product.getProductCode(),
+                product.getProductName(),
+                product.getProductLine(),
+                product.getProductScale(),
+                product.getProductVendor(),
+                product.getProductDescription(),
+                product.getQuantityInStock(),
+                product.getBuyPrice(),
+                product.getMsrp()
+            };
+            tableModel.addRow(row);
+        }
+        
+    }
+
+    /**
+     * Updates the table with the provided list of product details.
+     *
+     * @param products The list of product details to update the table.
+     * @return The list of product details if needed elsewhere in the class.
+     */
+    public List<String[]> updateTableWithProducts(List<String[]> products) {
+        tableModel.setRowCount(0); // Clear existing rows from the table
+
+        // Populate the table with the product details
         for (String[] product : products) {
-            tableModel.addRow(product); // Add rows to the table model
+            tableModel.addRow(product);
         }
 
         return products; // If you need to use the products elsewhere in your class
     }
 
+    /**
+     * Fetches and displays products in the table.
+     *
+     * @return The list of product details fetched from the database.
+     */
+    public List<String[]> fetchAndDisplayProducts() {
+        List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
+        updateTableWithProducts(products);
 
-
- 
-        // Implement the logic to perform the search based on user input
-        public List<Products> performSearch(String searchCriteria) {
-            // Placeholder logic: You should implement the actual database search here
-            // This code assumes you have a ProductHandler class to handle database operations
-            ProductDAO productHandler = new ProductDAO();
-            List<Products> searchResults = productHandler.searchProducts(searchCriteria);
-
-            return searchResults;
-        }
-
-        // Update the table with the search results
-        public void updateTableWithSearchResults(List<Products> searchResults) {
-            tableModel.setRowCount(0); // Clear existing rows from the table
-
-            // Populate the table with the search results
-            for (Products product : searchResults) {
-                Object[] row = {
-                    product.getProductCode(),
-                    product.getProductName(),
-                    product.getProductLine(),
-                    product.getProductScale(),
-                    product.getProductVendor(),
-                    product.getProductDescription(),
-                    product.getQuantityInStock(),
-                    product.getBuyPrice(),
-                    product.getMsrp()
-                };
-                tableModel.addRow(row);
-            }
-        }
-    
-
-
-
-
-    
-    
-    public void saveProductsToFile() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Specify a CSV file to save");
-        fileChooser.setSelectedFile(new File("Products.csv")); // Set default file name
-
-        int userSelection = fileChooser.showSaveDialog(null);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> products = fetchAndDisplayProducts(); // Fetch product data
-
-                // Write header row (optional)
-                writer.write("Product Code, Product Name, Product Line, Product Scale, Product Vendor, " +
-                             "Product Description, Quantity In Stock, Buy Price, MSRP");
-                writer.newLine();
-
-                // Write data rows
-                for (String[] product : products) {
-                    String line = String.join(",", product); // Comma as delimiter
-                    writer.write(line);
-                    writer.newLine();
-                }
-                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
+        return products; // If you need to use the products elsewhere in your class
     }
 }
-   
