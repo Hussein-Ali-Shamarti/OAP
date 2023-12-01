@@ -1,11 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
-
-
 import java.awt.Color;
 import java.awt.Font;
-
 import java.awt.GridLayout;
 
 import java.awt.event.ActionEvent;
@@ -14,12 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.swing.Box;
@@ -31,13 +23,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddProductButtonListener;
 import controller.DeleteProductButtonListener;
+import controller.SearchProductsButtonListener;
 import controller.UpdateProductButtonListener;
 import model.ProductDAO;
 import model.Products;
@@ -114,8 +106,8 @@ public class ProductView extends MainView {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search",new SearchButtonListener());
-        JButton addButton = createButton("Add", new AddProductButtonListener(null));
+        JButton searchButton = createButton("Search",new SearchProductsButtonListener(this, this.productDAO));
+        JButton addButton = createButton("Add", new AddProductButtonListener(this, this.productDAO));
         JButton editButton = createButton("Edit", new UpdateProductButtonListener(this,this.productDAO));
         JButton deleteButton = createButton("Delete", new DeleteProductButtonListener(this,this.productDAO));
         JButton saveProductButton = createButton("Save to File", new SaveProductButtonListener());
@@ -141,6 +133,61 @@ public class ProductView extends MainView {
         button.addActionListener(listener);
         return button;
     }
+    
+    public Products gatherUserInputForProduct() {
+        JTextField productCodeField = new JTextField(10);
+        JTextField productNameField = new JTextField(20);
+        JTextField productLineField = new JTextField(20);
+        JTextField productScaleField = new JTextField(10);
+        JTextField productVendorField = new JTextField(20);
+        JTextField productDescriptionField = new JTextField(20);
+        JTextField quantityInStockField = new JTextField(5);
+        JTextField buyPriceField = new JTextField(10);
+        JTextField msrpField = new JTextField(10);
+
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("Product Code:"));
+        panel.add(productCodeField);
+        panel.add(new JLabel("Product Name:"));
+        panel.add(productNameField);
+        panel.add(new JLabel("Product Line:"));
+        panel.add(productLineField);
+        panel.add(new JLabel("Product Scale:"));
+        panel.add(productScaleField);
+        panel.add(new JLabel("Product Vendor:"));
+        panel.add(productVendorField);
+        panel.add(new JLabel("Product Description:"));
+        panel.add(productDescriptionField);
+        panel.add(new JLabel("Quantity in Stock:"));
+        panel.add(quantityInStockField);
+        panel.add(new JLabel("Buy Price:"));
+        panel.add(buyPriceField);
+        panel.add(new JLabel("MSRP:"));
+        panel.add(msrpField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter Product Details", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String productCode = productCodeField.getText();
+                String productName = productNameField.getText();
+                String productLine = productLineField.getText();
+                String productScale = productScaleField.getText();
+                String productVendor = productVendorField.getText();
+                String productDescription = productDescriptionField.getText();
+                int quantityInStock = Integer.parseInt(quantityInStockField.getText());
+                double buyPrice = Double.parseDouble(buyPriceField.getText());
+                double msrp = Double.parseDouble(msrpField.getText());
+
+                return new Products(productCode, productName, productLine, productScale, productVendor,
+                        productDescription, quantityInStock, buyPrice, msrp);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input format.");
+            }
+        }
+
+        return null; // Return null if the user cancels or an error occurs
+    }
+
 
     public List<String[]> fetchAndDisplayProducts() {
         List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
@@ -155,31 +202,9 @@ public class ProductView extends MainView {
 
 
 
- // Action listener for "Search" button
-    private class SearchButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Create a dialog to input search criteria
-            JTextField searchField = new JTextField(20);
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Search Products:"));
-            panel.add(searchField);
-
-            int result = JOptionPane.showConfirmDialog(null, panel, "Search Products", JOptionPane.OK_CANCEL_OPTION);
-
-            if (result == JOptionPane.OK_OPTION) {
-                String searchCriteria = searchField.getText().trim();
-
-                // Perform the search based on the user's input
-                List<Products> searchResults = performSearch(searchCriteria);
-
-                // Update the table with the search results
-                updateTableWithSearchResults(searchResults);
-            }
-        }
-
+ 
         // Implement the logic to perform the search based on user input
-        private List<Products> performSearch(String searchCriteria) {
+        public List<Products> performSearch(String searchCriteria) {
             // Placeholder logic: You should implement the actual database search here
             // This code assumes you have a ProductHandler class to handle database operations
             ProductDAO productHandler = new ProductDAO();
@@ -189,7 +214,7 @@ public class ProductView extends MainView {
         }
 
         // Update the table with the search results
-        private void updateTableWithSearchResults(List<Products> searchResults) {
+        public void updateTableWithSearchResults(List<Products> searchResults) {
             tableModel.setRowCount(0); // Clear existing rows from the table
 
             // Populate the table with the search results
@@ -208,37 +233,11 @@ public class ProductView extends MainView {
                 tableModel.addRow(row);
             }
         }
-    }
+    
 
 
 
 
-        // Implement the logic to delete selected products from the database
-        public boolean deleteSelectedProducts(int[] selectedRows) {
-            try {
-                Connection conn = database.DataBaseConnection.getConnection();
-                String deleteSQL = "DELETE FROM products WHERE productCode = ?";
-                PreparedStatement pstmt = conn.prepareStatement(deleteSQL);
-
-                for (int rowIndex : selectedRows) {
-                    String productCode = (String) table.getValueAt(rowIndex, 0);
-                    pstmt.setString(1, productCode);
-                    pstmt.addBatch();
-                }
-
-                int[] deleteCounts = pstmt.executeBatch();
-                for (int count : deleteCounts) {
-                    if (count != 1) {
-                        return false; // If any deletion count is not 1, consider it a failure
-                    }
-                }
-
-                return true; // All deletions were successful
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
     
     
     private void saveProductsToFile() {
