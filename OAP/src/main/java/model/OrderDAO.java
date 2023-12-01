@@ -58,32 +58,7 @@ public class OrderDAO {
 
 		);
 	}
-	// Add this method in your OrderDAO class
-	public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
-	    String sql = "SELECT * FROM orderdetails WHERE orderNumber = ? AND orderLineNumber = ?";
 
-	    try (Connection conn = DataBaseConnection.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	        pstmt.setInt(1, orderNumber);
-	        pstmt.setInt(2, orderLineNumber);
-
-	        try (ResultSet rs = pstmt.executeQuery()) {
-	            if (rs.next()) {
-	                // Assuming you have a constructor in OrderDetails class that accepts these parameters
-	                return new OrderDetails(
-	                    rs.getInt("quantityOrdered"),
-	                    rs.getDouble("priceEach"),
-	                    rs.getString("productCode"),
-	                    orderNumber,
-	                    orderLineNumber
-	                );
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return null; // or handle this case as needed
-	}
 
 	// CRUD-methods
 
@@ -152,7 +127,32 @@ public class OrderDAO {
 			return false;
 		}
 	}
+	//Delete for OrderDetailsView
+	public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
+	    String sql = "SELECT * FROM orderdetails WHERE orderNumber = ? AND orderLineNumber = ?";
 
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, orderNumber);
+	        pstmt.setInt(2, orderLineNumber);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                // Assuming you have a constructor in OrderDetails class that accepts these parameters
+	                return new OrderDetails(
+	                    rs.getInt("quantityOrdered"),
+	                    rs.getDouble("priceEach"),
+	                    rs.getString("productCode"),
+	                    orderNumber,
+	                    orderLineNumber
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null; // or handle this case as needed
+	}
 	// Delete
 	public boolean deleteOrder(int OrderNumber) {
 		String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
@@ -163,7 +163,7 @@ public class OrderDAO {
 			pstmt.setInt(1, OrderNumber);
 
 			int affectedRows = pstmt.executeUpdate();
-			System.out.println("slettet");
+			System.out.println("Deleted");
 
 			return affectedRows > 0;
 
@@ -202,6 +202,28 @@ public class OrderDAO {
 
 		return order;
 	}
+	
+	// In your OrderDAO class
+	public boolean deleteOrderDetail(int orderNumber, int orderLineNumber) {
+	    String deleteOrderDetailSQL = "DELETE FROM orderdetails WHERE OrderNumber = ? AND orderLineNumber = ?";
+
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(deleteOrderDetailSQL)) {
+
+	        pstmt.setInt(1, orderNumber);
+	        pstmt.setInt(2, orderLineNumber);
+
+	        int affectedRows = pstmt.executeUpdate();
+	        System.out.println("Deleted order detail with OrderNumber: " + orderNumber + " and orderLineNumber: " + orderLineNumber);
+
+	        return affectedRows > 0;
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
 
 	// Define SQL queries for the "orderDetails" table
 	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
