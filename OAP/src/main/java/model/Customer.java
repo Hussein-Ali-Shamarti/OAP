@@ -162,7 +162,7 @@ public class Customer extends Address {
     @Override
     public String getAddress() {
         // You may customize the format of the address based on your requirements.
-        return getaddressLine1() + ", " + getaddressLine2() + ", " + getcity() + ", " +
-               getstate() + ", " + getPostalCode() + ", " + getcountry();
+        return getAddressLine1() + ", " + getAddressLine2() + ", " + getCity() + ", " +
+               getState() + ", " + getPostalCode() + ", " + getCountry();
     }
 }
