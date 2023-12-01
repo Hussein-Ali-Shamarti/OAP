@@ -109,7 +109,7 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      * @param creditLimit The credit limit.
      * @return True if the customer is added successfully, false otherwise.
      */
-    public static boolean addCustomer(Customer customer) {
+    public boolean addCustomer(Customer customer) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement pstm = connection.prepareStatement(
                 "INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, " + 

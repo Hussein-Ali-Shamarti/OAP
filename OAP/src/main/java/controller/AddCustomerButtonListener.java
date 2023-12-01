@@ -15,11 +15,6 @@ import view.CustomerView;
 
 
 
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
-
 public class AddCustomerButtonListener implements ActionListener {
     private final CustomerView customerView;
     private final CustomerDAO customerDAO;
