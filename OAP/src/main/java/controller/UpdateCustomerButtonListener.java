@@ -42,5 +42,4 @@ public class UpdateCustomerButtonListener implements ActionListener {
                 }
             }
         }
-    
-}
+    }
