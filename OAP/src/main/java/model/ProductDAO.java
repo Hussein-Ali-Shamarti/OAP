@@ -368,5 +368,85 @@ public class ProductDAO {
         return productNames;
     }
 
+    public Map<String, String> getAllProductDetails() {
+        Map<String, String> productDetails = new HashMap<>();
+
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT productName, productCode FROM products");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String productName = resultSet.getString("productName"); // Adjust the column name based on your database
+                String productCode = resultSet.getString("productCode"); // Adjust the column name based on your database
+                productDetails.put(productName, productCode);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception (Consider logging this or throwing a custom exception)
+        }
+
+        return productDetails;
+    }
+
+
+    public Map<String, Object> getProductDetailsByCode(String productCode) {
+        Map<String, Object> productDetails = new HashMap<>();
+        Connection connection = null; // Initialize connection
+
+        try {
+            connection = DataBaseConnection.getConnection(); // Get the database connection
+
+            String query = "SELECT * FROM products WHERE productCode = ?"; // Adjust this query to fit your database schema
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, productCode);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        // Assuming you have columns like 'quantityInStock', 'buyPrice', 'MSRP', etc.
+                        // Adjust the column names based on your database schema
+                        productDetails.put("quantityInStock", resultSet.getInt("quantityInStock"));
+                        productDetails.put("buyPrice", resultSet.getDouble("buyPrice"));
+                        productDetails.put("MSRP", resultSet.getDouble("MSRP"));
+                        // Add more columns as needed
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle the exception appropriately
+        } finally {
+            // Close the connection in the finally block
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // Handle the exception appropriately
+                }
+            }
+        }
+
+        return productDetails;
+    }
+    
+    public Map<String, String> getProductNamesToCodes() {
+        Map<String, String> productNamesToCodes = new HashMap<>();
+        String query = "SELECT productName, productCode FROM products";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String productName = rs.getString("productName");
+                String productCode = rs.getString("productCode");
+                productNamesToCodes.put(productName, productCode);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception
+        }
+
+        return productNamesToCodes;
+    }
+
 
 }

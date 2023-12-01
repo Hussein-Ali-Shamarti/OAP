@@ -16,9 +16,9 @@ public class OrderDetails {
 	   
 	   private int quantityOrdered;
 	   private double priceEach; // Kept as double to reflect the DECIMAL type in the database
-	   private int orderLineNumber;
 	   private String productCode;
 	   private int orderNumber;
+	   private int orderLineNumber;
 
    /**
     * Constructor for OrderDetails class.
