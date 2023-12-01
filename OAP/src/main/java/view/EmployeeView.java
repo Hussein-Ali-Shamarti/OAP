@@ -16,6 +16,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -104,7 +105,7 @@ public class EmployeeView extends MainView {
         
         
         JButton searchButton = createButton("Search",new SearchEmployeeButtonListener(this, employeeDAO));
-        JButton addButton = createButton("Add", new AddEmployeeButtonListener(null));
+        JButton addButton = createButton("Add", new AddEmployeeButtonListener(this, employeeDAO));
         JButton editButton = createButton("Edit", new UpdateEmployeeButtonListener(this, this.employeeDAO)); 
         JButton deleteButton = createButton("Delete",new DeleteEmployeeButtonListener(null, employeeDAO));
         JButton saveEmployeeButton = createButton("Save to File", new SaveEmployeeButtonListener(null, employeeDAO));
@@ -140,6 +141,52 @@ public class EmployeeView extends MainView {
 	        tableModel.addRow(employee); // Add rows to the table model
 	    }
 	}
+	
+	 public Employee gatherUserInputForAddEmployee() {
+	        // Define fields for employee details
+	        JTextField employeeNumberField = new JTextField(5);
+	        JTextField firstNameField = new JTextField(10);
+	        JTextField lastNameField = new JTextField(10);
+	        JTextField extensionField = new JTextField(10);
+	        JTextField emailField = new JTextField(10);
+	        JTextField officeCodeField = new JTextField(5);
+	        JTextField reportsToField = new JTextField(10);
+	        JTextField jobTitleField = new JTextField(10);
+
+	        // Panel to hold the form
+	        JPanel panel = new JPanel(new GridLayout(0, 1));
+	        panel.add(new JLabel("Employee Number:")); panel.add(employeeNumberField);
+	        panel.add(new JLabel("First Name:")); panel.add(firstNameField);
+	        panel.add(new JLabel("Last Name:")); panel.add(lastNameField);
+	        panel.add(new JLabel("Extension:")); panel.add(extensionField);
+	        panel.add(new JLabel("Email:")); panel.add(emailField);
+	        panel.add(new JLabel("Office Code:")); panel.add(officeCodeField);
+	        panel.add(new JLabel("Reports To (Employee Number):")); panel.add(reportsToField);
+	        panel.add(new JLabel("Job Title:")); panel.add(jobTitleField);
+
+	        // Show confirm dialog with the form
+	        int result = JOptionPane.showConfirmDialog(null, panel, 
+	                "Enter Employee Details", JOptionPane.OK_CANCEL_OPTION);
+	        if (result == JOptionPane.OK_OPTION) {
+	            try {
+	                int employeeNumber = Integer.parseInt(employeeNumberField.getText());
+	                String firstName = firstNameField.getText();
+	                String lastName = lastNameField.getText();
+	                String extension = extensionField.getText();
+	                String email = emailField.getText();
+	                String officeCode = officeCodeField.getText();
+	                int reportsTo = reportsToField.getText().isEmpty() ? 0 : Integer.parseInt(reportsToField.getText()); // Assuming this can be empty
+	                String jobTitle = jobTitleField.getText();
+
+	                // Assuming the existence of a constructor in Employee class that takes all these fields
+	                return new Employee(employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
+	            } catch (NumberFormatException ex) {
+	                JOptionPane.showMessageDialog(null, "Invalid number format.");
+	                return null;
+	            }
+	        }
+	        return null; // Return null if the user cancels or an error occurs
+	    }
 
 	public void updateTableWithSearchResults(List<Employee> searchResults) {
 	    tableModel.setRowCount(0); // Fjern eksisterende rader

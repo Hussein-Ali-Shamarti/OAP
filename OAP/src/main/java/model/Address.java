@@ -41,7 +41,7 @@ public abstract class Address {
      * Get the first address of the customer.
      * @return The first address of the customer.
      */
-    public String getaddressLine1() {
+    public String getAddressLine1() {
         return addressLine1;
     }
 
@@ -49,18 +49,18 @@ public abstract class Address {
    * Get the second address of the customer.
    * @return The second address of the customer, or a message if it is not available.
    */
-    public String getaddressLine2() {
+    public String getAddressLine2() {
     if (addressLine2 == null || addressLine2.isEmpty()) {
         return "No second address registered";
             }
         return addressLine2;
     }
 
-    public String getcity() {
+    public String getCity() {
         return city;
     }
 
-    public String getstate() {
+    public String getState() {
         return state;
     }
 
@@ -68,11 +68,11 @@ public abstract class Address {
         return postalCode;
     }
 
-   public String getcountry() {
+   public String getCountry() {
         return country;
     }
     
-   public String getphone() {
+   public String getPhone() {
         return phone;
     }
 

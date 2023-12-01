@@ -92,19 +92,20 @@ public class EmployeeDAO {
 	 * @param jobTitle The job title of the employee.
 	 * @return True if the employee is added successfully, false otherwise.
 	 */
-	public boolean addEmployee(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+	public boolean addEmployee(Employee employee) {
+	    String employeesTable = "employees"; // Assuming you have a table name for employees
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstm = connection.prepareStatement(
-	                "INSERT INTO " + employees + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+	                "INSERT INTO " + employeesTable + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-	        pstm.setInt(1, employeeNumber);
-	        pstm.setString(2, firstName);
-	        pstm.setString(3, lastName);
-	        pstm.setString(4, extension);
-	        pstm.setString(5, email);
-	        pstm.setString(6, officeCode);
-	        pstm.setInt(7, reportsTo);
-	        pstm.setString(8, jobTitle);
+	        pstm.setInt(1, employee.getEmployeeNumber());
+	        pstm.setString(2, employee.getFirstName());
+	        pstm.setString(3, employee.getLastName());
+	        pstm.setString(4, employee.getExtension());
+	        pstm.setString(5, employee.getEmail());
+	        pstm.setString(6, employee.getOfficeCode());
+	        pstm.setInt(7, employee.getReportsTo());
+	        pstm.setString(8, employee.getJobTitle());
 
 	        int affectedRows = pstm.executeUpdate();
 

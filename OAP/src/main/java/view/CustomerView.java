@@ -92,7 +92,7 @@ public class CustomerView extends MainView {
         controlPanel.setBackground(new Color(90, 23, 139));
 
         JButton searchButton = createButton("Search", new SearchButtonListener());
-        JButton addButton = createButton("Add", new AddCustomerButtonListener(null));
+        JButton addButton = createButton("Add", new AddCustomerButtonListener(this, customerDAO));
         JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
         JButton deleteButton = createButton("Delete", new DeleteButtonListener());
         JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
@@ -152,19 +152,80 @@ public class CustomerView extends MainView {
         }
         return customers;
     }
+    
+
+    public Customer gatherUserInputForAddCustomer() {
+        JTextField customerNumberField = new JTextField(10);
+        JTextField customerNameField = new JTextField(10);
+        JTextField contactLastNameField = new JTextField(10);
+        JTextField contactFirstNameField = new JTextField(10);
+        JTextField phoneField = new JTextField(10);
+        JTextField addressLine1Field = new JTextField(10);
+        JTextField addressLine2Field = new JTextField(10);
+        JTextField cityField = new JTextField(10);
+        JTextField stateField = new JTextField(10);
+        JTextField postalCodeField = new JTextField(10);
+        JTextField countryField = new JTextField(10);
+        JTextField salesRepEmployeeNumberField = new JTextField(10);
+        JTextField creditLimitField = new JTextField(10);
+
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
+        panel.add(new JLabel("Company Name:")); panel.add(customerNameField);
+        panel.add(new JLabel("Contact Last Name:")); panel.add(contactLastNameField);
+        panel.add(new JLabel("Contact First Name:")); panel.add(contactFirstNameField);
+        panel.add(new JLabel("Phone:")); panel.add(phoneField);
+        panel.add(new JLabel("Address Line 1:")); panel.add(addressLine1Field);
+        panel.add(new JLabel("Address Line 2:")); panel.add(addressLine2Field);
+        panel.add(new JLabel("City:")); panel.add(cityField);
+        panel.add(new JLabel("State:")); panel.add(stateField);
+        panel.add(new JLabel("Postal Code:")); panel.add(postalCodeField);
+        panel.add(new JLabel("Country:")); panel.add(countryField);
+        panel.add(new JLabel("Sales Rep Employee Number:")); panel.add(salesRepEmployeeNumberField);
+        panel.add(new JLabel("Credit Limit:")); panel.add(creditLimitField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int customerNumber = Integer.parseInt(customerNumberField.getText());
+                String customerName = customerNameField.getText();
+                String contactLastName = contactLastNameField.getText();
+                String contactFirstName = contactFirstNameField.getText();
+                String phone = phoneField.getText();
+                String addressLine1 = addressLine1Field.getText();
+                String addressLine2 = addressLine2Field.getText();
+                String city = cityField.getText();
+                String state = stateField.getText();
+                String postalCode = postalCodeField.getText();
+                String country = countryField.getText();
+                int salesRepEmployeeNumber = Integer.parseInt(salesRepEmployeeNumberField.getText());
+                BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
+
+                return new Customer(customerNumber, customerName, contactLastName, contactFirstName, 
+                                    phone, addressLine1, addressLine2, city, state, 
+                                    postalCode, country, salesRepEmployeeNumber, creditLimit);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input format.");
+                return null;
+            }
+        }
+        return null; // Return null if the user cancels or an error occurs
+    }
+    
+    
 
     public void gatherUserInputForUpdateCustomer(Customer customer) {
        
     	JTextField customerNameField = new JTextField(customer.getCustomerName(), 10);
         JTextField contactLastNameField = new JTextField(customer.getContactLastName(), 10);
         JTextField contactFirstNameField = new JTextField(customer.getContactFirstName(), 10);
-        JTextField phoneField = new JTextField(customer.getphone(), 10);
-        JTextField addressLine1Field = new JTextField(customer.getaddressLine1(), 10);
-        JTextField addressLine2Field = new JTextField(customer.getaddressLine2(), 10);
-        JTextField cityField = new JTextField(customer.getcity(), 10);
-        JTextField stateField = new JTextField(customer.getstate(), 10);
+        JTextField phoneField = new JTextField(customer.getPhone(), 10);
+        JTextField addressLine1Field = new JTextField(customer.getAddressLine1(), 10);
+        JTextField addressLine2Field = new JTextField(customer.getAddressLine2(), 10);
+        JTextField cityField = new JTextField(customer.getCity(), 10);
+        JTextField stateField = new JTextField(customer.getState(), 10);
         JTextField postalCodeField = new JTextField(customer.getPostalCode(), 10);
-        JTextField countryField = new JTextField(customer.getcountry(), 10);
+        JTextField countryField = new JTextField(customer.getCountry(), 10);
         JTextField creditLimitField = new JTextField(customer.getCreditLimit().toString(), 10);
         
         CustomerDAO customerDAO = new CustomerDAO();
@@ -293,13 +354,13 @@ public class CustomerView extends MainView {
                     customer.getCustomerName(),
                     customer.getContactLastName(),
                     customer.getContactFirstName(),
-                    customer.getphone(),
-                    customer.getaddressLine1(),
-                    customer.getaddressLine2(),
-                    customer.getcity(),
-                    customer.getstate(),
+                    customer.getPhone(),
+                    customer.getAddressLine1(),
+                    customer.getAddressLine2(),
+                    customer.getCity(),
+                    customer.getState(),
                     customer.getPostalCode(),
-                    customer.getcountry(),
+                    customer.getCountry(),
                     customer.getSalesRepEmployeeNumber(),
                     customer.getCreditLimit()
                 };
