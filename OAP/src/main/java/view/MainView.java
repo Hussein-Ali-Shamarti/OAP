@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 
-import controller.OrderListener;
+
 
 
 
@@ -157,6 +157,23 @@ public class MainView extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 CustomerView customerView = new CustomerView();
                 customerView.setVisible(true);
+            });
+        }
+    }
+    
+    public class OrderListener implements ActionListener {
+
+        /**
+         * Invoked when an action occurs, in this case, opens the {@link OrderView}.
+         *
+         * @param e The event representing the user's action.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open OrderView when "Orders" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                OrderView orderView = new OrderView();
+                orderView.setVisible(true);
             });
         }
     }
