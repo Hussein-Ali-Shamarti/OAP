@@ -238,7 +238,7 @@ public class OrderView extends MainView {
 	private JButton createButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
 		button.setForeground(Color.BLACK);
-		button.setBackground(Color.WHITE);
+		button.setBackground(new Color(84, 11, 131));
 		button.setFocusPainted(false);
 		button.addActionListener(listener);
 	    // set other button properties
