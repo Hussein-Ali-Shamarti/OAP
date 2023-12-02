@@ -30,7 +30,7 @@ public class UpdateEmployeeButtonListener implements ActionListener {
                     Employee updatedEmployee = employeeView.gatherUserInputForUpdateEmployee(employee);
                     if (updatedEmployee != null) {
                         boolean success = employeeDAO.editEmployeeInDatabase(
-                            "employees", // Assuming the table name is provided here
+                            "employees", 
                             updatedEmployee.getEmployeeNumber(),
                             updatedEmployee.getFirstName(),
                             updatedEmployee.getLastName(),

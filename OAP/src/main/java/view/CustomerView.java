@@ -22,10 +22,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddCustomerButtonListener;
+import controller.DeleteCustomerButtonListener;
 import controller.UpdateCustomerButtonListener;
 import model.Customer;
 import model.CustomerDAO;
-import model.EmployeeDAO;
+
 
 
 
@@ -94,7 +95,7 @@ public class CustomerView extends MainView {
         JButton searchButton = createButton("Search", new SearchButtonListener());
         JButton addButton = createButton("Add", new AddCustomerButtonListener(this, customerDAO));
         JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
-        JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+        JButton deleteButton = createButton("Delete", new DeleteCustomerButtonListener(this, this.customerDAO));
         JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
 
         controlPanel.add(searchButton);
@@ -297,43 +298,36 @@ public class CustomerView extends MainView {
         }
     }
 
-    // Action listener for "Delete" button
-    private class DeleteButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String customerNumberStr = JOptionPane.showInputDialog(CustomerView.this, "Enter Customer Number to delete:");
-            if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
-                try {
-                    int customerNumber = Integer.parseInt(customerNumberStr);
+   
+    public Integer gatherUserInputForDeleteCustomer() {
+        String customerNumberStr = JOptionPane.showInputDialog(this, "Enter Customer Number to delete:");
+        if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
+            try {
+                int customerNumber = Integer.parseInt(customerNumberStr);
 
-                    CustomerDAO handler = new CustomerDAO();
-                    Customer customer = handler.fetchCustomerData(customerNumber);
+                CustomerDAO customerDAO = new CustomerDAO();
+                Customer customer = customerDAO.fetchCustomerData(customerNumber);
 
-                    if (customer != null) {
-                        int confirm = JOptionPane.showConfirmDialog(
-                            CustomerView.this, 
-                            "Are you sure you want to delete this customer?\n" +
-                            "Customer Nr: " + customer.getCustomerNumber() + "\n" +
-                            "Name: " + customer.getCustomerName() + "\n" +
-                            "Contact: " + customer.getContactFirstName() + " " + customer.getContactLastName(), 
-                            "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                if (customer != null) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                        this, 
+                        "Are you sure you want to delete this customer?\n" +
+                        "Customer Nr: " + customer.getCustomerNumber() + "\n" +
+                        "Name: " + customer.getCustomerName() + "\n" +
+                        "Contact: " + customer.getContactFirstName() + " " + customer.getContactLastName(), 
+                        "Confirm Deletion", JOptionPane.YES_NO_OPTION);
 
-                        if (confirm == JOptionPane.YES_OPTION) {
-                            boolean success = handler.deleteCustomer(customerNumber);
-                            if (success) {
-                                JOptionPane.showMessageDialog(CustomerView.this, "Customer deleted successfully.");
-                            } else {
-                                JOptionPane.showMessageDialog(CustomerView.this, "Failed to delete customer.");
-                            }
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(CustomerView.this, "Customer not found.");
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        return customerNumber; // Return customer number to delete
                     }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(CustomerView.this, "Invalid customer number format.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Customer not found.");
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid customer number format.");
             }
         }
+        return null; 
     }
 
     private class SearchButtonListener implements ActionListener {
