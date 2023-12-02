@@ -23,9 +23,12 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.AddCustomerButtonListener;
 import controller.DeleteCustomerButtonListener;
+
+import controller.SearchCustomerButtonListener;
 import controller.UpdateCustomerButtonListener;
 import model.Customer;
 import model.CustomerDAO;
+import model.ProductDAO;
 
 
 
@@ -33,12 +36,16 @@ import model.CustomerDAO;
 public class CustomerView extends MainView {
 	
 	private CustomerDAO customerDAO;
+
+
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
 
     public CustomerView() {
         super();
+        this.customerDAO = new CustomerDAO();
+        
 
         setLayout(new BorderLayout());
         initializeUI();
@@ -92,10 +99,10 @@ public class CustomerView extends MainView {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search", new SearchButtonListener());
+        JButton searchButton = createButton("Search", new SearchCustomerButtonListener(this, customerDAO));
         JButton addButton = createButton("Add", new AddCustomerButtonListener(this, customerDAO));
         JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
-        JButton deleteButton = createButton("Delete", new DeleteCustomerButtonListener(this, this.customerDAO));
+        JButton deleteButton = createButton("Delete", new DeleteCustomerButtonListener(this, customerDAO));
         JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
 
         controlPanel.add(searchButton);
@@ -330,24 +337,23 @@ public class CustomerView extends MainView {
         return null; 
     }
 
-    private class SearchButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JTextField searchField = new JTextField(20);
-            JPanel panel = new JPanel(new GridLayout(0, 1));
-            panel.add(new JLabel("Enter search criteria:"));
-            panel.add(searchField);
-            
-            int result = JOptionPane.showConfirmDialog(CustomerView.this, panel, 
-                                                       "Search Customers", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                String searchCriteria = searchField.getText().trim();
-                List<Customer> searchResults = new CustomerDAO().searchCustomers(searchCriteria);
-                updateTableWithSearchResults(searchResults);
-            }
+
+    public String gatherUserInputForSearch() {
+        JTextField searchField = new JTextField(20);
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Enter search criteria:"));
+        panel.add(searchField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, 
+                                                   "Search Customers", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            return searchField.getText().trim();
         }
+        return null;
+    }
+
         
-        private void updateTableWithSearchResults(List<Customer> searchResults) {
+        public void updateTableWithSearchResults(List<Customer> searchResults) {
             tableModel.setRowCount(0); // Clear existing rows
 
             for (Customer customer : searchResults) {
@@ -369,7 +375,7 @@ public class CustomerView extends MainView {
                 tableModel.addRow(row);
             }
         }
-    }
+    
    private class SaveCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
