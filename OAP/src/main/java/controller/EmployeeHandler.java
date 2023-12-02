@@ -15,35 +15,98 @@ import model.Employee;
 import model.EmployeeDAO;
 import view.EmployeeView;
 
+
+/**
+ * The EmployeeHandler class is responsible for handling the business logic 
+ * associated with employee management in the application. It coordinates the 
+ * interactions between the EmployeeView and EmployeeDAO, facilitating operations 
+ * such as adding, updating, deleting, searching, and saving employee data.
+ * 
+ * @author 7080
+ * @version 2.12.2023
+ */
+
 public class EmployeeHandler {
-
-    private final EmployeeView employeeView;
+	
+	 /**
+     * The view component for employee management operations.
+     */
+	
+	private final EmployeeView employeeView;
+    
+    /**
+     * The DAO component for performing CRUD operations on employee data.
+     */
+	
     private final EmployeeDAO employeeDAO;
-
+    
+    /**
+     * Constructs an EmployeeHandler with the specified view and DAO.
+     * 
+     * @param employeeView The EmployeeView instance used for UI interactions.
+     * @param employeeDAO The EmployeeDAO instance used for data access operations.
+     */
+    
     public EmployeeHandler(EmployeeView employeeView, EmployeeDAO employeeDAO) {
         this.employeeView = employeeView;
         this.employeeDAO = employeeDAO;
     }
+    
+    /**
+     * Returns an ActionListener for adding a new employee.
+     * 
+     * @return ActionListener for the add employee action.
+     */
 
     public ActionListener getAddEmployeeButtonListener() {
         return this::addEmployee;
     }
+    
+    /**
+     * Returns an ActionListener for updating an employee.
+     * 
+     * @return ActionListener for the update employee action.
+     */
 
     public ActionListener getUpdateEmployeeButtonListener() {
         return this::updateEmployee;
     }
+    
+    /**
+     * Returns an ActionListener for deleting an employee.
+     * 
+     * @return ActionListener for the delete employee action.
+     */
 
     public ActionListener getDeleteEmployeeButtonListener() {
         return this::deleteEmployee;
     }
+    
+    /**
+     * Returns an ActionListener for searching employees.
+     * 
+     * @return ActionListener for the search employee action.
+     */
 
     public ActionListener getSearchEmployeeButtonListener() {
         return this::searchEmployee;
     }
+    
+    /**
+     * Returns an ActionListener for saving employee data to a file.
+     * 
+     * @return ActionListener for the save employee data action.
+     */
 
     public ActionListener getSaveEmployeeButtonListener() {
         return this::saveEmployeesToFile;
     }
+    
+    /**
+     * Handles the addition of a new employee.
+     * 
+     * @param e The action event that triggers the add operation.
+     */
 
     private void addEmployee(ActionEvent e) {
         Employee employee = employeeView.gatherUserInputForAddEmployee();
@@ -59,6 +122,12 @@ public class EmployeeHandler {
             }
         }
     }
+    
+    /**
+     * Handles updating an existing employee.
+     * 
+     * @param e The action event that triggers the update operation.
+     */
 
     private void updateEmployee(ActionEvent e) {
         String employeeNumberStr = JOptionPane.showInputDialog(employeeView, "Enter Employee Number to edit:");
@@ -99,6 +168,12 @@ public class EmployeeHandler {
             }
         }
     }
+    
+    /**
+     * Handles the deletion of an employee.
+     * 
+     * @param e The action event that triggers the delete operation.
+     */
 
     private void deleteEmployee(ActionEvent e) {
         Integer employeeNumberToDelete = employeeView.gatherUserInputForDelete();
@@ -114,6 +189,12 @@ public class EmployeeHandler {
             }
         }
     }
+    
+    /**
+     * Handles searching for employees based on a specified criteria.
+     * 
+     * @param e The action event that triggers the search operation.
+     */
 
     private void searchEmployee(ActionEvent e) {
         String searchCriteria = employeeView.gatherInputForSearch();
@@ -123,6 +204,12 @@ public class EmployeeHandler {
             employeeView.updateTableWithSearchResults(searchResults);
         }
     }
+    
+    /**
+     * Handles saving the current employee data to a file.
+     * 
+     * @param e The action event that triggers the save operation.
+     */
 
     private void saveEmployeesToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
@@ -137,6 +224,12 @@ public class EmployeeHandler {
         }
     }
 
+    /**
+     * Writes the employee data to the specified file.
+     * 
+     * @param fileToSave The file to which the employee data will be written.
+     */
+    
     private void writeEmployeeDataToFile(File fileToSave) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
             List<String[]> employees = employeeView.fetchAndDisplayEmployees();
