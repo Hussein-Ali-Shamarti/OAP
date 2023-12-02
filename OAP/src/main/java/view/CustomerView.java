@@ -22,9 +22,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddCustomerButtonListener;
-import controller.CustomerHandler;
 import controller.DeleteCustomerButtonListener;
-
+import controller.CustomerHandler;
 import controller.SearchCustomerButtonListener;
 import controller.UpdateCustomerButtonListener;
 import model.Customer;
@@ -37,6 +36,7 @@ import model.ProductDAO;
 public class CustomerView extends MainView {
 	
 	private CustomerDAO customerDAO;
+	 private CustomerHandler customerHandler;
 
 
     private static final long serialVersionUID = 1L;
@@ -46,6 +46,7 @@ public class CustomerView extends MainView {
     public CustomerView() {
         super();
         this.customerDAO = new CustomerDAO();
+        this.customerHandler = new CustomerHandler(this, this.customerDAO);
         
 
         setLayout(new BorderLayout());
