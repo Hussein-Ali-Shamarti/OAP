@@ -47,6 +47,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.AddOrderButtonListener;
 import controller.DeleteOrderButtonListener;
 import controller.SearchOrderButtonListener;
 import controller.UpdateOrderButtonListener;
@@ -178,12 +179,12 @@ public class OrderView extends MainView {
 
 	}
 	
-    private void initializeComponents() {
+  /*  private void initializeComponents() {
         panel = new JPanel(new GridLayout(0, 2));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         JButton addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
         panel.add(addMultipleProducts);
-    }
+    }*/
     
 	private void setupTable() {
 		String[] columnNames = { "Order Number", "Order Date", "Required Date", "Shipped Date", "Status", "Comments",
@@ -205,7 +206,7 @@ public class OrderView extends MainView {
 		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		controlPanel.setBackground(new Color(90, 23, 139));
 		JButton searchButton = createButton("Search", new SearchOrderButtonListener(this, OrderDAO));
-		JButton addButton = createButton("Add", new AddButtonListener());
+		JButton addButton = createButton("Add", new AddOrderButtonListener(this, OrderDAO));
 		JButton editButton = createButton("Edit", new UpdateOrderButtonListener(this, OrderDAO, ProductDAO));
 		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
 		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
@@ -275,254 +276,129 @@ public class OrderView extends MainView {
 	}
 
 
-	private class AddButtonListener implements ActionListener {
-	    private JButton addMultipleProducts; // Class attribute for the button
-	    private JScrollPane scrollPane; // This will contain your panel and provide scrolling
-	    private JPanel panel;
+    private void addProductFields(JPanel panel, Map<String, String> products) {
+    	JComboBox<String> productNameDropdown = new JComboBox<>();
+        JTextField productCodeField = new JTextField(10);
+        JTextField quantityOrderedField = new JTextField(10);
+        JTextField orderLineNumberField = new JTextField(10);
 
-	    public AddButtonListener() {
-	        panel = new JPanel(new GridLayout(0, 2));
-	        scrollPane = new JScrollPane(panel);
-	        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-	        addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
-	        panel.add(addMultipleProducts);
-	    }
-	   
-	    
-		@Override
-		public void actionPerformed(ActionEvent e) {
-	        panel.removeAll(); // Clear the panel before adding components
+        productCodeField.setEditable(false);
+        productCodeField.setFocusable(false);
 
-			// Fields for customer details
-			JTextField orderDateField = new JTextField(10);
-			JTextField requiredDateField = new JTextField(10);
-			JTextField shippedDateField = new JTextField(10);
-			JTextField statusField = new JTextField(10);
-			JTextField commentsField = new JTextField(10);
-			JTextField customerNumberField = new JTextField(10);
+        for (String productName : products.keySet()) {
+            productNameDropdown.addItem(productName);
+        }
 
-			// Fields for product details, which must be class attributesorderLineNumber
-			JTextField productCodeField = new JTextField(10);
-			JTextField quantityOrderedField = new JTextField(10);
-			JTextField orderLineNumberField = new JTextField(10);
-			JTextField quantityInStockField = new JTextField(10);
-			JTextField buyPriceField = new JTextField(10);
-			JTextField msrpField = new JTextField(10);
-			productCodeField.setEditable(false);
-			productCodeField.setFocusable(false);
-			productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
+        productNameDropdown.addActionListener(e -> {
+            String selectedProductName = productNameDropdown.getSelectedItem().toString();
+            String productCode = products.get(selectedProductName);
+            productCodeField.setText(productCode);
+        });
+        panel.add(new JLabel("Product Name:"));
+        panel.add(productNameDropdown);
+        panel.add(new JLabel("Product Code:"));
+        panel.add(productCodeField);
+        panel.add(new JLabel("Quantity Ordered:"));
+        panel.add(quantityOrderedField);
+        panel.add(new JLabel("Order Line Number:"));
+        panel.add(orderLineNumberField);
 
-			// Dropdowns for selecting product
-			JComboBox<String> productNameDropdown = new JComboBox<>();
-			JComboBox<String> productCodeDropdown = new JComboBox<>();
+        panel.revalidate();
+        panel.repaint();
+    }
+    
+    public Order gatherUserInputForAddOrder() {
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-			// Panel for the form
-			 scrollPane.validate();
-		        scrollPane.repaint();
-			// Populate the dropdown with product data from the database using an instance
-			// of ProductDAO
-			Map<String, String> products = ProductDAO.getProducts(); // Use the instance
-			for (String productName : products.keySet()) {
-				productNameDropdown.addItem(productName);
-				productCodeDropdown.addItem(products.get(productName));
-			}
+        // Fields for customer details
+        JTextField orderDateField = new JTextField(10);
+        JTextField requiredDateField = new JTextField(10);
+        JTextField shippedDateField = new JTextField(10);
+        JTextField statusField = new JTextField(10);
+        JTextField commentsField = new JTextField(10);
+        JTextField customerNumberField = new JTextField(10);
+		// Fields for product details, which must be class attributesorderLineNumber
+		JTextField productCodeField = new JTextField(10);
+		JTextField quantityOrderedField = new JTextField(10);
+		JTextField orderLineNumberField = new JTextField(10);
+		JTextField quantityInStockField = new JTextField(10);
+		JTextField buyPriceField = new JTextField(10);
+		JTextField msrpField = new JTextField(10);
+		productCodeField.setEditable(false);
+		productCodeField.setFocusable(false);
+		productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
 
-			productNameDropdown.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String selectedProductName = (String) productNameDropdown.getSelectedItem();
-					String productCode = products.get(selectedProductName);
-					productCodeField.setText(productCode); // Update the productCodeField with the selected product code
+		// Dropdowns for selecting product
+		JComboBox<String> productNameDropdown = new JComboBox<>();
+		JComboBox<String> productCodeDropdown = new JComboBox<>();
 
-					updateProductDetailsFields(selectedProductName);
-
-					Map<String, Object> productDetails = ProductDAO.getProductDetailsByName(selectedProductName);
-					if (productDetails != null && !productDetails.isEmpty()) {
-						quantityInStockField.setText(productDetails.get("quantityInStock").toString());
-						buyPriceField.setText(productDetails.get("buyPrice").toString());
-						msrpField.setText(productDetails.get("MSRP").toString());
-					} else {
-						quantityInStockField.setText("");
-						buyPriceField.setText("");
-						msrpField.setText("");
-					}
-				}
-			});
-
-			if (productNameDropdown.getItemCount() == 0) {
-				for (String productName : products.keySet()) {
-					productNameDropdown.addItem(productName);
-				}
-			}
-
-			if (productCodeDropdown.getItemCount() == 0) {
-				for (String productCode : products.values()) {
-					productCodeDropdown.addItem(productCode);
-				}
-			}
-
-	        // Populate fields for the initially selected product
-	        if (productNameDropdown.getItemCount() > 0) {
-	            productNameDropdown.setSelectedIndex(0);
-	            productNameDropdown.getActionListeners()[0]
-	                    .actionPerformed(new ActionEvent(productNameDropdown, ActionEvent.ACTION_PERFORMED, null));
-	        }
-
-			// Add components to the panel
-			panel.add(new JLabel("Order Date (yyyy-MM-dd):"));
-			panel.add(orderDateField);
-			panel.add(new JLabel("Required Date:"));
-			panel.add(requiredDateField);
-			panel.add(new JLabel("Shipped Date:"));
-			panel.add(shippedDateField);
-			panel.add(new JLabel("Status:"));
-			panel.add(statusField);
-			panel.add(new JLabel("Comments:"));
-			panel.add(commentsField);
-			panel.add(new JLabel("Customer Number:"));
-			panel.add(customerNumberField);
-			panel.add(new JLabel("Product Name:"));
-			panel.add(productNameDropdown);
-			panel.add(new JLabel("Product Code:"));
-			panel.add(productCodeField); // Use the JTextField for Product Code
-			panel.add(new JLabel("Product Quantity:"));
-			panel.add(quantityOrderedField);
-			panel.add(new JLabel("Quantity in Stock:"));
-			panel.add(quantityInStockField);
-			panel.add(new JLabel("Buy Price:"));
-			panel.add(buyPriceField);
-			panel.add(new JLabel("MSRP:"));
-			panel.add(msrpField);
-			panel.add(new JLabel("orderLineNumber:"));
-			panel.add(orderLineNumberField);
-
-
-			//adding multiple products
-			JButton addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
-			panel.add(addMultipleProducts);
-			if (!Arrays.asList(panel.getComponents()).contains(addMultipleProducts)) {
-		            panel.add(addMultipleProducts);
-		        }
-	        if (addMultipleProducts == null) {
-	            addMultipleProducts = createButton("Add More Products +", new AddMultipleProductsButtonListener());
-	        }
-	        
-	        JScrollPane scrollPane = new JScrollPane(panel);
-	        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-			// Show confirm dialog with the form
-	        
-	        int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details",
-                    JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-				try {
-					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-					Date orderDate = dateFormat.parse(orderDateField.getText());
-					Date requiredDate = dateFormat.parse(requiredDateField.getText());
-					Date shippedDate = dateFormat.parse(shippedDateField.getText());
-					String status = statusField.getText();
-					String comments = commentsField.getText();
-					int customerNumber = Integer.parseInt(customerNumberField.getText());
-
-					String productCode = productCodeField.getText();
-					int quantityOrdered = Integer.parseInt(quantityOrderedField.getText());
-					int orderLineNumber = Integer.parseInt(orderLineNumberField.getText());
-					double buyPrice = Double.parseDouble(buyPriceField.getText());
-
-					// Assume Order constructor takes these parameters
-					Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-					OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode,
-							orderLineNumber);
-					boolean success = OrderDAO.addOrder(order, orderDetails);
-					if (success) {
-						JOptionPane.showMessageDialog(OrderView.this, "Order added successfully!");
-					} else {
-						JOptionPane.showMessageDialog(OrderView.this, "Failed to add order.");
-					}
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(OrderView.this, "Error: " + ex.getMessage());
-				}
-			}
+		// Panel for the form
+		 scrollPane.validate();
+	     scrollPane.repaint();
+		// Populate the dropdown with product data from the database using an instance
+		// of ProductDAO
+		Map<String, String> products = ProductDAO.getProducts(); // Use the instance
+		for (String productName : products.keySet()) {
+			productNameDropdown.addItem(productName);
+			productCodeDropdown.addItem(products.get(productName));
 		}
-	
 
+        // Adding initial fields to the panel
+        panel.add(new JLabel("Order Date (yyyy-MM-dd):")); panel.add(orderDateField);
+        panel.add(new JLabel("Required Date:")); panel.add(requiredDateField);
+        panel.add(new JLabel("Shipped Date:")); panel.add(shippedDateField);
+        panel.add(new JLabel("Status:")); panel.add(statusField);
+        panel.add(new JLabel("Comments:")); panel.add(commentsField);
+        panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
+
+        // Adding initial product fields
+        addProductFields(panel, ProductDAO.getProducts());
+
+        // Adding button to add more products
+        JButton addMoreProductsButton = new JButton("Add More Products +");
+        addMoreProductsButton.addActionListener(e -> addProductFields(panel, ProductDAO.getProducts()));
+        panel.add(addMoreProductsButton);
+
+        // Show the dialog
+        int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date orderDate = dateFormat.parse(orderDateField.getText());
+                Date requiredDate = dateFormat.parse(requiredDateField.getText());
+                Date shippedDate = dateFormat.parse(shippedDateField.getText());
+                String status = statusField.getText();
+                String comments = commentsField.getText();
+                int customerNumber = Integer.parseInt(customerNumberField.getText());
+
+
+				String productCode = productCodeField.getText();
+				int quantityOrdered = Integer.parseInt(quantityOrderedField.getText());
+				int orderLineNumber = Integer.parseInt(orderLineNumberField.getText());
+				double buyPrice = Double.parseDouble(buyPriceField.getText());
+
+                // Create Order and OrderDetails objects
+                Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode,
+						orderLineNumber);
+				boolean success = OrderDAO.addOrder(order, orderDetails);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Order added successfully!");
+                    // Optionally update the table or UI
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to add order.");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        }
+		return null;
+    }
 		
-	    private class AddMultipleProductsButtonListener implements ActionListener {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            // Initialize additional fields if they are null or reset them otherwise
-	            if (additionalProductNameDropdown == null) {
-	                additionalProductNameDropdown = new JComboBox<>(products.keySet().toArray(new String[0]));
-	            } else {
-	                additionalProductNameDropdown.removeAllItems();
-	                for (String productName : products.keySet()) {
-	                    additionalProductNameDropdown.addItem(productName);
-	                }
-	            }
-
-	            if (additionalProductCodeField == null) {
-	                additionalProductCodeField = new JTextField(10);
-	                additionalProductCodeField.setEditable(false);
-	                additionalProductCodeField.setFocusable(false);
-	                additionalProductCodeField.setBorder(BorderFactory.createEmptyBorder());
-	            } else {
-	                additionalProductCodeField.setText("");
-	            }
-
-	            additionalProductNameDropdown.addActionListener(new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent e) {
-	                    String selectedProductName = (String) additionalProductNameDropdown.getSelectedItem();
-	                    String productCode = products.get(selectedProductName);
-	                    additionalProductCodeField.setText(productCode);
-	                }
-	            });
-
-		        JTextField additionalProductCodeField = new JTextField(10);
-		        additionalProductCodeField.setEditable(false);
-		        additionalProductCodeField.setFocusable(false);
-		        additionalProductCodeField.setBorder(BorderFactory.createEmptyBorder()); // Remove border
-		        additionalProductCodeField.setBorder(null); // Set the border to null to remove it
-		        JTextField textField = new JTextField(10);
-		        textField.setBorder(BorderFactory.createEmptyBorder()); // This will remove the border.
-		        JTextField additionalQuantityOrderedField = new JTextField(10);
-		        additionalQuantityOrderedField.setBorder(null);
-		        UIManager.put("TextField.border", BorderFactory.createEmptyBorder());
-
-		        JTextField additionalQuantityInStockField = new JTextField(10);
-		        additionalQuantityInStockField.setBorder(null);
-
-		        JTextField additionalBuyPriceField = new JTextField(10);
-		        JTextField additionalMsrpField = new JTextField(10);
-		        JTextField additionalOrderLineNumberField = new JTextField(10);
-		        try {
-		            // Set to the cross-platform Java Look and Feel (also called "Metal")
-		            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException event) {
-		            event.printStackTrace();
-		        }
-
-		        // Add components to the panel
-		        panel.add(additionalProductNameDropdown);
-		        panel.add(new JLabel("Product Code:"));
-		        panel.add(additionalProductCodeField); // Use the JTextField for Product Code
-		        panel.add(new JLabel("Product Quantity:"));
-		        panel.add(additionalQuantityOrderedField);
-		        panel.add(new JLabel("Quantity in Stock:"));
-		        panel.add(additionalQuantityInStockField);
-		        panel.add(new JLabel("Buy Price:"));
-		        panel.add(additionalBuyPriceField);
-		        panel.add(new JLabel("MSRP:"));
-		        panel.add(additionalMsrpField);
-		        panel.add(new JLabel("Order Line Number:"));
-		        panel.add(additionalOrderLineNumberField);
-
-		        // Update the layout to include the new fields
-		        panel.revalidate();
-		        panel.repaint();
-		        scrollPane.getViewport().revalidate();
-		    }
-		}
+		
+	  
 		
 		private void updateProductDetailsFields(String productName) {
 			Map<String, Object> productDetails = ProductDAO.getProductDetailsByName(productName);
@@ -536,7 +412,7 @@ public class OrderView extends MainView {
 				msrpField.setText("");
 			}
 		}
-	}
+	
 
 	public Order gatherUserInputForUpdateOrder(Order order) {
 	    // Define fields for editing order details
@@ -804,7 +680,7 @@ public class OrderView extends MainView {
 	
 	
 	//adding multiple products
-	private class AddMultipleProductsButtonListener implements ActionListener {
+	private class AddMultipleProductsButtonListener1 implements ActionListener {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 	    	
