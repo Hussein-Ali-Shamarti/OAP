@@ -18,6 +18,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import database.DataBaseConnection;
 
  public class CustomerDAO {
@@ -269,6 +271,38 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
             }
         }
         return salesRepNumbers;
+    }
+    
+    public List<String[]> fetchCustomers() {
+        List<String[]> customers = new ArrayList<>();
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
+                         "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
+                         "salesRepEmployeeNumber, creditLimit FROM customers";
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String[] customer = {
+                    resultSet.getString("customerNumber"),
+                    resultSet.getString("customerName"),
+                    resultSet.getString("contactLastName"),
+                    resultSet.getString("contactFirstName"),
+                    resultSet.getString("phone"),
+                    resultSet.getString("addressLine1"),
+                    resultSet.getString("addressLine2"),
+                    resultSet.getString("city"),
+                    resultSet.getString("state"),
+                    resultSet.getString("postalCode"),
+                    resultSet.getString("country"),
+                    resultSet.getString("salesRepEmployeeNumber"),
+                    resultSet.getString("creditLimit")
+                };
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return customers;
     }
 
 

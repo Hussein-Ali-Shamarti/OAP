@@ -126,41 +126,7 @@ public class CustomerView extends MainView {
         return button;
     }
     
-    List<String[]> fetchAndDisplayCustomers() {
-        List<String[]> customers = new ArrayList<>();
-        tableModel.setRowCount(0); // Clear the existing rows
-
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
-                         "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
-                         "salesRepEmployeeNumber, creditLimit FROM customers";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                String[] customer = {
-                    resultSet.getString("customerNumber"),
-                    resultSet.getString("customerName"),
-                    resultSet.getString("contactLastName"),
-                    resultSet.getString("contactFirstName"),
-                    resultSet.getString("phone"),
-                    resultSet.getString("addressLine1"),
-                    resultSet.getString("addressLine2"),
-                    resultSet.getString("city"),
-                    resultSet.getString("state"),
-                    resultSet.getString("postalCode"),
-                    resultSet.getString("country"),
-                    resultSet.getString("salesRepEmployeeNumber"),
-                    resultSet.getString("creditLimit")
-                };
-                tableModel.addRow(customer); // Add row to the table model
-                customers.add(customer); // Add to the list
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return customers;
-    }
-    
+  
 
     public Customer gatherUserInputForAddCustomer() {
         // Define fields for customer details
@@ -397,7 +363,7 @@ public class CustomerView extends MainView {
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> customers = fetchAndDisplayCustomers(); // Fetch customer data
+                List<String[]> customers = customerDAO.fetchCustomers(); // Fetch customer data
 
                 // Write header row (optional)
                 writer.write("Customer Number, Customer Name, Contact Last Name, Contact First Name, " +
@@ -415,6 +381,15 @@ public class CustomerView extends MainView {
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+    public void fetchAndDisplayCustomers() {
+        CustomerDAO customerDAO = new CustomerDAO();
+        List<String[]> customers = customerDAO.fetchCustomers();
+        tableModel.setRowCount(0); // Clear the existing rows
+
+        for (String[] customer : customers) {
+            tableModel.addRow(customer); // Add row to the table model
         }
     }
 }
