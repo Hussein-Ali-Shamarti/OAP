@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AddCustomerButtonListener;
+import controller.CustomerHandler;
 import controller.DeleteCustomerButtonListener;
 
 import controller.SearchCustomerButtonListener;

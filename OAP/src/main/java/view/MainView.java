@@ -142,6 +142,24 @@ public class MainView extends JFrame {
             });
         }
     }
+    
+    public class CustomerListener implements ActionListener {
+
+        /**
+         * Invoked when the "Customers" button is pressed.
+         * Opens the CustomerView.
+         *
+         * @param e The ActionEvent representing the button press.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open CustomerView when "Customers" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                CustomerView customerView = new CustomerView();
+                customerView.setVisible(true);
+            });
+        }
+    }
 
 }
 	
