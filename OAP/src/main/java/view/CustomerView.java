@@ -10,25 +10,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+
 import java.util.List; // Ensure this import for generic Lists
 
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.AddCustomerButtonListener;
-import controller.DeleteCustomerButtonListener;
 
-import controller.SearchCustomerButtonListener;
-import controller.UpdateCustomerButtonListener;
+import controller.CustomerHandler;
+
 import model.Customer;
 import model.CustomerDAO;
-import model.ProductDAO;
+
 
 
 
@@ -36,6 +30,7 @@ import model.ProductDAO;
 public class CustomerView extends MainView {
 	
 	private CustomerDAO customerDAO;
+	 private CustomerHandler customerHandler;
 
 
     private static final long serialVersionUID = 1L;
@@ -45,6 +40,7 @@ public class CustomerView extends MainView {
     public CustomerView() {
         super();
         this.customerDAO = new CustomerDAO();
+        this.customerHandler = new CustomerHandler(this, this.customerDAO);
         
 
         setLayout(new BorderLayout());
@@ -99,11 +95,11 @@ public class CustomerView extends MainView {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search", new SearchCustomerButtonListener(this, customerDAO));
-        JButton addButton = createButton("Add", new AddCustomerButtonListener(this, customerDAO));
-        JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
-        JButton deleteButton = createButton("Delete", new DeleteCustomerButtonListener(this, customerDAO));
-        JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
+        JButton searchButton = createButton("Search", customerHandler.getSearchCustomerButtonListener());
+        JButton addButton = createButton("Add", customerHandler.getAddCustomerButtonListener());
+        JButton editButton = createButton("Edit", customerHandler.getUpdateCustomerButtonListener());
+        JButton deleteButton = createButton("Delete", customerHandler.getDeleteCustomerButtonListener());
+        JButton saveButton = createButton("Save to File",customerHandler.getSaveCustomerButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -265,6 +261,7 @@ public class CustomerView extends MainView {
             salesRepEmployeeNumber, creditLimit);
             if (success) {
                 JOptionPane.showMessageDialog(CustomerView.this, "Customer updated successfully!");
+                
             } else {
                 JOptionPane.showMessageDialog(CustomerView.this, "Failed to update customer.");
             }
@@ -342,55 +339,21 @@ public class CustomerView extends MainView {
             }
         }
     
-   private class SaveCustomerButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveCustomersToFile();
-        }
-    };
-    
-    private void saveCustomersToFile() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Specify a CSV file to save");
-        fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
+        public List<String[]> updateTableWithCustomers(List<String[]> customers) {
+            tableModel.setRowCount(0); // Clear existing rows from the table
 
-        int userSelection = fileChooser.showSaveDialog(null);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            if (!fileToSave.getAbsolutePath().endsWith(".csv")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".csv");
+            // Populate the table with the product details
+            for (String[] customer : customers) {
+                tableModel.addRow(customer);
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> customers = customerDAO.fetchCustomers(); // Fetch customer data
-
-                // Write header row (optional)
-                writer.write("Customer Number, Customer Name, Contact Last Name, Contact First Name, " +
-                             "Phone, Address Line 1, Address Line 2, City, State, Postal Code, Country, " +
-                             "Sales Rep Employee Number, Credit Limit");
-                writer.newLine();
-
-                // Write data rows
-                for (String[] customer : customers) {
-                    String line = String.join(",", customer); // Comma as delimiter
-                    writer.write(line);
-                    writer.newLine();
-                }
-                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            return customers; // If you need to use the products elsewhere in your class
         }
-    }
-    public void fetchAndDisplayCustomers() {
-        CustomerDAO customerDAO = new CustomerDAO();
-        List<String[]> customers = customerDAO.fetchCustomers();
-        tableModel.setRowCount(0); // Clear the existing rows
+    public List<String[]> fetchAndDisplayCustomers() {
+        List<String[]> customers = customerDAO.fetchCustomers(); // Fetch data using DAO
+        updateTableWithCustomers(customers);
 
-        for (String[] customer : customers) {
-            tableModel.addRow(customer); // Add row to the table model
-        }
+        return customers; // If you need to use the customers elsewhere in your class
     }
 }
 

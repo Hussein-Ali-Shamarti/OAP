@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -14,9 +15,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import controller.CustomerListener;
-import controller.OrderListener;
-import controller.EmployeeListener;
 
 
 
@@ -127,6 +125,58 @@ public class MainView extends JFrame {
             });
         }
 }
+    
+    public class EmployeeListener implements ActionListener {
+
+        /**
+         * Invoked when an action occurs, in this case, opens the {@link EmployeeView}.
+         *
+         * @param e The event representing the user's action.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open EmployeeView when "Employees" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                EmployeeView employeeView = new EmployeeView();
+                employeeView.setVisible(true);
+            });
+        }
+    }
+    
+    public class CustomerListener implements ActionListener {
+
+        /**
+         * Invoked when the "Customers" button is pressed.
+         * Opens the CustomerView.
+         *
+         * @param e The ActionEvent representing the button press.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open CustomerView when "Customers" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                CustomerView customerView = new CustomerView();
+                customerView.setVisible(true);
+            });
+        }
+    }
+    
+    public class OrderListener implements ActionListener {
+
+        /**
+         * Invoked when an action occurs, in this case, opens the {@link OrderView}.
+         *
+         * @param e The event representing the user's action.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open OrderView when "Orders" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                OrderView orderView = new OrderView();
+                orderView.setVisible(true);
+            });
+        }
+    }
 
 }
 	

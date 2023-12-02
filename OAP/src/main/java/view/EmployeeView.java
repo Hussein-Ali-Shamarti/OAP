@@ -25,15 +25,12 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-//import com.OBJ2100.ExamApp.gui.listeners.AboutAppListener;
 
 import model.Employee;
 import model.EmployeeDAO;
-import controller.AddEmployeeButtonListener;
-import controller.DeleteEmployeeButtonListener;
-import controller.SaveEmployeeButtonListener;
-import controller.SearchEmployeeButtonListener;
-import controller.UpdateEmployeeButtonListener;
+import controller.EmployeeHandler;
+
+
 
 
 
@@ -44,12 +41,13 @@ public class EmployeeView extends MainView {
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
-    private JTextField textField;
+    private EmployeeHandler employeeHandler;
     
     public EmployeeView() {
     	
         super();
         this.employeeDAO = new EmployeeDAO();
+        this.employeeHandler = new EmployeeHandler(this, this.employeeDAO);
         setLayout(new BorderLayout());
         initializeUI();
         fetchAndDisplayEmployees();
@@ -104,11 +102,11 @@ public class EmployeeView extends MainView {
         
         
         
-        JButton searchButton = createButton("Search",new SearchEmployeeButtonListener(this, employeeDAO));
-        JButton addButton = createButton("Add", new AddEmployeeButtonListener(this, employeeDAO));
-        JButton editButton = createButton("Edit", new UpdateEmployeeButtonListener(this, this.employeeDAO)); 
-        JButton deleteButton = createButton("Delete",new DeleteEmployeeButtonListener(this, employeeDAO));
-        JButton saveEmployeeButton = createButton("Save to File", new SaveEmployeeButtonListener(null, employeeDAO));
+        JButton searchButton = createButton("Search", employeeHandler.getSearchEmployeeButtonListener());
+        JButton addButton = createButton("Add", employeeHandler.getAddEmployeeButtonListener());
+        JButton editButton = createButton("Edit", employeeHandler.getUpdateEmployeeButtonListener());
+        JButton deleteButton = createButton("Delete", employeeHandler.getDeleteEmployeeButtonListener());
+        JButton saveEmployeeButton = createButton("Save to File", employeeHandler.getSaveEmployeeButtonListener());
 
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
@@ -133,13 +131,14 @@ public class EmployeeView extends MainView {
         return button;
     }
 	
-	private void fetchAndDisplayEmployees() {
+	public List<String[]> fetchAndDisplayEmployees() {
 	    List<String[]> employees = employeeDAO.fetchEmployees(); // Fetch data using DAO
 	    tableModel.setRowCount(0); // Clear existing rows
 
 	    for (String[] employee : employees) {
 	        tableModel.addRow(employee); // Add rows to the table model
 	    }
+		return employees;
 	}
 	
 	 public Employee gatherUserInputForAddEmployee() {
@@ -259,9 +258,24 @@ public class EmployeeView extends MainView {
 	        }
 	        return null;
 	    }
+	 
+	 public String gatherInputForSearch() {
+	        JTextField searchField = new JTextField(20);
+	        JPanel panel = new JPanel();
+	        panel.add(new JLabel("Search Employees:"));
+	        panel.add(searchField);
+
+	        int result = JOptionPane.showConfirmDialog(this, panel, "Search Employees", JOptionPane.OK_CANCEL_OPTION);
+	        if (result == JOptionPane.OK_OPTION) {
+	            return searchField.getText().trim();
+	        } else {
+	            return null; // User canceled the operation
+	        }
+	    }
+
 
 	public void updateTableWithSearchResults(List<Employee> searchResults) {
-	    tableModel.setRowCount(0); // Fjern eksisterende rader
+	    tableModel.setRowCount(0); 
 
 	    for (Employee employee : searchResults) {
 	        Object[] row = new Object[]{
