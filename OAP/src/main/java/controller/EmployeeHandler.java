@@ -1,3 +1,15 @@
+/**
+ * The EmployeeHandler class is responsible for handling the business logic 
+ * associated with employee management in the application. It coordinates the 
+ * interactions between the EmployeeView and EmployeeDAO, facilitating operations 
+ * such as adding, updating, deleting, searching, and saving employee data.
+ * 
+ * @author 7080
+ * @version 2.12.2023
+ */
+
+
+
 package controller;
 
 import java.awt.event.ActionEvent;
@@ -16,15 +28,7 @@ import model.EmployeeDAO;
 import view.EmployeeView;
 
 
-/**
- * The EmployeeHandler class is responsible for handling the business logic 
- * associated with employee management in the application. It coordinates the 
- * interactions between the EmployeeView and EmployeeDAO, facilitating operations 
- * such as adding, updating, deleting, searching, and saving employee data.
- * 
- * @author 7080
- * @version 2.12.2023
- */
+
 
 public class EmployeeHandler {
 	

@@ -1,3 +1,12 @@
+/**
+ * This class, {@code CustomerHandler}, serves as the controller for managing customer-related actions in the application.
+ * It handles events triggered by the associated {@link CustomerView} and interacts with the {@link CustomerDAO} to
+ * perform operations on customer data.
+ *
+ * @author 7080
+ * @version 2.12.2023
+ */
+
 package controller;
 
 import java.awt.event.ActionEvent;
@@ -15,21 +24,13 @@ import model.Customer;
 import model.CustomerDAO;
 import view.CustomerView;
 
-
 public class CustomerHandler {
 
-    /**
-     * The associated {@link CustomerView} instance for which actions are handled.
-     */
     private final CustomerView customerView;
-
-    /**
-     * The data access object for managing customers in the model.
-     */
     private final CustomerDAO customerDAO;
 
     /**
-     * Constructs a new {@code customerHandler} with the given {@link CustomerView} and {@link CustomerDAO}.
+     * Constructs a new {@code CustomerHandler} with the given {@link CustomerView} and {@link CustomerDAO}.
      *
      * @param customerView The associated product view.
      * @param customerDAO  The data access object for managing customers.
@@ -38,64 +39,53 @@ public class CustomerHandler {
         this.customerView = customerView;
         this.customerDAO = customerDAO;
     }
-    
+
     /**
      * Returns an ActionListener for adding a new Customer.
-     * 
+     *
      * @return ActionListener for the add Customer action.
      */
-
     public ActionListener getAddCustomerButtonListener() {
         return this::addCustomer;
     }
-    
+
     /**
-     * Returns an ActionListener for updating an Customer.
-     * 
+     * Returns an ActionListener for updating a Customer.
+     *
      * @return ActionListener for the update Customer action.
      */
-
     public ActionListener getUpdateCustomerButtonListener() {
         return this::updateCustomer;
     }
-    
+
     /**
-     * Returns an ActionListener for deleting an Customer.
-     * 
+     * Returns an ActionListener for deleting a Customer.
+     *
      * @return ActionListener for the delete Customer action.
      */
-
     public ActionListener getDeleteCustomerButtonListener() {
         return this::deleteCustomer;
     }
-    
+
     /**
      * Returns an ActionListener for searching Customers.
-     * 
+     *
      * @return ActionListener for the search Customer action.
      */
-
     public ActionListener getSearchCustomerButtonListener() {
         return this::searchCustomer;
     }
-    
+
     /**
      * Returns an ActionListener for saving Customer data to a file.
-     * 
+     *
      * @return ActionListener for the save Customer data action.
      */
+    public ActionListener getSaveCustomerButtonListener() {
+        return new SaveCustomerButtonListener();
+    }
 
-//    public ActionListener getSaveCustomerButtonListener() {
-//        return this::saveCustomersToFile;
-//    }
-//    
-    /**
-     * Handles the addition of a new Customer.
-     * 
-     * @param e The action event that triggers the add operation.
-     */
-    
-    private void  addCustomer (ActionEvent e) {
+    private void addCustomer(ActionEvent e) {
         Customer customer = customerView.gatherUserInputForAddCustomer();
 
         if (customer != null) {
@@ -109,14 +99,8 @@ public class CustomerHandler {
             }
         }
     }
-    
-    /**
-     * Handles updating an existing customer.
-     * 
-     * @param e The action event that triggers the update operation.
-     */
 
-    private void updateCustomer (ActionEvent e) {
+    private void updateCustomer(ActionEvent e) {
         String customerNumberStr = JOptionPane.showInputDialog(customerView, "Enter Customer Number to edit:");
         if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
             try {
@@ -136,12 +120,6 @@ public class CustomerHandler {
             }
         }
     }
-    
-    /**
-     * Handles the deletion of an customer.
-     * 
-     * @param e The action event that triggers the delete operation.
-     */
 
     private void deleteCustomer(ActionEvent e) {
         Integer customerNumberToDelete = customerView.gatherUserInputForDeleteCustomer();
@@ -158,12 +136,6 @@ public class CustomerHandler {
             }
         }
     }
-    
-    /**
-     * Handles searching for customer based on a specified criteria.
-     * 
-     * @param e The action event that triggers the search operation.
-     */
 
     private void searchCustomer(ActionEvent e) {
         String searchCriteria = customerView.gatherUserInputForSearch();
@@ -173,17 +145,46 @@ public class CustomerHandler {
             customerView.updateTableWithSearchResults(searchResults);
         }
     }
-    
-    /**
-     * Handles saving the current customer data to a file.
-     * 
-     * @param e The action event that triggers the save operation.
-     */
 
-    
-    
-    
+    private class SaveCustomerButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveCustomersToFile();
+        }
+    }
+
+    private void saveCustomersToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a CSV file to save");
+        fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            if (!fileToSave.getAbsolutePath().endsWith(".csv")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".csv");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                List<String[]> customers = customerView.fetchAndDisplayCustomers(); // Fetch customer data from view
+
+                // Write header row (optional)
+                writer.write("Customer Number, Customer Name, Contact Last Name, Contact First Name, " +
+                        "Phone, Address Line 1, Address Line 2, City, State, Postal Code, Country, " +
+                        "Sales Rep Employee Number, Credit Limit");
+                writer.newLine();
+
+                // Write data rows
+                for (String[] customer : customers) {
+                    String line = String.join(",", customer); // Comma as delimiter
+                    writer.write(line);
+                    writer.newLine();
+                }
+                JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }
-
-
-
