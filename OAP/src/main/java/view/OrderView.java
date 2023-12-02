@@ -47,6 +47,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.DeleteOrderButtonListener;
 import model.ProductDAO;
 import model.OrderDAO;
 import model.Order;
@@ -190,7 +191,7 @@ public class OrderView extends MainView {
 		JButton searchButton = createButton("Search", new SearchButtonListener());
 		JButton addButton = createButton("Add", new AddButtonListener());
 		JButton editButton = createButton("Edit", new UpdateButtonListener(OrderDAO, ProductDAO));
-		JButton deleteButton = createButton("Delete", new DeleteButtonListener());
+		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
 		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
 		// In your OrderView class constructor or appropriate method
@@ -659,39 +660,24 @@ public class OrderView extends MainView {
 	 * Integer.parseInt(customerNumberField.getText()), orderDate);
 	 */
 
-	private class DeleteButtonListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// Prompt the user to enter the Order Number to delete
-			String orderNumberString = JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to delete:");
+	public Integer gatherUserInputForDeleteOrder() {
+        String orderNumberStr = JOptionPane.showInputDialog(this, "Enter Order Number to delete:");
+        if (orderNumberStr != null && !orderNumberStr.isEmpty()) {
+            try {
+                int orderNumber = Integer.parseInt(orderNumberStr);
+                int confirm = JOptionPane.showConfirmDialog(this, 
+                    "Are you sure you want to delete Order Number " + orderNumber + "?", 
+                    "Confirm Deletion", JOptionPane.YES_NO_OPTION);
 
-			if (orderNumberString != null && !orderNumberString.isEmpty()) {
-				try {
-					int orderNumber = Integer.parseInt(orderNumberString);
-
-					// Confirm deletion with a dialog
-					int confirmResult = JOptionPane.showConfirmDialog(OrderView.this,
-							"Are you sure you want to delete Order Number " + orderNumber + "?", "Confirm Deletion",
-							JOptionPane.YES_NO_OPTION);
-
-					if (confirmResult == JOptionPane.YES_OPTION) {
-						// Call the OrderDAO to delete the order
-						boolean success = OrderDAO.deleteOrder(orderNumber);
-
-						if (success) {
-							JOptionPane.showMessageDialog(OrderView.this,
-									"Order Number " + orderNumber + " deleted successfully!");
-						} else {
-							JOptionPane.showMessageDialog(OrderView.this,
-									"Failed to delete Order Number " + orderNumber + ".");
-						}
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
-				}
-			}
-		}
-	}
+                if (confirm == JOptionPane.YES_OPTION) {
+                    return orderNumber;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid Order Number format.");
+            }
+        }
+        return null;
+    }
 
 	private class SearchButtonListener implements ActionListener {
 		@Override
