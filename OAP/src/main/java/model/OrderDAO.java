@@ -154,24 +154,53 @@ public class OrderDAO {
 	    return null; // or handle this case as needed
 	}
 	// Delete
-	public boolean deleteOrder(int OrderNumber) {
-		String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
+	public boolean deleteOrder(int orderNumber) {
+	    String deleteOrderDetailsSQL = "DELETE FROM orderdetails WHERE OrderNumber = ?";
+	    String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
 
-		try (Connection conn = DataBaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(deleteOrderSQL)) {
+	    Connection conn = null;
+	    PreparedStatement pstmtOrderDetails = null;
+	    PreparedStatement pstmtOrder = null;
 
-			pstmt.setInt(1, OrderNumber);
+	    try {
+	        conn = DataBaseConnection.getConnection();
+	        conn.setAutoCommit(false); // Start transaction
 
-			int affectedRows = pstmt.executeUpdate();
-			System.out.println("Deleted");
+	        // First, delete child records in orderdetails
+	        pstmtOrderDetails = conn.prepareStatement(deleteOrderDetailsSQL);
+	        pstmtOrderDetails.setInt(1, orderNumber);
+	        pstmtOrderDetails.executeUpdate();
 
-			return affectedRows > 0;
+	        // Then, delete the order
+	        pstmtOrder = conn.prepareStatement(deleteOrderSQL);
+	        pstmtOrder.setInt(1, orderNumber);
+	        int affectedRows = pstmtOrder.executeUpdate();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	        conn.commit(); // Commit transaction
+
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        if (conn != null) {
+	            try {
+	                conn.rollback(); // Rollback transaction on error
+	            } catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        // Clean up resources
+	        try {
+	            if (pstmtOrderDetails != null) pstmtOrderDetails.close();
+	            if (pstmtOrder != null) pstmtOrder.close();
+	            if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
 
 	// Read
 	public Order getOrder(int OrderNumber) {

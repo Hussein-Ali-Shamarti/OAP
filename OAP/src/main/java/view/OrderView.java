@@ -48,6 +48,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.DeleteOrderButtonListener;
+import controller.SearchOrderButtonListener;
 import model.ProductDAO;
 import model.OrderDAO;
 import model.Order;
@@ -76,7 +77,16 @@ public class OrderView extends MainView {
 	private JTextField orderLineNumberField = new JTextField(10);
     private JPanel panel = new JPanel(new GridLayout(0, 2));
     private JScrollPane scrollPane = new JScrollPane(panel); // This will contain your panel and provide scrolling
+  //  private boolean searchDialogVisible = false;
 
+    /*   public boolean isSearchDialogVisible() {
+        return searchDialogVisible;
+    }
+
+   public void setSearchDialogVisible(boolean isVisible) {
+        this.searchDialogVisible = isVisible;
+    }*/
+    
 	public OrderView() {
 		super();
 		this.OrderDAO = new OrderDAO(); // Initialize OrderDAO first
@@ -85,6 +95,8 @@ public class OrderView extends MainView {
 		this.quantityInStockField = new JTextField(10);
 		this.buyPriceField = new JTextField(10);
 		this.msrpField = new JTextField(10);
+        //this.searchOrderButtonListener = new SearchOrderButtonListener(this, new OrderDAO());
+
 
 		setLayout(new BorderLayout());
 		initializeUI();
@@ -96,9 +108,10 @@ public class OrderView extends MainView {
 		setLocationRelativeTo(null);
 		pack(); // Adjusts the frame to fit the components
 		setVisible(true); // Make sure the frame is visible
-		UpdateButtonListener updateButtonListener = new UpdateButtonListener(OrderDAO, ProductDAO);
+		//UpdateButtonListener updateButtonListener = new UpdateButtonListener(OrderDAO, ProductDAO);
 
 	}
+
 
 	private void setupProductDropdowns() {
 		productNameDropdown = new JComboBox<>();
@@ -159,6 +172,8 @@ public class OrderView extends MainView {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(600, 400);
 		setLocationRelativeTo(null);
+       // searchButton = new JButton("Search");
+       // searchButton.addActionListener(e -> gatherUserInputForSearch());
 
 	}
 	
@@ -188,7 +203,7 @@ public class OrderView extends MainView {
 		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
 		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		controlPanel.setBackground(new Color(90, 23, 139));
-		JButton searchButton = createButton("Search", new SearchButtonListener());
+		JButton searchButton = createButton("Search", new SearchOrderButtonListener(this, OrderDAO));
 		JButton addButton = createButton("Add", new AddButtonListener());
 		JButton editButton = createButton("Edit", new UpdateButtonListener(OrderDAO, ProductDAO));
 		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
@@ -196,7 +211,6 @@ public class OrderView extends MainView {
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
 		// In your OrderView class constructor or appropriate method
 
-		controlPanel.add(orderDetailsButton); // Add the button to the control panel
 		controlPanel.add(searchButton);
 		controlPanel.add(addButton);
 		controlPanel.add(editButton);
@@ -218,6 +232,8 @@ public class OrderView extends MainView {
 		panelHolder.add(controlPanel, BorderLayout.SOUTH);
 		this.add(panelHolder, BorderLayout.SOUTH);
 	}
+	
+
 
 	private JButton createButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
@@ -225,6 +241,7 @@ public class OrderView extends MainView {
 		button.setBackground(new Color(84, 11, 131));
 		button.setFocusPainted(false);
 		button.addActionListener(listener);
+	    // set other button properties
 		return button;
 	}
 
@@ -595,23 +612,7 @@ public class OrderView extends MainView {
 						panel.add(commentsField);
 						panel.add(new JLabel("Customer Number:"));
 						panel.add(customerNumberField);
-						/*
-						panel.add(new JLabel("Product Name:"));
-						panel.add(productNameDropdown);
-						panel.add(new JLabel("Product Code:"));
-						panel.add(productCodeField); // Use the JTextField for Product Code
-						panel.add(new JLabel("Product Quantity:"));
-						panel.add(quantityOrderedField);
-						panel.add(new JLabel("Quantity in Stock:"));
-						panel.add(quantityInStockField);
-						panel.add(new JLabel("Buy Price:"));
-						panel.add(buyPriceField);
-						panel.add(new JLabel("MSRP:"));
-						panel.add(msrpField);
-						panel.add(new JLabel("orderLineNumber:"));
-						panel.add(orderLineNumberField);
-*/
-						
+
 						int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
 								JOptionPane.OK_CANCEL_OPTION);
 						if (result == JOptionPane.OK_OPTION) {
@@ -679,35 +680,66 @@ public class OrderView extends MainView {
         return null;
     }
 
-	private class SearchButtonListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// Prompt the user to enter an Order Number for the search
-			String searchParameter = JOptionPane.showInputDialog(OrderView.this, "Enter Order Detail To Ssearch:");
+    public String gatherUserInputForSearch() {
+        JTextField searchField = new JTextField(20);
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Enter search criteria:"));
+        panel.add(searchField);
 
-			if (searchParameter != "" && !searchParameter.isEmpty()) {
-				try {
-					tableModel.setRowCount(0);
-					List<Order> filter = OrderDAO.searchOrder(searchParameter);
-					for (Order o : filter) {
-						Vector<Object> row = new Vector<>();
-						row.add(o.getOrderNumber());
-						row.add(o.getOrderDate());
-						row.add(o.getRequiredDate());
-						row.add(o.getShippedDate());
-						row.add(o.getStatus());
-						row.add(o.getComments());
-						row.add(o.getCustomerNumber());
+        int result = JOptionPane.showConfirmDialog(this, panel, "Search Orders", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+        	return searchField.getText().trim();
+        }
+        return null;
+    }
+	
+    public void gatherUserInputForSearchOrder(List<Order> orders) {
+        tableModel.setRowCount(0); // Clear the table
+        for (Order order : orders) {
+            Vector<Object> row = new Vector<>();
+            row.add(order.getOrderNumber());
+            row.add(order.getOrderDate());
+            row.add(order.getRequiredDate());
+            row.add(order.getShippedDate());
+            row.add(order.getStatus());
+            row.add(order.getComments());
+            row.add(order.getCustomerNumber());
+            tableModel.addRow(row); // Add row to the table
+            
+        }
+    //    setSearchDialogVisible(false); // Hide the dialog after displaying results
 
-						tableModel.addRow(row);
+    }
 
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(OrderView.this, "Invalid Order format");
-				}
-			}
-		}
-	}
+  /*  // Call this method instead of gatherUserInputForSearchOrder when you need to show the dialog
+    public void showSearchDialog() {
+    	//   if (!isSearchDialogVisible()) {
+            JTextField searchField = new JTextField(20);
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Enter Order Detail To Search:"));
+            panel.add(searchField);
+
+            int result = JOptionPane.showConfirmDialog(this, panel, "Search Orders", JOptionPane.OK_CANCEL_OPTION);
+           System.out.println("test");
+            if (result == JOptionPane.OK_OPTION) {
+             System.out.println("bbb");
+            	String searchParameter = searchField.getText().trim();
+                if (!searchParameter.isEmpty()) {
+                    System.out.println("test2");
+
+                	// Use the instance to call the method
+                    this.searchOrderButtonListener.searchOrders(searchParameter);
+                 //  setSearchDialogVisible(false);
+
+                }
+                
+            } else {
+             //   setSearchDialogVisible(false);
+            }
+            // }
+    }
+
+	 */
 
 	// StringBuilder resultMessage = new StringBuilder("Search result:\n");
 	// resultMessage.append("Order Number: ").append(filter)
@@ -871,6 +903,8 @@ public class OrderView extends MainView {
 	    }
 	    
 	}
+
+
 
 
 }
