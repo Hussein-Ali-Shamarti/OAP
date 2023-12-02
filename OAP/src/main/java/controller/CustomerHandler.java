@@ -19,20 +19,20 @@ import view.CustomerView;
 public class CustomerHandler {
 
     /**
-     * The associated {@link ProductView} instance for which actions are handled.
+     * The associated {@link CustomerView} instance for which actions are handled.
      */
     private final CustomerView customerView;
 
     /**
-     * The data access object for managing products in the model.
+     * The data access object for managing customers in the model.
      */
     private final CustomerDAO customerDAO;
 
     /**
-     * Constructs a new {@code ProductHandler} with the given {@link ProductView} and {@link ProductDAO}.
+     * Constructs a new {@code customerHandler} with the given {@link CustomerView} and {@link CustomerDAO}.
      *
-     * @param productView The associated product view.
-     * @param productDAO  The data access object for managing products.
+     * @param customerView The associated product view.
+     * @param customerDAO  The data access object for managing customers.
      */
     public CustomerHandler(CustomerView customerView, CustomerDAO customerDAO) {
         this.customerView = customerView;
@@ -100,6 +100,7 @@ public class CustomerHandler {
 
         if (customer != null) {
             boolean success = customerDAO.addCustomer(customer);
+            customerView.fetchAndDisplayCustomers();
 
             if (success) {
                 JOptionPane.showMessageDialog(customerView, "Customer added successfully!");
@@ -110,7 +111,7 @@ public class CustomerHandler {
     }
     
     /**
-     * Handles updating an existing employee.
+     * Handles updating an existing customer.
      * 
      * @param e The action event that triggers the update operation.
      */
@@ -126,6 +127,7 @@ public class CustomerHandler {
 
                 if (customer != null) {
                     customerView.gatherUserInputForUpdateCustomer(customer);
+                    customerView.fetchAndDisplayCustomers();
                 } else {
                     JOptionPane.showMessageDialog(customerView, "Customer not found.");
                 }
@@ -146,9 +148,11 @@ public class CustomerHandler {
 
         if (customerNumberToDelete != null) {
             boolean success = customerDAO.deleteCustomer(customerNumberToDelete);
+            customerView.fetchAndDisplayCustomers();
 
             if (success) {
                 JOptionPane.showMessageDialog(customerView, "Customer deleted successfully.");
+                customerView.fetchAndDisplayCustomers();
             } else {
                 JOptionPane.showMessageDialog(customerView, "Failed to delete customer.");
             }
@@ -156,7 +160,7 @@ public class CustomerHandler {
     }
     
     /**
-     * Handles searching for employees based on a specified criteria.
+     * Handles searching for customer based on a specified criteria.
      * 
      * @param e The action event that triggers the search operation.
      */
@@ -171,7 +175,7 @@ public class CustomerHandler {
     }
     
     /**
-     * Handles saving the current employee data to a file.
+     * Handles saving the current customer data to a file.
      * 
      * @param e The action event that triggers the save operation.
      */

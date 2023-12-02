@@ -21,11 +21,9 @@ import java.util.List; // Ensure this import for generic Lists
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.AddCustomerButtonListener;
-import controller.DeleteCustomerButtonListener;
+
 import controller.CustomerHandler;
-import controller.SearchCustomerButtonListener;
-import controller.UpdateCustomerButtonListener;
+
 import model.Customer;
 import model.CustomerDAO;
 import model.ProductDAO;
@@ -101,10 +99,10 @@ public class CustomerView extends MainView {
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
 
-        JButton searchButton = createButton("Search", new SearchCustomerButtonListener(this, customerDAO));
-        JButton addButton = createButton("Add", new AddCustomerButtonListener(this, customerDAO));
-        JButton editButton = createButton("Edit", new UpdateCustomerButtonListener(this, customerDAO));
-        JButton deleteButton = createButton("Delete", new DeleteCustomerButtonListener(this, customerDAO));
+        JButton searchButton = createButton("Search", customerHandler.getSearchCustomerButtonListener());
+        JButton addButton = createButton("Add", customerHandler.getAddCustomerButtonListener());
+        JButton editButton = createButton("Edit", customerHandler.getUpdateCustomerButtonListener());
+        JButton deleteButton = createButton("Delete", customerHandler.getDeleteCustomerButtonListener());
         JButton saveButton = createButton("Save to File", new SaveCustomerButtonListener());
 
         controlPanel.add(searchButton);
@@ -267,6 +265,7 @@ public class CustomerView extends MainView {
             salesRepEmployeeNumber, creditLimit);
             if (success) {
                 JOptionPane.showMessageDialog(CustomerView.this, "Customer updated successfully!");
+                
             } else {
                 JOptionPane.showMessageDialog(CustomerView.this, "Failed to update customer.");
             }

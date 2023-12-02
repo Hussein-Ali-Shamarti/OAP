@@ -15,7 +15,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import controller.CustomerListener;
+
 import controller.OrderListener;
 
 
