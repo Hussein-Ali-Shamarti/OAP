@@ -49,6 +49,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.DeleteOrderButtonListener;
 import controller.SearchOrderButtonListener;
+import controller.UpdateOrderButtonListener;
 import model.ProductDAO;
 import model.OrderDAO;
 import model.Order;
@@ -205,7 +206,7 @@ public class OrderView extends MainView {
 		controlPanel.setBackground(new Color(90, 23, 139));
 		JButton searchButton = createButton("Search", new SearchOrderButtonListener(this, OrderDAO));
 		JButton addButton = createButton("Add", new AddButtonListener());
-		JButton editButton = createButton("Edit", new UpdateButtonListener(OrderDAO, ProductDAO));
+		JButton editButton = createButton("Edit", new UpdateOrderButtonListener(this, OrderDAO, ProductDAO));
 		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
 		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
@@ -537,121 +538,43 @@ public class OrderView extends MainView {
 		}
 	}
 
-	public class UpdateButtonListener implements ActionListener {
+	public Order gatherUserInputForUpdateOrder(Order order) {
+	    // Define fields for editing order details
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    JTextField orderDateField = new JTextField(order.getOrderDate() != null ? dateFormat.format(order.getOrderDate()) : "", 10);
+	    JTextField requiredDateField = new JTextField(order.getRequiredDate() != null ? dateFormat.format(order.getRequiredDate()) : "", 10);
+	    JTextField shippedDateField = new JTextField(order.getShippedDate() != null ? dateFormat.format(order.getShippedDate()) : "", 10);
+	    JTextField statusField = new JTextField(order.getStatus(), 10);
+	    JTextField commentsField = new JTextField(order.getComments(), 10);
+	    JTextField customerNumberField = new JTextField(String.valueOf(order.getCustomerNumber()), 10);
 
-		private OrderDAO OrderDAO; // Assuming you have an OrderDAO class
-		private ProductDAO ProductDAO; // Assuming you have a ProductDAO class
+	    // Panel to hold the form
+	    JPanel panel = new JPanel(new GridLayout(0, 2));
+	    panel.add(new JLabel("Order Date (yyyy-MM-dd):")); panel.add(orderDateField);
+	    panel.add(new JLabel("Required Date (yyyy-MM-dd):")); panel.add(requiredDateField);
+	    panel.add(new JLabel("Shipped Date (yyyy-MM-dd):")); panel.add(shippedDateField);
+	    panel.add(new JLabel("Status:")); panel.add(statusField);
+	    panel.add(new JLabel("Comments:")); panel.add(commentsField);
+	    panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
 
-		public UpdateButtonListener(OrderDAO OrderDAO, ProductDAO ProductDAO) {
-			this.OrderDAO = OrderDAO;
-			this.ProductDAO = ProductDAO;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
-			if (orderNumberString != null && !orderNumberString.isEmpty()) {
-				try {
-					int orderNumber = Integer.parseInt(orderNumberString);
-					Order existingOrder = OrderDAO.getOrder(orderNumber);
-
-					if (existingOrder != null) {
-						JPanel panel = new JPanel(new GridLayout(0, 2));
-
-						// Setup panel with existing order data
-						JTextField orderDateField = new JTextField(existingOrder.getOrderDate() != null ? existingOrder.getOrderDate().toString() : "",10);
-						JTextField requiredDateField = new JTextField(existingOrder.getRequiredDate() != null ? existingOrder.getRequiredDate().toString(): "",10);
-						JTextField shippedDateField = new JTextField(existingOrder.getShippedDate() != null ? existingOrder.getShippedDate().toString() : "",10);
-						JTextField statusField = new JTextField(existingOrder.getStatus(), 10);
-						JTextField commentsField = new JTextField(existingOrder.getComments(), 10);
-						JTextField customerNumberField = new JTextField(String.valueOf(existingOrder.getCustomerNumber()), 10);
-						JTextField productCodeField = new JTextField(10);
-						JTextField quantityOrderedField = new JTextField(10);
-						JTextField orderLineNumberField = new JTextField(10);
-						productCodeField.setEditable(false);
-						productCodeField.setFocusable(false);
-						productCodeField.setBackground(new Color(240, 240, 240)); // Light grey background color
-						
-						Map<String, String> products = ProductDAO.getProducts();
-						JComboBox<String> productNameDropdown = new JComboBox<>();
-						for (String productName : products.keySet()) {
-							productNameDropdown.addItem(productName);
-						}
-
-						productNameDropdown.addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								String selectedProductName = (String) productNameDropdown.getSelectedItem();
-								String productCode = products.get(selectedProductName);
-								productCodeDropdown.setSelectedItem(productCode);
-
-								Map<String, Object> productDetails = ProductDAO
-										.getProductDetailsByName(selectedProductName);
-								if (productDetails != null && !productDetails.isEmpty()) {
-									quantityInStockField.setText(productDetails.get("quantityInStock").toString());
-									buyPriceField.setText(productDetails.get("buyPrice").toString());
-									msrpField.setText(productDetails.get("MSRP").toString());
-								} else {
-									quantityInStockField.setText("");
-									buyPriceField.setText("");
-									msrpField.setText("");
-								}
-							}
-						});
-
-						// Add components to the panel
-						panel.add(new JLabel("Order Date (yyyy-MM-dd):"));
-						panel.add(orderDateField);
-						panel.add(new JLabel("Required Date:"));
-						panel.add(requiredDateField);
-						panel.add(new JLabel("Shipped Date:"));
-						panel.add(shippedDateField);
-						panel.add(new JLabel("Status:"));
-						panel.add(statusField);
-						panel.add(new JLabel("Comments:"));
-						panel.add(commentsField);
-						panel.add(new JLabel("Customer Number:"));
-						panel.add(customerNumberField);
-
-						int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
-								JOptionPane.OK_CANCEL_OPTION);
-						if (result == JOptionPane.OK_OPTION) {
-							SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-							Date orderDate = orderDateField.getText().isEmpty() ? null
-									: dateFormat.parse(orderDateField.getText());
-							Date requiredDate = requiredDateField.getText().isEmpty() ? null
-									: dateFormat.parse(requiredDateField.getText());
-							Date shippedDate = shippedDateField.getText().isEmpty() ? null
-									: dateFormat.parse(shippedDateField.getText());
-							String status = statusField.getText();
-							String comments = commentsField.getText();
-							int customerNumber = Integer.parseInt(customerNumberField.getText());
-
-							// Update the order with new details
-							existingOrder.setOrderDate(orderDate);
-							existingOrder.setRequiredDate(requiredDate);
-							existingOrder.setShippedDate(shippedDate);
-							existingOrder.setStatus(status);
-							existingOrder.setComments(comments);
-							existingOrder.setCustomerNumber(customerNumber);
-
-							boolean success = OrderDAO.editOrder(existingOrder, orderNumber);
-							if (success) {
-								JOptionPane.showMessageDialog(null, "Order updated successfully!");
-							} else {
-								JOptionPane.showMessageDialog(null, "Failed to update order.");
-							}
-						}
-					} else {
-						JOptionPane.showMessageDialog(null, "Order with Order Number " + orderNumber + " not found.");
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(null, "Invalid Order Number format.");
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
-				}
-			}
-		}
+	    // Show confirm dialog with the form
+	    int result = JOptionPane.showConfirmDialog(null, panel, "Edit Order Details", JOptionPane.OK_CANCEL_OPTION);
+	    if (result == JOptionPane.OK_OPTION) {
+	        try {
+	            // Update the order object with new values from the form
+	            order.setOrderDate(dateFormat.parse(orderDateField.getText()));
+	            order.setRequiredDate(dateFormat.parse(requiredDateField.getText()));
+	            order.setShippedDate(shippedDateField.getText().isEmpty() ? null : dateFormat.parse(shippedDateField.getText()));
+	            order.setStatus(statusField.getText());
+	            order.setComments(commentsField.getText());
+	            order.setCustomerNumber(Integer.parseInt(customerNumberField.getText()));
+	            
+	            return order; // Return updated order
+	        } catch (Exception ex) {
+	            JOptionPane.showMessageDialog(null, "Error in updating order: " + ex.getMessage());
+	        }
+	    }
+	    return null; // Return null if the user cancels the operation
 	}
 
 	/*
