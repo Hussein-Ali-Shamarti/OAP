@@ -107,7 +107,7 @@ public class EmployeeView extends MainView {
         JButton searchButton = createButton("Search",new SearchEmployeeButtonListener(this, employeeDAO));
         JButton addButton = createButton("Add", new AddEmployeeButtonListener(this, employeeDAO));
         JButton editButton = createButton("Edit", new UpdateEmployeeButtonListener(this, this.employeeDAO)); 
-        JButton deleteButton = createButton("Delete",new DeleteEmployeeButtonListener(null, employeeDAO));
+        JButton deleteButton = createButton("Delete",new DeleteEmployeeButtonListener(this, employeeDAO));
         JButton saveEmployeeButton = createButton("Save to File", new SaveEmployeeButtonListener(null, employeeDAO));
 
         controlPanel.add(searchButton);
@@ -143,7 +143,7 @@ public class EmployeeView extends MainView {
 	}
 	
 	 public Employee gatherUserInputForAddEmployee() {
-	        // Define fields for employee details
+	        
 	        JTextField employeeNumberField = new JTextField(5);
 	        JTextField firstNameField = new JTextField(10);
 	        JTextField lastNameField = new JTextField(10);
@@ -153,7 +153,7 @@ public class EmployeeView extends MainView {
 	        JTextField reportsToField = new JTextField(10);
 	        JTextField jobTitleField = new JTextField(10);
 
-	        // Panel to hold the form
+	        
 	        JPanel panel = new JPanel(new GridLayout(0, 1));
 	        panel.add(new JLabel("Employee Number:")); panel.add(employeeNumberField);
 	        panel.add(new JLabel("First Name:")); panel.add(firstNameField);
@@ -164,7 +164,7 @@ public class EmployeeView extends MainView {
 	        panel.add(new JLabel("Reports To (Employee Number):")); panel.add(reportsToField);
 	        panel.add(new JLabel("Job Title:")); panel.add(jobTitleField);
 
-	        // Show confirm dialog with the form
+	     
 	        int result = JOptionPane.showConfirmDialog(null, panel, 
 	                "Enter Employee Details", JOptionPane.OK_CANCEL_OPTION);
 	        if (result == JOptionPane.OK_OPTION) {
@@ -186,6 +186,78 @@ public class EmployeeView extends MainView {
 	            }
 	        }
 	        return null; // Return null if the user cancels or an error occurs
+	    }
+	 
+	    public Employee gatherUserInputForUpdateEmployee(Employee employee) {
+	        // Define fields for editing employee details
+	        JTextField firstNameField = new JTextField(employee.getFirstName(), 10);
+	        JTextField lastNameField = new JTextField(employee.getLastName(), 10);
+	        JTextField extensionField = new JTextField(employee.getExtension(), 10);
+	        JTextField emailField = new JTextField(employee.getEmail(), 10);
+	        JTextField officeCodeField = new JTextField(employee.getOfficeCode(), 5);
+	        JTextField reportsToField = new JTextField(String.valueOf(employee.getReportsTo()), 10);
+	        JTextField jobTitleField = new JTextField(employee.getJobTitle(), 10);
+
+	        // Panel to hold the form
+	        JPanel panel = new JPanel(new GridLayout(0, 2));
+	        panel.add(new JLabel("First Name:")); panel.add(firstNameField);
+	        panel.add(new JLabel("Last Name:")); panel.add(lastNameField);
+	        panel.add(new JLabel("Extension:")); panel.add(extensionField);
+	        panel.add(new JLabel("Email:")); panel.add(emailField);
+	        panel.add(new JLabel("Office Code:")); panel.add(officeCodeField);
+	        panel.add(new JLabel("Reports to:")); panel.add(reportsToField);
+	        panel.add(new JLabel("Job Title:")); panel.add(jobTitleField);
+
+	        // Show confirm dialog with the form
+	        int result = JOptionPane.showConfirmDialog(null, panel, "Edit Employee Details", JOptionPane.OK_CANCEL_OPTION);
+	        if (result == JOptionPane.OK_OPTION) {
+	            // Update the employee object with new values from the form
+	            employee.setFirstName(firstNameField.getText());
+	            employee.setLastName(lastNameField.getText());
+	            employee.setExtension(extensionField.getText());
+	            employee.setEmail(emailField.getText());
+	            employee.setOfficeCode(officeCodeField.getText());
+	            try {
+	                employee.setReportsTo(Integer.parseInt(reportsToField.getText()));
+	            } catch (NumberFormatException ex) {
+	                JOptionPane.showMessageDialog(null, "Invalid format for 'Reports To'.");
+	                return null;
+	            }
+	            employee.setJobTitle(jobTitleField.getText());
+
+	            return employee; // Return updated employee
+	        }
+	        return null; // Return null if the user cancels the operation
+	    }
+	
+	 
+	 public Integer gatherUserInputForDelete() {
+	        String employeeNumberStr = JOptionPane.showInputDialog(this, "Enter Employee Number to delete:");
+	        if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
+	            try {
+	                int employeeNumber = Integer.parseInt(employeeNumberStr);
+
+	                EmployeeDAO handler = new EmployeeDAO();
+	                Employee employee = handler.fetchEmployeeData(employeeNumber);
+
+	                if (employee != null) {
+	                    int confirm = JOptionPane.showConfirmDialog(this, 
+	                        "Are you sure you want to delete this employee?\n" +
+	                        "Employee Nr: " + employee.getEmployeeNumber() + "\n" +
+	                        "Name: " + employee.getFirstName() + " " + employee.getLastName(), 
+	                        "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+	                    if (confirm == JOptionPane.YES_OPTION) {
+	                        return employeeNumber;
+	                    }
+	                } else {
+	                    JOptionPane.showMessageDialog(this, "Employee not found.");
+	                }
+	            } catch (NumberFormatException ex) {
+	                JOptionPane.showMessageDialog(this, "Invalid employee number format.");
+	            }
+	        }
+	        return null;
 	    }
 
 	public void updateTableWithSearchResults(List<Employee> searchResults) {

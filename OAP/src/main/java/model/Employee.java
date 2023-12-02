@@ -171,4 +171,16 @@ public class Employee extends Address {
         return getAddressLine1() + ", " + getAddressLine2() + ", " + getCity() + ", " +
                getState() + ", " + getPostalCode() + ", " + getCountry();
     }
+
+	public void setEmployeeNumber(int employeeNumber) {
+		this.employeeNumber = employeeNumber;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 }

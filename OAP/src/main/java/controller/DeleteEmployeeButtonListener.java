@@ -27,35 +27,16 @@ public class DeleteEmployeeButtonListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String employeeNumberStr = JOptionPane.showInputDialog(employeeView, "Enter Employee Number to delete:");
-        if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
-            try {
-                int employeeNumber = Integer.parseInt(employeeNumberStr);
+        Integer employeeNumberToDelete = employeeView.gatherUserInputForDelete();
 
-                EmployeeDAO handler = new EmployeeDAO();
-                Employee employee = handler.fetchEmployeeData(employeeNumber);
+        if (employeeNumberToDelete != null) {
+            boolean success = employeeDAO.removeEmployeeFromDatabase("employees", employeeNumberToDelete);
 
-                if (employee != null) {
-                    int confirm = JOptionPane.showConfirmDialog(employeeView, 
-                        "Are you sure you want to delete this employee?\n" +
-                        "Employee Nr: " + employee.getEmployeeNumber() + "\n" +
-                        "Name: " + employee.getFirstName() + " " + employee.getLastName(), 
-                        "Confirm Deletion", JOptionPane.YES_NO_OPTION);
-
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        boolean success = handler.removeEmployeeFromDatabase("employees", employeeNumber);
-                        if (success) {
-                            JOptionPane.showMessageDialog(employeeView, "Employee deleted successfully.");
-                        } else {
-                            JOptionPane.showMessageDialog(employeeView, "Failed to delete employee.");
-                        }
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(employeeView, "Employee not found.");
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(employeeView, "Invalid employee number format.");
+            if (success) {
+                JOptionPane.showMessageDialog(employeeView, "Employee deleted successfully.");
+            } else {
+                JOptionPane.showMessageDialog(employeeView, "Failed to delete employee.");
             }
         }
-    } 
+    }
 }
