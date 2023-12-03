@@ -1,11 +1,11 @@
+package model;
+
 /**
  * Description: This is an entity class for "address" and encapsulates the basic information of a address.
  * This class represents information about address information, such as first address, second address, city, state, postal code, country and phone.
  * @author Henrik
  * @version: 07.11.2023
  */
-package model;
-
 
 public abstract class Address {
     protected String addressLine2;
