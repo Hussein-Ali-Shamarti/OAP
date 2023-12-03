@@ -16,6 +16,16 @@ import model.CustomerDAO;
 import view.CustomerView;
 
 
+/**
+ * CustomerHandler class handles the user interactions related to Customer operations
+ * in the application. It acts as a bridge between the CustomerView and CustomerDAO,
+ * facilitating actions such as adding, updating, deleting, and searching for customers.
+ * It also includes functionalities to save customer data to a file.
+ * 
+ * @author 7080
+ * @version 2.12.2023
+ */
+
 public class CustomerHandler {
 
     /**
@@ -90,7 +100,7 @@ public class CustomerHandler {
 //    }
 //    
     /**
-     * Handles the addition of a new Customer.
+     * Handles the addition of a new customer.
      * 
      * @param e The action event that triggers the add operation.
      */
@@ -138,7 +148,7 @@ public class CustomerHandler {
     }
     
     /**
-     * Handles the deletion of an customer.
+     * Handles the deletion of a customer.
      * 
      * @param e The action event that triggers the delete operation.
      */
@@ -181,8 +191,7 @@ public class CustomerHandler {
      */
 
     
-    
-    
+
 }
 
 
