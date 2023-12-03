@@ -1,6 +1,9 @@
 
+package model;
+
 /**
  * File: ProductDAO.java
+
  * Description: This class serves as the Data Access Object (DAO) for managing CRUD (Create, Read, Update, Delete) operations
  * related to products in the database. It acts as an intermediary between the application's model (Products) and the database,
  * providing methods to add, search, update, and delete products. The class encapsulates the database interactions and ensures
@@ -8,12 +11,10 @@
  * The methods in this class are designed to handle various aspects of product management, such as adding new products,
  * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
  * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
- * @author Ole
- * @version 08.11.2023
+ * @author 7120
+ * @version 03.12.2023
  
  */
-
-package model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

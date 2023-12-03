@@ -4,7 +4,7 @@ import javax.swing.*;
 
 
 import java.awt.*;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
@@ -17,9 +17,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CustomerHandler;
-
-
-
+import controller.OrderHandler;
 import model.Customer;
 import model.CustomerDAO;
 
@@ -348,8 +346,10 @@ public class CustomerView extends MainView {
             }
 			return customers;
         }
-    }
-
+        
+       
+  }
+    
 
 
 

@@ -1,15 +1,19 @@
+package view;
+
+
 /**
  * ProductView class represents the graphical user interface for managing products.
+
  * It extends the MainView class and provides functionality for displaying, adding, updating, and deleting products in a table format.
  * The class interacts with the controller (ProductHandler) and the model (ProductDAO and Products) to facilitate user actions
  * and maintain the consistency of product data.
  * 
- * @author Ole
- * @version 1.0
+ *  @author 7120
+ * @version 03.12.2023
  */
 
 
-package view;
+
 
 import java.awt.BorderLayout;
 import java.awt.Color;

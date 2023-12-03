@@ -10,6 +10,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -95,7 +96,7 @@ public class CustomerHandler {
      * @return ActionListener for the save Customer data action.
      */
     public ActionListener getSaveCustomerButtonListener() {
-        return new SaveCustomerButtonListener();
+    	return this::saveCustomersToFile;
     }
 
 
@@ -181,15 +182,8 @@ public class CustomerHandler {
     }
 
 
-    private class SaveCustomerButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveCustomersToFile();
-        }
-    }
 
-
-    private void saveCustomersToFile() {
+    public void saveCustomersToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
