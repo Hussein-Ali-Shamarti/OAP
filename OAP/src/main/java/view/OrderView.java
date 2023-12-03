@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +49,7 @@ import controller.DeleteOrderButtonListener;
 import controller.SearchOrderButtonListener;
 import controller.UpdateOrderButtonListener;
 import model.ProductDAO;
+import model.ProductEntry;
 import model.OrderDAO;
 import model.Order;
 import model.OrderDetails;
@@ -355,6 +357,7 @@ public class OrderView extends MainView {
 	    msrpField.setEditable(false);
 	    msrpField.setFocusable(false);
 	    msrpField.setBackground(new Color(240, 240, 240)); // Light grey background color
+	    makeFieldReadOnly(productCodeField);
 
 		// Dropdowns for selecting product
 		JComboBox<String> productNameDropdown = new JComboBox<>();
@@ -379,18 +382,21 @@ public class OrderView extends MainView {
         panel.add(new JLabel("Comments:")); panel.add(commentsField);
         panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
 
-        
+        addFieldsToPanel(panel, orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField);
+
         JButton addMoreProductsButton = new JButton("Add More Products +");
         addProductFields(panel, ProductDAO.getProducts(), addMoreProductsButton);
 
         // Adding button to add more products
         addMoreProductsButton.addActionListener(e -> {
             addProductFields(panel, ProductDAO.getProducts(), addMoreProductsButton);
-            scrollPane.getViewport().revalidate(); // Refresh the scroll pane
+            scrollPane.getViewport().revalidate();
         });
 
         panel.add(addMoreProductsButton); // Add the button to the panel
-
+        if (showDialogAndGetResult(scrollPane) == JOptionPane.OK_OPTION) {
+            return processOrderInput(orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField, productCodeField, quantityOrderedField, orderLineNumberField);
+        }
         // Show the dialog
         int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
@@ -409,21 +415,10 @@ public class OrderView extends MainView {
 	            int quantityOrdered = quantityOrderedField.getText().isEmpty() ? 0 : Integer.parseInt(quantityOrderedField.getText());
 	            int orderLineNumber = orderLineNumberField.getText().isEmpty() ? 0 : Integer.parseInt(orderLineNumberField.getText());
 	            double buyPrice = buyPriceField.getText().isEmpty() ? 0.0 : Double.parseDouble(buyPriceField.getText());
-
-
-	            boolean productCodeExists = OrderDAO.checkProductCodeExists(productCode);
-	            if (!productCodeExists) {
-	                JOptionPane.showMessageDialog(null, "Product code does not exist in the database.");
-	                return null; // Return null or handle this scenario appropriately
-	            }
+	            
                 // Create Order and OrderDetails objects
 	            OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
 	            orderDetailsList.add(orderDetails); // Add the created OrderDetails object to the list
-	            
-	            if (orderDetailsList.isEmpty()) {
-	                JOptionPane.showMessageDialog(null, "No valid products added to the order.");
-	                return null;
-	            }
 	            
 	            Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
                 return new OrderInput(order, orderDetailsList);
@@ -435,7 +430,55 @@ public class OrderView extends MainView {
         }
 		return null;
     }
-		
+    private void makeFieldReadOnly(JTextField field) {
+        field.setEditable(false);
+        field.setFocusable(false);
+        field.setBackground(new Color(240, 240, 240));
+    }
+
+    private void addFieldsToPanel(JPanel panel, JTextField... fields) {
+        for (JTextField field : fields) {
+            panel.add(new JLabel(field.getName() + ":"));
+            panel.add(field);
+        }
+    }
+
+    private int showDialogAndGetResult(JScrollPane scrollPane) {
+        return JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    private OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date orderDate = dateFormat.parse(orderDateField.getText());
+            Date requiredDate = dateFormat.parse(requiredDateField.getText());
+            Date shippedDate = dateFormat.parse(shippedDateField.getText());
+            String status = statusField.getText();
+            String comments = commentsField.getText();
+            int customerNumber = Integer.parseInt(customerNumberField.getText());
+
+            List<OrderDetails> orderDetailsList = new ArrayList<>();
+            for (ProductEntry entry : productEntries) {
+                String productCode = entry.getProductCodeField().getText();
+                int quantityOrdered = entry.getQuantityOrderedField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getQuantityOrderedField().getText());
+                int orderLineNumber = entry.getOrderLineNumberField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getOrderLineNumberField().getText());
+                double priceEach = entry.getPriceEachField().getText().isEmpty() ? 0.0 : Double.parseDouble(entry.getPriceEachField().getText());
+
+                OrderDetails orderDetails = new OrderDetails(quantityOrdered, priceEach, productCode, orderLineNumber);
+                orderDetailsList.add(orderDetails);
+            }
+
+            Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+            return new OrderInput(order, orderDetailsList);
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(null, "Error parsing dates: " + ex.getMessage());
+            return null;
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Error in number format: " + ex.getMessage());
+            return null;
+        }
+    }
+
 
 
 	public Order gatherUserInputForUpdateOrder(Order order) {

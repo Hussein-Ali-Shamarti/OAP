@@ -411,7 +411,7 @@ public class OrderDAO {
 	    return searchResults;
 	}
 
-	public boolean checkProductCodeExists(String productCode) {
+	/*public boolean checkProductCodeExists(String productCode) {
 	    String query = "SELECT COUNT(*) FROM products WHERE productCode = ?";
 	    try (Connection conn = DataBaseConnection.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -429,6 +429,6 @@ public class OrderDAO {
 	    }
 	    return false; // Return false if productCode does not exist or in case of an exception
 	}
-
+*/
 
 }
