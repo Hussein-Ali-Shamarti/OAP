@@ -1,18 +1,11 @@
 package view;
 
 import java.awt.BorderLayout;
-
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-
-
 import java.awt.event.ActionListener;
-
-
 import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,30 +15,34 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-//import com.OBJ2100.ExamApp.gui.listeners.AboutAppListener;
-
 import model.Employee;
 import model.EmployeeDAO;
-
 import controller.EmployeeHandler;
 
-
-
+/**
+ * EmployeeView class extends MainView to provide a user interface for managing employees.
+ * It includes functionality to display, add, edit, delete, and search employees using a graphical user interface.
+ * The class uses an EmployeeDAO instance for database operations and interacts with the user through various UI components.
+ *
+ * @author 7080
+ * @version 2.12.2023
+ */
 
 public class EmployeeView extends MainView {
 
-	private EmployeeDAO employeeDAO;
 	
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
-  
     private EmployeeHandler employeeHandler;
+    private EmployeeDAO employeeDAO;
   
+    /**
+     * Constructor to initialize the EmployeeView. Sets up the UI and fetches initial data to display.
+     */
     
     public EmployeeView() {
     	
@@ -57,12 +54,15 @@ public class EmployeeView extends MainView {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 600);
         setLocationRelativeTo(null);
-        pack(); // Adjusts the frame to fit the components
-        setVisible(true); // Make sure the frame is visible
-        
+        pack(); 
+        setVisible(true); 
         
     }
 
+    /**
+     * Initializes the UI components of the EmployeeView.
+     */
+    
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(90, 23, 139));
@@ -78,12 +78,15 @@ public class EmployeeView extends MainView {
         add(titlePanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Set frame properties
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Center on screen
+        setLocationRelativeTo(null); 
     }
 
+    /**
+     * Sets up the table model and structure for displaying employee data.
+     */
+    
     private void setupTable() {
         String[] columnNames = {"Employee Number", "First Name", "Last Name", "Extension", "Email", "Office Code", "Reports To", "Job Title"};
         tableModel = new DefaultTableModel(null, columnNames) {
@@ -94,16 +97,17 @@ public class EmployeeView extends MainView {
                 return false;
             }
         };
-
         table = new JTable(tableModel);
     }
 
+    /**
+     * Sets up the control panel with buttons for various actions like search, add, edit, delete, and save.
+     */
+    
     private void setupControlPanel() {
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));
-        
-        
         
         JButton searchButton = createButton("Search", employeeHandler.getSearchEmployeeButtonListener());
         JButton addButton = createButton("Add", employeeHandler.getAddEmployeeButtonListener());
@@ -118,11 +122,17 @@ public class EmployeeView extends MainView {
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
-        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); // Add space
+        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); 
         this.add(buttonPanelHolder, BorderLayout.SOUTH);
     }
 
-   
+    /**
+     * Creates and returns a JButton with specified text and action listener.
+     *
+     * @param text The text to display on the button.
+     * @param listener The ActionListener to attach to the button.
+     * @return A JButton instance.
+     */
 
 	private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
@@ -133,15 +143,28 @@ public class EmployeeView extends MainView {
         return button;
     }
 	
+    /**
+     * Fetches and displays employee data from the database in the table.
+     *
+     * @return A list of employee data as String arrays.
+     */
+	
 	public List<String[]> fetchAndDisplayEmployees() {
-	    List<String[]> employees = employeeDAO.fetchEmployees(); // Fetch data using DAO
-	    tableModel.setRowCount(0); // Clear existing rows
+	    List<String[]> employees = employeeDAO.fetchEmployees(); 
+	    tableModel.setRowCount(0); 
 
 	    for (String[] employee : employees) {
-	        tableModel.addRow(employee); // Add rows to the table model
+	        tableModel.addRow(employee); 
 	    }
 		return employees;
 	}
+	
+    /**
+     * Gathers user input for adding a new employee. Presents a form to the user to enter new employee details.
+     *
+     * @return An Employee object with the details entered by the user, or null if the operation is canceled.
+     */
+
 	
 	 public Employee gatherUserInputForAddEmployee() {
 	        
@@ -176,21 +199,28 @@ public class EmployeeView extends MainView {
 	                String extension = extensionField.getText();
 	                String email = emailField.getText();
 	                String officeCode = officeCodeField.getText();
-	                int reportsTo = reportsToField.getText().isEmpty() ? 0 : Integer.parseInt(reportsToField.getText()); // Assuming this can be empty
+	                int reportsTo = reportsToField.getText().isEmpty() ? 0 : Integer.parseInt(reportsToField.getText()); 
 	                String jobTitle = jobTitleField.getText();
 
-	                // Assuming the existence of a constructor in Employee class that takes all these fields
+	                
 	                return new Employee(employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle);
 	            } catch (NumberFormatException ex) {
 	                JOptionPane.showMessageDialog(null, "Invalid number format.");
 	                return null;
 	            }
 	        }
-	        return null; // Return null if the user cancels or an error occurs
+	        return null; 
 	    }
 	 
+	    /**
+	     * Gathers user input for updating an existing employee. Presents a pre-filled form with the employee's current details.
+	     *
+	     * @param employee The Employee object to be updated.
+	     * @return The updated Employee object, or null if the operation is canceled.
+	     */
+	 
 	    public Employee gatherUserInputForUpdateEmployee(Employee employee) {
-	        // Define fields for editing employee details
+	       
 	        JTextField firstNameField = new JTextField(employee.getFirstName(), 10);
 	        JTextField lastNameField = new JTextField(employee.getLastName(), 10);
 	        JTextField extensionField = new JTextField(employee.getExtension(), 10);
@@ -199,7 +229,7 @@ public class EmployeeView extends MainView {
 	        JTextField reportsToField = new JTextField(String.valueOf(employee.getReportsTo()), 10);
 	        JTextField jobTitleField = new JTextField(employee.getJobTitle(), 10);
 
-	        // Panel to hold the form
+	        
 	        JPanel panel = new JPanel(new GridLayout(0, 2));
 	        panel.add(new JLabel("First Name:")); panel.add(firstNameField);
 	        panel.add(new JLabel("Last Name:")); panel.add(lastNameField);
@@ -209,10 +239,10 @@ public class EmployeeView extends MainView {
 	        panel.add(new JLabel("Reports to:")); panel.add(reportsToField);
 	        panel.add(new JLabel("Job Title:")); panel.add(jobTitleField);
 
-	        // Show confirm dialog with the form
+	       
 	        int result = JOptionPane.showConfirmDialog(null, panel, "Edit Employee Details", JOptionPane.OK_CANCEL_OPTION);
 	        if (result == JOptionPane.OK_OPTION) {
-	            // Update the employee object with new values from the form
+	           
 	            employee.setFirstName(firstNameField.getText());
 	            employee.setLastName(lastNameField.getText());
 	            employee.setExtension(extensionField.getText());
@@ -226,12 +256,18 @@ public class EmployeeView extends MainView {
 	            }
 	            employee.setJobTitle(jobTitleField.getText());
 
-	            return employee; // Return updated employee
+	            return employee; 
 	        }
-	        return null; // Return null if the user cancels the operation
+	        return null; 
 	    }
 	
 	 
+	    /**
+	     * Gathers user input for the employee number to be deleted.
+	     *
+	     * @return The employee number to delete, or null if the operation is canceled.
+	     */
+	    
 	 public Integer gatherUserInputForDelete() {
 	        String employeeNumberStr = JOptionPane.showInputDialog(this, "Enter Employee Number to delete:");
 	        if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
@@ -261,6 +297,12 @@ public class EmployeeView extends MainView {
 	        return null;
 	    }
 	 
+	    /**
+	     * Gathers the user input for searching employees. Prompts the user to enter a search string.
+	     *
+	     * @return The search string entered by the user, or null if the operation is canceled.
+	     */
+	 
 	 public String gatherInputForSearch() {
 	        JTextField searchField = new JTextField(20);
 	        JPanel panel = new JPanel();
@@ -271,12 +313,18 @@ public class EmployeeView extends MainView {
 	        if (result == JOptionPane.OK_OPTION) {
 	            return searchField.getText().trim();
 	        } else {
-	            return null; // User canceled the operation
+	            return null; 
 	        }
 	    }
+	 
+	    /**
+	     * Updates the table with the provided list of search results.
+	     *
+	     * @param searchResults A list of Employee objects representing the search results.
+	     */
 
 	public void updateTableWithSearchResults(List<Employee> searchResults) {
-	    tableModel.setRowCount(0); // Fjern eksisterende rader
+	    tableModel.setRowCount(0); 
 
 	    for (Employee employee : searchResults) {
 	        Object[] row = new Object[]{
