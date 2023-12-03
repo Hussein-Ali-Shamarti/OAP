@@ -393,9 +393,10 @@ public class OrderView extends MainView {
         
         panel.add(addMoreProductsButton); // Add the button to the panel
         if (showDialogAndGetResult(scrollPane) == JOptionPane.OK_OPTION) {
-            return processOrderInput(orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField, productEntries);
-        }
+    } else {
+        return null;
 
+    }
         // Show the dialog
         int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
