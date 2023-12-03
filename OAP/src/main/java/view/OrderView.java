@@ -11,6 +11,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -44,15 +45,16 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-
+import controller.AddOrderButtonListener;
+import controller.DeleteOrderButtonListener;
+import controller.SearchOrderButtonListener;
+import controller.UpdateOrderButtonListener;
 import model.ProductDAO;
 import model.ProductEntry;
 import model.OrderDAO;
 import model.Order;
 import model.OrderDetails;
 import model.OrderInput;
-import controller.OrderHandler;
-import controller.ProductHandler;
 
 
 public class OrderView extends MainView {
@@ -63,19 +65,16 @@ public class OrderView extends MainView {
 	private JComboBox<String> productNameDropdown;
 	private JComboBox<String> productCodeDropdown;
     private ProductDAO ProductDAO;
-    private OrderHandler orderHandler;
 	private JTextField quantityInStockField;
 	private JTextField buyPriceField;
 	private JTextField msrpField;
 	private JTextField orderLineNumberField = new JTextField(10);
-	
 
 	public OrderView() {
 		super();
 		this.OrderDAO = new OrderDAO(); // Initialize OrderDAO first
 		this.ProductDAO = new ProductDAO(); // Initialize ProductDAO
 		ProductDAO.getProducts();
-		this.orderHandler = new OrderHandler(this, this.OrderDAO);
 		this.quantityInStockField = new JTextField(10);
 		this.buyPriceField = new JTextField(10);
 		this.msrpField = new JTextField(10);
@@ -179,13 +178,13 @@ public class OrderView extends MainView {
 		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
 		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		controlPanel.setBackground(new Color(90, 23, 139));
-		JButton searchButton = createButton("Search", orderHandler.getSearchOrderButtonListener());
-		JButton addButton = createButton("Add", orderHandler.getAddOrderButtonListener());
-		JButton editButton = createButton("Edit", orderHandler.getUpdateOrderButtonListener());
-		JButton deleteButton = createButton("Delete", orderHandler.getDeleteOrderButtonListener());
-		JButton saveOrderButton = createButton("Save to File", orderHandler.getSaveOrderButtonListener());
+		JButton searchButton = createButton("Search", new SearchOrderButtonListener(this, OrderDAO));
+		JButton addButton = createButton("Add", new AddOrderButtonListener(this, OrderDAO));
+		JButton editButton = createButton("Edit", new UpdateOrderButtonListener(this, OrderDAO, ProductDAO));
+		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
+		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
-	
+		// In your OrderView class constructor or appropriate method
 
 		controlPanel.add(searchButton);
 		controlPanel.add(addButton);
@@ -198,8 +197,8 @@ public class OrderView extends MainView {
 		JPanel statusPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 		statusPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		statusPanel.setBackground(new Color(100, 25, 150));
-		JButton checkStatusButton = createButton("Check Shipping Status",orderHandler.getCheckStatusButtonListener());
-		JButton paymentButton = createButton("Check Payment Status", orderHandler.getPaymentButtonListener());
+		JButton checkStatusButton = createButton("Check Shipping Status", new CheckStatusButtonListener());
+		JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
 		statusPanel.add(checkStatusButton);
 		statusPanel.add(paymentButton);
 		// Main panel holder to hold both the status and control panels
@@ -221,7 +220,7 @@ public class OrderView extends MainView {
 		return button;
 	}
 
-	public List<String[]> fetchAndDisplayOrders() {
+	List<String[]> fetchAndDisplayOrders() {
 	    List<String[]> orders = new ArrayList<>();
 	    tableModel.setRowCount(0); // Clear the existing rows
 
@@ -370,11 +369,11 @@ public class OrderView extends MainView {
 	     scrollPane.repaint();
 		// Populate the dropdown with product data from the database using an instance
 		// of ProductDAO
-		Map<String, String> products = ProductDAO.getProducts(); // Use the instance
-		for (String productName : products.keySet()) {
-			productNameDropdown.addItem(productName);
-			productCodeDropdown.addItem(products.get(productName));
-		}
+	     Map<String, String> products = ProductDAO.getProducts();
+	        for (String productName : products.keySet()) {
+	            productNameDropdown.addItem(productName);
+	            productCodeDropdown.addItem(products.get(productName));
+	        }
 
         // Adding initial fields to the panel
         panel.add(new JLabel("Order Date (yyyy-MM-dd):")); panel.add(orderDateField);
@@ -383,8 +382,9 @@ public class OrderView extends MainView {
         panel.add(new JLabel("Status:")); panel.add(statusField);
         panel.add(new JLabel("Comments:")); panel.add(commentsField);
         panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
+       
+        List<ProductEntry> productEntries = new ArrayList<>();
 
-        addFieldsToPanel(panel, orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField);
 
         JButton addMoreProductsButton = new JButton("Add More Products +");
         addProductFields(panel, ProductDAO.getProducts(), addMoreProductsButton);
@@ -394,11 +394,12 @@ public class OrderView extends MainView {
             addProductFields(panel, ProductDAO.getProducts(), addMoreProductsButton);
             scrollPane.getViewport().revalidate();
         });
-
+        
         panel.add(addMoreProductsButton); // Add the button to the panel
         if (showDialogAndGetResult(scrollPane) == JOptionPane.OK_OPTION) {
-            return processOrderInput(orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField, productCodeField, quantityOrderedField, orderLineNumberField);
+            return processOrderInput(orderDateField, requiredDateField, shippedDateField, statusField, commentsField, customerNumberField, productEntries);
         }
+
         // Show the dialog
         int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
@@ -419,12 +420,10 @@ public class OrderView extends MainView {
 	            double buyPrice = buyPriceField.getText().isEmpty() ? 0.0 : Double.parseDouble(buyPriceField.getText());
 	            
                 // Create Order and OrderDetails objects
-	            OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
-	            orderDetailsList.add(orderDetails); // Add the created OrderDetails object to the list
-	            
-	            Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
+                orderDetailsList.add(orderDetails);    
+                Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
                 return new OrderInput(order, orderDetailsList);
-
              
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
@@ -432,24 +431,22 @@ public class OrderView extends MainView {
         }
 		return null;
     }
+    
+
+    
     private void makeFieldReadOnly(JTextField field) {
         field.setEditable(false);
         field.setFocusable(false);
         field.setBackground(new Color(240, 240, 240));
     }
 
-    private void addFieldsToPanel(JPanel panel, JTextField... fields) {
-        for (JTextField field : fields) {
-            panel.add(new JLabel(field.getName() + ":"));
-            panel.add(field);
-        }
-    }
+ 
 
     private int showDialogAndGetResult(JScrollPane scrollPane) {
         return JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
     }
 
-    public OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
+    private OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date orderDate = dateFormat.parse(orderDateField.getText());
@@ -464,7 +461,7 @@ public class OrderView extends MainView {
                 String productCode = entry.getProductCodeField().getText();
                 int quantityOrdered = entry.getQuantityOrderedField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getQuantityOrderedField().getText());
                 int orderLineNumber = entry.getOrderLineNumberField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getOrderLineNumberField().getText());
-                double priceEach = entry.getPriceEachField().getText().isEmpty() ? 0.0 : Double.parseDouble(entry.getPriceEachField().getText());
+                double priceEach = entry.getBuyPriceField().getText().isEmpty() ? 0.0 : Double.parseDouble(entry.getBuyPriceField().getText());
 
                 OrderDetails orderDetails = new OrderDetails(quantityOrdered, priceEach, productCode, orderLineNumber);
                 orderDetailsList.add(orderDetails);
@@ -480,6 +477,8 @@ public class OrderView extends MainView {
             return null;
         }
     }
+
+
 
 
 
@@ -522,12 +521,7 @@ public class OrderView extends MainView {
 	    return null; // Return null if the user cancels the operation
 	}
 
-	/*
-	 * OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice,
-	 * productCode, orderLineNumber); Order updatedOrder = new Order(requiredDate,
-	 * shippedDate, statusField.getText(), commentsField.getText(),
-	 * Integer.parseInt(customerNumberField.getText()), orderDate);
-	 */
+
 
 	public Integer gatherUserInputForDeleteOrder() {
         String orderNumberStr = JOptionPane.showInputDialog(this, "Enter Order Number to delete:");
@@ -577,34 +571,118 @@ public class OrderView extends MainView {
         }
 
     }
-    
-	public String gatherInfoForPaymentCheck() {
-        // Prompt the user to enter a customer number for payment status check
-        return JOptionPane.showInputDialog(this, "Enter Customer Number to check payment status:");
 
 
-	}
-	
-	public String gatherInfoForDeliverCheck() {
-        // Prompt the user to enter an Order Number for status check
-        return JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
-    }
 
-	
-
-
-	public class OrderDetailsButtonListener implements ActionListener {
+	// Add this method to your CheckStatusButtonListener class
+	private class CheckStatusButtonListener implements ActionListener {
 		@Override
-		
+		public void actionPerformed(ActionEvent e) {
+			// Prompt the user to enter an Order Number for status check
+			String orderNumberString = JOptionPane.showInputDialog(OrderView.this,
+					"Enter Order Number to check status:");
+
+			if (orderNumberString != null && !orderNumberString.isEmpty()) {
+				try {
+					int orderNumber = Integer.parseInt(orderNumberString);
+
+					// Call the OrderDAO to retrieve the order status
+					String status = OrderDAO.getOrderStatus(orderNumber);
+
+					if (status != null) {
+						// Display the order status
+						JOptionPane.showMessageDialog(OrderView.this,
+								"Order Status for Order Number " + orderNumber + ": " + status);
+					} else {
+						JOptionPane.showMessageDialog(OrderView.this,
+								"No order found for Order Number: " + orderNumber);
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
+				}
+			}
+		}
+	}
+
+	private class PaymentButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// Prompt the user to enter a customer number for payment status check
+			String customerNumberString = JOptionPane.showInputDialog(OrderView.this,
+					"Enter Customer Number to check payment status:");
+
+			if (customerNumberString != null && !customerNumberString.isEmpty()) {
+				try {
+					int customerNumber = Integer.parseInt(customerNumberString);
+
+					// Check if the customer exists before checking payment status
+					if (OrderDAO.customerExists(customerNumber)) {
+						boolean paid = OrderDAO.checkPaymentStatus(customerNumber);
+
+						if (paid) {
+							JOptionPane.showMessageDialog(OrderView.this,
+									"Payment Status for Customer Number " + customerNumber + ": Paid");
+						} else {
+							JOptionPane.showMessageDialog(OrderView.this,
+									"Payment Status for Customer Number " + customerNumber + ": Not Paid");
+						}
+					} else {
+						JOptionPane.showMessageDialog(OrderView.this,
+								"Customer with Customer Number " + customerNumber + " does not exist.");
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(OrderView.this, "Invalid Customer Number format.");
+				}
+			}
+		}
+	}
+
+	private class OrderDetailsButtonListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Create an instance of OrderDetailsView without passing an order number
 			new OrderDetailsView(); // You can pass -1 or any default value
 		}
 	}
 	
+	private void saveOrdersToFile() {
+	    JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Specify a CSV file to save");
+	    fileChooser.setSelectedFile(new File("Orders.csv")); // Set default file name
+
+	    int userSelection = fileChooser.showSaveDialog(null);
+
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File fileToSave = fileChooser.getSelectedFile();
+
+	        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+	            List<String[]> orders = fetchAndDisplayOrders(); // Fetch order data
+
+	            // Write header row (optional)
+	            writer.write("Order Number, Order Date, Required Date, Shipped Date, Status, Comments, Customer Number");
+	            writer.newLine();
+
+	            // Write data rows
+	            for (String[] order : orders) {
+	                String line = String.join(",", order); // Comma as delimiter
+	                writer.write(line);
+	                writer.newLine();
+	            }
+	            JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
+	        } catch (IOException ex) {
+	            JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	}
+	private class SaveOrderButtonListener implements ActionListener {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        saveOrdersToFile();
+	    }
+	}
 	
-	 
+	
+
+
+
 }
-	
-
-

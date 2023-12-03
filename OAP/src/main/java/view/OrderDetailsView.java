@@ -5,7 +5,7 @@
  * 
  * <p>Orders may also contain order details, which are not implemented in this version.</p>
  * 
- * @author Hussein
+ * @author 7094
  * @version 07.11.2023
  */
 package view;

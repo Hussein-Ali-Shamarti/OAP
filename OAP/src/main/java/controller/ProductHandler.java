@@ -1,15 +1,15 @@
-
-package controller;
-
 /**
  * The {@code ProductHandler} class is responsible for handling user actions in the {@link ProductView}.
  * It provides action listeners for adding, updating, deleting, saving, and searching products.
  *
  * This class allows users to interact with product data, perform CRUD operations, and save product information to a CSV file.
  *
- * @author 7120
- * @version 03.12.2023
+ * @author Ole
+ * @version 1.0
  */
+
+
+package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -183,12 +183,19 @@ public class ProductHandler {
         }
     }
 
-  
-  
+    /**
+     * Handles the action event for saving products to a file.
+     *
+     * @param e The action event.
+     */
+    private void saveProductsToFile(ActionEvent e) {
+        saveProductsToFile();
+    }
+
     /**
      * Saves the product data to a CSV file chosen by the user.
      */
-    public void saveProductsToFile(ActionEvent e) {
+    public void saveProductsToFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Products.csv")); // Set default file name

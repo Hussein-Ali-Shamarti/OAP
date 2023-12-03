@@ -1,20 +1,20 @@
-/**
- /**
- * File: Employee.java
- * Description: This is an entity class for "Employee" and encapsulates the basic information of an employee.
- * This class represents information about an employee's attributes, such as employee number, firstname, lastname,
- * job title, email, role, and more.
- * 
- * <p>The class inherits from the Address class, incorporating address-related information.</p>
- * 
- * @author Marziyeh
- * @version 09.11.2023
- */ 
 package model;
+
+/**
+/**
+* File: Employee.java
+* Description: This is an entity class for "Employee" and encapsulates the basic information of an employee.
+* This class represents information about an employee's attributes, such as employee number, firstname, lastname,
+* job title, email, role, and more.
+* 
+* <p>The class inherits from the Address class, incorporating address-related information.</p>
+* 
+* @author Marziyeh
+* @version 11.11.2023
+*/ 
 
 public class Employee extends Address {
 
-    // Private data fields
     private int employeeNumber;
     private String firstName;
     private String lastName;
@@ -165,22 +165,38 @@ public class Employee extends Address {
         this.officeCode = officeCode;
     }
     
-    @Override
-    public String getAddress() {
-        // You may customize the format of the address based on your requirements.
-        return getAddressLine1() + ", " + getAddressLine2() + ", " + getCity() + ", " +
-               getState() + ", " + getPostalCode() + ", " + getCountry();
-    }
-
+    /**
+     * Sets the employeeNumber.
+     * 
+     * @param employeenumber the employeenumber to set.
+     */
+    
 	public void setEmployeeNumber(int employeeNumber) {
 		this.employeeNumber = employeeNumber;
 	}
+	
+    /**
+     * Sets the firstname.
+     * 
+     * @param firstname the firstname to set.
+     */
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+	
+	/**
+     * Sets the lastname.
+     * 
+     * @param lastname the lastname to set.
+     */
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	  @Override
+	    public String getAddress() {
+	        return getAddressLine1() + ", " + getAddressLine2() + ", " + getCity() + ", " +
+	               getState() + ", " + getPostalCode() + ", " + getCountry();
+	    }
 }

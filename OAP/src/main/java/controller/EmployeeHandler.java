@@ -160,7 +160,7 @@ public class EmployeeHandler {
      * @param e The action event that triggers the delete operation.
      */
     private void deleteEmployee(ActionEvent e) {
-        Integer employeeNumberToDelete = employeeView.gatherUserInputForDelete();
+        Integer employeeNumberToDelete = employeeView.gatherUserInputForDeleteEmployee();
         if (employeeNumberToDelete != null) {
             boolean success = employeeDAO.removeEmployeeFromDatabase("employees", employeeNumberToDelete);
             if (success) {
@@ -178,7 +178,7 @@ public class EmployeeHandler {
      * @param e The action event that triggers the search operation.
      */
     private void searchEmployee(ActionEvent e) {
-        String searchCriteria = employeeView.gatherInputForSearch();
+        String searchCriteria = employeeView.gatherInputForSearchEmployee();
         if (searchCriteria != null) {
             List<Employee> searchResults = employeeDAO.searchEmployees(searchCriteria);
             employeeView.updateTableWithSearchResults(searchResults);

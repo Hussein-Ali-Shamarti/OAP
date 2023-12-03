@@ -1,11 +1,3 @@
-/**
- /**
- * File: EmployeeHandler.java
- * Description: This class is responsible for handling CRUD operations related to employees, including operators and administrators.
- * It provides methods for adding employee, operator, and administrator records in the database, as well as authorization of new roles.
- * @author Albert
- * @version 22.11.2023
- */
 package model;
 
 import java.sql.Connection;
@@ -15,15 +7,26 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JOptionPane;
 
 import database.DataBaseConnection;
 
 /**
- * A class for handling CRUD operations related to employees, including operators and administrators.
+ * The EmployeeDAO class is responsible for handling all database operations related to employees.
+ * This includes searching, adding, editing, fetching, and deleting employee records. 
+ * The class utilizes prepared statements to securely interact with the database.
+ *
+ * @author 7080
+ * @version 2.12.2023
  */
+
 public class EmployeeDAO {
+	
+	/**
+	 * SQL query for searching employees in the database. 
+	 * It searches across various fields like employee number, first name, last name, extension, email, office code, reports to, and job title.
+	 * The query uses LIKE clauses for each field to support partial matching.
+	 */
 	
 	private static final String SEARCH_EMPLOYEES_SQL = 
 	        "SELECT * FROM employees WHERE " +
@@ -36,11 +39,14 @@ public class EmployeeDAO {
 	        "CAST(reportsTo AS CHAR) LIKE ? OR " +
 	        "jobTitle LIKE ?";
 
-	/**
-	 * Searches for employees in the database based on the provided search criteria.
-	 * @param searchCriteria The criteria to search for employees.
-	 * @return A list of Employee objects matching the search criteria.
-	 */
+	 /**
+     * Searches for employees in the database based on the provided search criteria.
+     * The method uses a SQL query with LIKE clauses to find matches.
+     *
+     * @param searchCriteria The string to search for in various employee attributes.
+     * @return A list of Employee objects that match the search criteria.
+     */
+
 	public List<Employee> searchEmployees(String searchCriteria) {
 	    List<Employee> searchResults = new ArrayList<>();
 	    
@@ -64,8 +70,15 @@ public class EmployeeDAO {
 
 		        return searchResults;
 		    }
-	 
-	// Helper method to map a ResultSet to an Employee object
+	
+	 /**
+     * Maps a row from a ResultSet to an Employee object.
+     *
+     * @param resultSet The ResultSet from a SQL query.
+     * @return An Employee object populated with data from the ResultSet.
+     * @throws SQLException If there is an issue accessing the ResultSet data.
+     */ 
+	
 	private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
 	    return new Employee(
 	        resultSet.getInt("employeeNumber"),
@@ -79,19 +92,13 @@ public class EmployeeDAO {
 	    );
 	}
 
-	/**
-	 * Adds a new employee, operator, or administrator to the database.
-	 * @param employees The table name for the type of employee ("employees," "operators," or "administrators").
-	 * @param employeeNumber The employee number.
-	 * @param firstName The first name of the employee.
-	 * @param lastName The last name of the employee.
-	 * @param extension The extension of the employee.
-	 * @param email The email address of the employee.
-	 * @param officeCode The office code of the employee.
-	 * @param reportsTo The employee number to whom this employee reports.
-	 * @param jobTitle The job title of the employee.
-	 * @return True if the employee is added successfully, false otherwise.
-	 */
+	 /**
+     * Adds a new employee to the database.
+     *
+     * @param employee The Employee object to be added.
+     * @return true if the operation was successful, false otherwise.
+     */
+	
 	public boolean addEmployee(Employee employee) {
 	    String employeesTable = "employees"; // Assuming you have a table name for employees
 	    try (Connection connection = DataBaseConnection.getConnection();
@@ -116,19 +123,13 @@ public class EmployeeDAO {
 	    }
 	}
 
-	/**
-	 * Edits an existing employee's information in the database.
-	 * @param employees The table name for the type of employee ("employees," "operators," or "administrators").
-	 * @param employeeNumber The employee number.
-	 * @param firstName The first name of the employee.
-	 * @param lastName The last name of the employee.
-	 * @param extension The extension of the employee.
-	 * @param email The email address of the employee.
-	 * @param officeCode The office code of the employee.
-	 * @param reportsTo The employee number to whom this employee reports.
-	 * @param jobTitle The job title of the employee.
-	 * @return True if the employee is edited successfully, false otherwise.
-	 */
+     /**
+     * Edits an existing employee's details in the database.
+     *
+     * @param employee The Employee object with updated details.
+     * @return true if the operation was successful, false otherwise.
+     */
+
 	public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstm = connection.prepareStatement(
@@ -151,11 +152,13 @@ public class EmployeeDAO {
 	    }
 	}
 
-	/**
-	 * Fetches employee data from the database based on the employee number.
-	 * @param employeeNumber The employee number.
-	 * @return An Employee object representing the employee's data, or null if not found.
-	 */
+	 /**
+     * Fetches the details of a single employee from the database.
+     *
+     * @param employeeNumber The unique identifier of the employee.
+     * @return The Employee object if found, null otherwise.
+     */
+
 	public Employee fetchEmployeeData(int employeeNumber) {
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM employees WHERE employeeNumber = ?")) {
@@ -164,7 +167,7 @@ public class EmployeeDAO {
 	        ResultSet rs = pstmt.executeQuery();
 
 	        if (rs.next()) {
-	            // Create and return an Employee object from the ResultSet
+	            
 	            return new Employee(
 	                rs.getInt("employeeNumber"),
 	                rs.getString("firstName"),
@@ -179,15 +182,16 @@ public class EmployeeDAO {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-	    return null; // Return null if employee not found
+	    return null; 
 	}
 
-	/**
-	 * Removes an employee, operator, or administrator from the database based on the employee number.
-	 * @param employees The table name for the type of employee ("employees," "operators," or "administrators").
-	 * @param employeeNumber The employee number.
-	 * @return True if the employee is removed successfully, false otherwise.
-	 */
+	 /**
+     * Deletes an employee from the database based on their employee number.
+     *
+     * @param employeeNumber The unique identifier of the employee to be deleted.
+     * @return true if the operation was successful, false otherwise.
+     */
+	
 	public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNumber = ?")) {
@@ -201,13 +205,15 @@ public class EmployeeDAO {
 	    }
 	}
 
-	/**
-	 * Displays all employees in the database.
-	 * @return A list of all Employee objects in the database.
-	 */
+	 /**
+     * Retrieves a list of all employees from the database.
+     *
+     * @return A list of Employee objects representing all employees.
+     */
+	
 	public List<Employee> displayAll() {
 	    List<Employee> employees = new ArrayList<>();
-	    String sql = "SELECT * FROM employees"; // Assuming your table is named 'employees'
+	    String sql = "SELECT * FROM employees";
 
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -215,7 +221,7 @@ public class EmployeeDAO {
 
 	        while (rs.next()) {
 	            Employee employee = new Employee(
-	                rs.getInt("employeeNumber"), // Make sure these column names match your database
+	                rs.getInt("employeeNumber"), 
 	                rs.getString("firstName"),
 	                rs.getString("lastName"),
 	                rs.getString("jobTitle"),
@@ -228,10 +234,17 @@ public class EmployeeDAO {
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	        // Handle exception or rethrow as a runtime exception
+	        
 	    }
 	    return employees;
 	}
+	
+     /**
+     * Fetches the employee data from the database and returns it as a list of string arrays.
+     * Each array contains the details of one employee.
+     *
+     * @return A list of String arrays, each representing an employee's data.
+     */
 	
 	 public List<String[]> fetchEmployees() {
 	        List<String[]> employees = new ArrayList<>();

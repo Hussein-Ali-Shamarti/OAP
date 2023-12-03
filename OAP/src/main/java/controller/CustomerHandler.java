@@ -1,16 +1,6 @@
-/**
- * This class, {@code CustomerHandler}, serves as the controller for managing customer-related actions in the application.
- * It handles events triggered by the associated {@link CustomerView} and interacts with the {@link CustomerDAO} to
- * perform operations on customer data.
- *
- * @author 7080
- * @version 2.12.2023
- */
-
 package controller;
 
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -96,7 +86,7 @@ public class CustomerHandler {
      * @return ActionListener for the save Customer data action.
      */
     public ActionListener getSaveCustomerButtonListener() {
-    	return this::saveCustomersToFile;
+        return new SaveCustomerButtonListener();
     }
 
 
@@ -128,6 +118,13 @@ public class CustomerHandler {
         }
     }
 
+    /**
+     * Handles the updating of a customer's information based on a user-provided customer number.
+     * Fetches the relevant customer from the database and prompts the user to edit their details.
+     *
+     * @param e The ActionEvent that triggers the update method.
+     */
+    
     private void updateCustomer(ActionEvent e) {
         String customerNumberStr = JOptionPane.showInputDialog(customerView, "Enter Customer Number to edit:");
         if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
@@ -182,8 +179,15 @@ public class CustomerHandler {
     }
 
 
+    private class SaveCustomerButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveCustomersToFile();
+        }
+    }
 
-    public void saveCustomersToFile(ActionEvent e) {
+
+    private void saveCustomersToFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
