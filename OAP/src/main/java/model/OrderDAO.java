@@ -18,7 +18,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import database.DataBaseConnection;
-
+import controller.OrderHandler;
 
 public class OrderDAO {
 
@@ -101,11 +101,11 @@ public class OrderDAO {
 	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
 	        for (OrderDetails orderDetail : orderDetailsList) {
 	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
-	            pstmtOrderDetails.setString(2, orderDetail.getProductCode());
+	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); // Set the actual product code
 	            pstmtOrderDetails.setInt(3, orderDetail.getQuantityOrdered());
 	            pstmtOrderDetails.setDouble(4, orderDetail.getPriceEach());
 	            pstmtOrderDetails.setInt(5, orderDetail.getOrderLineNr());
-
+	            System.out.println("productCode"+orderDetail.getProductCode());
 	            pstmtOrderDetails.addBatch();
 	        }
 	        pstmtOrderDetails.executeBatch();
@@ -136,6 +136,8 @@ public class OrderDAO {
 	        }
 	    }
 	}
+
+
 
 
 	// Update

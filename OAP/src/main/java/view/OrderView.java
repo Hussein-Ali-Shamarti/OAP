@@ -64,6 +64,15 @@ public class OrderView extends MainView {
 	private JTextField buyPriceField;
 	private JTextField msrpField;
 	private JTextField orderLineNumberField = new JTextField(10);
+    JTextField productCodeField = new JTextField(10);
+    JTextField orderDateField = new JTextField(10);
+    JTextField requiredDateField = new JTextField(10);
+    JTextField shippedDateField = new JTextField(10);
+    JTextField statusField = new JTextField(10);
+    JTextField commentsField = new JTextField(10);
+    JTextField customerNumberField = new JTextField(10);
+	// Fields for product details, which must be class attributesorderLineNumber
+	JTextField quantityOrderedField = new JTextField(10);
 
 	public OrderView() {
 		super();
@@ -247,11 +256,7 @@ public class OrderView extends MainView {
 	// Method to add product fields dynamically
 	private void addProductFields(JPanel panel, Map<String, String> products, JButton addMoreProductsButton) {
 	    JComboBox<String> productNameDropdown = new JComboBox<>();
-	    JTextField productCodeField = new JTextField(10);
-	    JTextField quantityOrderedField = new JTextField(10);
-	    JTextField quantityInStockField = new JTextField(10);
-	    JTextField buyPriceField = new JTextField(10);
-	    JTextField msrpField = new JTextField(10);
+
 
 	    // Make fields uneditable and set their background color to light grey
 	    productCodeField.setEditable(false);
@@ -325,18 +330,7 @@ public class OrderView extends MainView {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         // Fields for customer details
-        JTextField orderDateField = new JTextField(10);
-        JTextField requiredDateField = new JTextField(10);
-        JTextField shippedDateField = new JTextField(10);
-        JTextField statusField = new JTextField(10);
-        JTextField commentsField = new JTextField(10);
-        JTextField customerNumberField = new JTextField(10);
-		// Fields for product details, which must be class attributesorderLineNumber
-		JTextField productCodeField = new JTextField(10);
-		JTextField quantityOrderedField = new JTextField(10);
-		JTextField quantityInStockField = new JTextField(10);
-		JTextField buyPriceField = new JTextField(10);
-		JTextField msrpField = new JTextField(10);
+
 		
 	    // Make fields uneditable and set their background color to light grey
 	    productCodeField.setEditable(false);
@@ -379,7 +373,6 @@ public class OrderView extends MainView {
         panel.add(new JLabel("Comments:")); panel.add(commentsField);
         panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
        
-        List<ProductEntry> productEntries = new ArrayList<>();
 
 
         JButton addMoreProductsButton = new JButton("Add More Products +");
@@ -392,13 +385,10 @@ public class OrderView extends MainView {
         });
         
         panel.add(addMoreProductsButton); // Add the button to the panel
-        if (showDialogAndGetResult(scrollPane) == JOptionPane.OK_OPTION) {
-    } else {
-        return null;
 
-    }
         // Show the dialog
         int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
+       OrderInput orderInput= null;
         if (result == JOptionPane.OK_OPTION) {
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -412,21 +402,28 @@ public class OrderView extends MainView {
                 List<OrderDetails> orderDetailsList = new ArrayList<>();
 
 				String productCode = productCodeField.getText();
+				//System.out.println("411 "+productCode);
 	            int quantityOrdered = quantityOrderedField.getText().isEmpty() ? 0 : Integer.parseInt(quantityOrderedField.getText());
+				System.out.println("413 "+status);
 	            int orderLineNumber = orderLineNumberField.getText().isEmpty() ? 0 : Integer.parseInt(orderLineNumberField.getText());
 	            double buyPrice = buyPriceField.getText().isEmpty() ? 0.0 : Double.parseDouble(buyPriceField.getText());
 	            
-                // Create Order and OrderDetails objects
+	            
+	            // Create Order and OrderDetails objects
                 OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
                 orderDetailsList.add(orderDetails);    
                 Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-                return new OrderInput(order, orderDetailsList);
+                orderInput= new OrderInput(order, orderDetailsList);
              
             } catch (Exception ex) {
+            	System.out.println("test");
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }
         }
-		return null;
+       // else return null; 
+    	System.out.println("test2 "+orderInput);
+
+        return orderInput;
     }
     
 
@@ -437,44 +434,13 @@ public class OrderView extends MainView {
         field.setBackground(new Color(240, 240, 240));
     }
 
- 
+
 
     private int showDialogAndGetResult(JScrollPane scrollPane) {
         return JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
     }
 
-    private OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date orderDate = dateFormat.parse(orderDateField.getText());
-            Date requiredDate = dateFormat.parse(requiredDateField.getText());
-            Date shippedDate = dateFormat.parse(shippedDateField.getText());
-            String status = statusField.getText();
-            String comments = commentsField.getText();
-            int customerNumber = Integer.parseInt(customerNumberField.getText());
-
-            List<OrderDetails> orderDetailsList = new ArrayList<>();
-            for (ProductEntry entry : productEntries) {
-                String productCode = entry.getProductCodeField().getText();
-                int quantityOrdered = entry.getQuantityOrderedField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getQuantityOrderedField().getText());
-                int orderLineNumber = entry.getOrderLineNumberField().getText().isEmpty() ? 0 : Integer.parseInt(entry.getOrderLineNumberField().getText());
-                double priceEach = entry.getBuyPriceField().getText().isEmpty() ? 0.0 : Double.parseDouble(entry.getBuyPriceField().getText());
-
-                OrderDetails orderDetails = new OrderDetails(quantityOrdered, priceEach, productCode, orderLineNumber);
-                orderDetailsList.add(orderDetails);
-            }
-
-            Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-            return new OrderInput(order, orderDetailsList);
-        } catch (ParseException ex) {
-            JOptionPane.showMessageDialog(null, "Error parsing dates: " + ex.getMessage());
-            return null;
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Error in number format: " + ex.getMessage());
-            return null;
-        }
-    }
-
+   
 
 
 
@@ -482,12 +448,12 @@ public class OrderView extends MainView {
 	public Order gatherUserInputForUpdateOrder(Order order) {
 	    // Define fields for editing order details
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    JTextField orderDateField = new JTextField(order.getOrderDate() != null ? dateFormat.format(order.getOrderDate()) : "", 10);
-	    JTextField requiredDateField = new JTextField(order.getRequiredDate() != null ? dateFormat.format(order.getRequiredDate()) : "", 10);
-	    JTextField shippedDateField = new JTextField(order.getShippedDate() != null ? dateFormat.format(order.getShippedDate()) : "", 10);
-	    JTextField statusField = new JTextField(order.getStatus(), 10);
-	    JTextField commentsField = new JTextField(order.getComments(), 10);
-	    JTextField customerNumberField = new JTextField(String.valueOf(order.getCustomerNumber()), 10);
+	     orderDateField = new JTextField(order.getOrderDate() != null ? dateFormat.format(order.getOrderDate()) : "", 10);
+	     requiredDateField = new JTextField(order.getRequiredDate() != null ? dateFormat.format(order.getRequiredDate()) : "", 10);
+	     shippedDateField = new JTextField(order.getShippedDate() != null ? dateFormat.format(order.getShippedDate()) : "", 10);
+	     statusField = new JTextField(order.getStatus(), 10);
+	     commentsField = new JTextField(order.getComments(), 10);
+	     customerNumberField = new JTextField(String.valueOf(order.getCustomerNumber()), 10);
 
 	    // Panel to hold the form
 	    JPanel panel = new JPanel(new GridLayout(0, 2));

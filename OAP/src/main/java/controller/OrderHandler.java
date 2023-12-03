@@ -21,6 +21,7 @@ public class OrderHandler {
 
     private final OrderView orderView;
     private final OrderDAO orderDAO;
+//    private static final String placeholderProductCode = "UNKNOWN"; // Define it here
 
     public OrderHandler(OrderView orderView, OrderDAO orderDAO) {
         this.orderView = orderView;
@@ -54,22 +55,37 @@ public class OrderHandler {
     public ActionListener getCheckStatusButtonListener() {
         return this::checkOrderStatus;
     }
-
+    
     private void addOrder(ActionEvent e) {
         OrderInput orderAndDetails = orderView.gatherUserInputForAddOrder();
+        System.out.println(orderView.gatherUserInputForAddOrder());
 
         if (orderAndDetails != null) {
             Order order = orderAndDetails.getOrder();
             List<OrderDetails> orderDetailsList = orderAndDetails.getOrderDetailsList();
+            System.out.println(orderDetailsList.toString()+"test10");
+          //  String placeholderProductCode = "UNKNOWN"; // Define the placeholderProductCode here
 
-            boolean success = orderDAO.addOrder(order, orderDetailsList);
-            if (success) {
-                JOptionPane.showMessageDialog(orderView, "New order added successfully!");
-            } else {
-                JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
+          //  for(OrderDetails orderdetails:orderDetailsList) {
+            	
+                boolean success = orderDAO.addOrder(order, orderDetailsList);
+                if (success) {
+                    JOptionPane.showMessageDialog(orderView, "New order added successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
+                }
+
             }
+
         }
-    }
+        
+       // }
+    
+
+
+
+
+
 
     private void updateOrder(ActionEvent e) {
         String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");

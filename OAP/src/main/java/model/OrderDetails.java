@@ -45,7 +45,11 @@ public class OrderDetails {
 	      this.orderLineNumber = orderLineNumber;
 	   }
    
-   
+   @Override
+public String toString() {
+	return productCode;
+	   
+   }   
    
    public int getQuantityOrdered() {
 	    return this.quantityOrdered;
