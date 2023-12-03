@@ -22,7 +22,14 @@ import database.DataBaseConnection;
 
  public class CustomerDAO {
     
-    
+	 /**
+	  * SQL query for searching customers in the database.
+	  * It searches across multiple customer attributes including customer number, name, contact information, 
+	  * phone number, address details, city, state, postal code, country, sales representative employee number, 
+	  * and credit limit. This query is designed to perform a flexible search, 
+	  * allowing for partial matches in any of these fields.
+	  * The query uses CAST for numeric fields to enable string-based search.
+	  */
 
 private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHERE " +
             "CAST(customerNumber AS CHAR) LIKE ? OR " +
@@ -38,12 +45,12 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
             "country LIKE ? OR " +
             "CAST(salesRepEmployeeNumber AS CHAR) LIKE ? OR " +
             "CAST(creditLimit AS CHAR) LIKE ?";
-/**
- * Searches for customers in the database that match a given search criteria.
- *
- * @param searchCriteria The criteria used for searching customers.
- * @return A list of customers that match the search criteria.
- */
+	/**
+	 * Searches for customers in the database that match a given search criteria.
+	 *
+	 * @param searchCriteria The criteria used for searching customers.
+	 * @return A list of customers that match the search criteria.
+	 */
    
     public List<Customer> searchCustomers(String searchCriteria) {
         List<Customer> searchResults = new ArrayList<>();
