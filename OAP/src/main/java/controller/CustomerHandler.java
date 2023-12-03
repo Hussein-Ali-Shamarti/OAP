@@ -102,7 +102,7 @@ public class CustomerHandler {
     
    
 
-    private void addCustomer(ActionEvent e) {
+    public void addCustomer(ActionEvent e) {
 
         Customer customer = customerView.gatherUserInputForAddCustomer();
 
@@ -125,7 +125,7 @@ public class CustomerHandler {
      * @param e The ActionEvent that triggers the update method.
      */
     
-    private void updateCustomer(ActionEvent e) {
+    public void updateCustomer(ActionEvent e) {
         String customerNumberStr = JOptionPane.showInputDialog(customerView, "Enter Customer Number to edit:");
         if (customerNumberStr != null && !customerNumberStr.isEmpty()) {
             try {
@@ -153,7 +153,7 @@ public class CustomerHandler {
      */
 
 
-    private void deleteCustomer(ActionEvent e) {
+    public void deleteCustomer(ActionEvent e) {
         Integer customerNumberToDelete = customerView.gatherUserInputForDeleteCustomer();
 
         if (customerNumberToDelete != null) {
@@ -169,7 +169,7 @@ public class CustomerHandler {
         }
     }
 
-    private void searchCustomer(ActionEvent e) {
+    public void searchCustomer(ActionEvent e) {
         String searchCriteria = customerView.gatherUserInputForSearch();
 
         if (searchCriteria != null && !searchCriteria.isEmpty()) {
@@ -179,7 +179,7 @@ public class CustomerHandler {
     }
 
 
-    private class SaveCustomerButtonListener implements ActionListener {
+    public class SaveCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             saveCustomersToFile();
@@ -187,7 +187,7 @@ public class CustomerHandler {
     }
 
 
-    private void saveCustomersToFile() {
+    public void saveCustomersToFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name

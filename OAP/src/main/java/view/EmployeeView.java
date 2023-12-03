@@ -104,7 +104,7 @@ public class EmployeeView extends MainView {
      * Sets up the control panel with buttons for various actions like search, add, edit, delete, and save.
      */
     
-    private void setupControlPanel() {
+   private void setupControlPanel() {
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
         controlPanel.setBackground(new Color(90, 23, 139));

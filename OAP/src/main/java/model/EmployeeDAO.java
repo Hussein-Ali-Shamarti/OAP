@@ -79,7 +79,7 @@ public class EmployeeDAO {
      * @throws SQLException If there is an issue accessing the ResultSet data.
      */ 
 	
-	private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
+	public Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
 	    return new Employee(
 	        resultSet.getInt("employeeNumber"),
 	        resultSet.getString("firstName"),

@@ -303,7 +303,7 @@ public class ProductView extends MainView {
      * @param selectedRows The array of selected row indices.
      * @return The list of product codes corresponding to the selected rows.
      */
-    private List<String> getProductCodesFromRows(int[] selectedRows) {
+    public List<String> getProductCodesFromRows(int[] selectedRows) {
         JTable table = getTable();
         List<String> productCodes = new ArrayList<>();
 

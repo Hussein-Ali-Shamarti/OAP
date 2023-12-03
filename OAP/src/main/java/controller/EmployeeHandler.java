@@ -100,7 +100,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the add operation.
      */
-    private void addEmployee(ActionEvent e) {
+    public void addEmployee(ActionEvent e) {
         Employee employee = employeeView.gatherUserInputForAddEmployee();
         if (employee != null) {
             boolean success = employeeDAO.addEmployee(employee);
@@ -118,7 +118,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the update operation.
      */
-    private void updateEmployee(ActionEvent e) {
+    public void updateEmployee(ActionEvent e) {
         String employeeNumberStr = JOptionPane.showInputDialog(employeeView, "Enter Employee Number to edit:");
         if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
             try {
@@ -159,7 +159,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the delete operation.
      */
-    private void deleteEmployee(ActionEvent e) {
+    public void deleteEmployee(ActionEvent e) {
         Integer employeeNumberToDelete = employeeView.gatherUserInputForDeleteEmployee();
         if (employeeNumberToDelete != null) {
             boolean success = employeeDAO.removeEmployeeFromDatabase("employees", employeeNumberToDelete);
@@ -177,7 +177,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the search operation.
      */
-    private void searchEmployee(ActionEvent e) {
+   public void searchEmployee(ActionEvent e) {
         String searchCriteria = employeeView.gatherInputForSearchEmployee();
         if (searchCriteria != null) {
             List<Employee> searchResults = employeeDAO.searchEmployees(searchCriteria);
@@ -190,7 +190,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the save operation.
      */
-    private void saveEmployeesToFile(ActionEvent e) {
+   public void saveEmployeesToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Employees.csv"));
@@ -206,7 +206,7 @@ public class EmployeeHandler {
      * @param fileToSave The file to which the employee data will be written.
      */
     
-    private void writeEmployeeDataToFile(File fileToSave) {
+    public void writeEmployeeDataToFile(File fileToSave) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
             List<String[]> employees = employeeView.fetchAndDisplayEmployees();
             writer.write("Employee Number, First Name, Last Name, Extension, Email, Office Code, Reports To, Job Title");

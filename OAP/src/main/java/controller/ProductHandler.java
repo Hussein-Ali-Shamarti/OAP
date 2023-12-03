@@ -101,7 +101,7 @@ public class ProductHandler {
      *
      * @param e The action event.
      */
-    private void addProduct(ActionEvent e) {
+    public void addProduct(ActionEvent e) {
         Products product = productView.gatherUserInputForAddProduct();
 
         if (product != null) {
@@ -121,7 +121,7 @@ public class ProductHandler {
      *
      * @param e The action event.
      */
-    private void updateProduct(ActionEvent e) {
+    public void updateProduct(ActionEvent e) {
         String productCodeToUpdate = JOptionPane.showInputDialog(productView, "Enter Product Code to update:");
 
         if (productCodeToUpdate != null && !productCodeToUpdate.isEmpty()) {
@@ -151,7 +151,7 @@ public class ProductHandler {
      *
      * @param e The action event.
      */
-    private void deleteProduct(ActionEvent e) {
+    public void deleteProduct(ActionEvent e) {
         List<String> productCodesToDelete = productView.gatherUserInputForDelete();
 
         if (productCodesToDelete != null && !productCodesToDelete.isEmpty()) {
@@ -171,7 +171,7 @@ public class ProductHandler {
      *
      * @param e The action event.
      */
-    private void searchProducts(ActionEvent e) {
+    public void searchProducts(ActionEvent e) {
         String searchCriteria = productView.gatherInputForSearch();
 
         if (searchCriteria != null) {
@@ -188,7 +188,7 @@ public class ProductHandler {
      *
      * @param e The action event.
      */
-    private void saveProductsToFile(ActionEvent e) {
+    public void saveProductsToFile(ActionEvent e) {
         saveProductsToFile();
     }
 
