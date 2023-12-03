@@ -4,7 +4,7 @@
  * <p>This class contains a constructor, getter and setter methods, and a method to calculate
  * the subtotal price of an order.</p>
  * 
- * @Author Hussein
+ * @Author 7094
  * @CoAuthor Kim
  * @version 07.11.2023
  */
