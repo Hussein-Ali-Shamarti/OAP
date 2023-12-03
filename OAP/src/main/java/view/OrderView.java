@@ -212,7 +212,7 @@ public class OrderView extends MainView {
 	private JButton createButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
 		button.setForeground(Color.BLACK);
-		button.setBackground(new Color(84, 11, 131));
+		button.setBackground(Color.WHITE);
 		button.setFocusPainted(false);
 		button.addActionListener(listener);
 	    // set other button properties
@@ -447,7 +447,7 @@ public class OrderView extends MainView {
         return JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
     }
 
-    private OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
+    public OrderInput processOrderInput(JTextField orderDateField, JTextField requiredDateField, JTextField shippedDateField, JTextField statusField, JTextField commentsField, JTextField customerNumberField, List<ProductEntry> productEntries) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date orderDate = dateFormat.parse(orderDateField.getText());
