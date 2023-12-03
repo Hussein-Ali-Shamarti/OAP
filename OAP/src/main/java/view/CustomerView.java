@@ -1,42 +1,39 @@
 package view;
 
 import javax.swing.*;
-
-
 import java.awt.*;
-
 import java.awt.event.ActionListener;
-
-
 import java.math.BigDecimal;
-
-import java.util.List; // Ensure this import for generic Lists
-
-
+import java.util.List; 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CustomerHandler;
-
-
-
 import model.Customer;
 import model.CustomerDAO;
 
-
-
-
+/**
+ * CustomerView class extends MainView to provide a user interface for managing customers.
+ * It includes functionality to display, add, edit, delete, and search customers using a graphical user interface.
+ * The class uses a CustomerDAO instance for database operations and interacts with the user through various UI components.
+ *
+ * @author Author Name
+ * @version 1.0
+ */
 
 public class CustomerView extends MainView {
 	
-	private CustomerDAO customerDAO;
-
 
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private CustomerHandler customerHandler;
+    private CustomerDAO customerDAO;
     private JTable table;
 
+    /**
+     * Constructor to initialize the CustomerView. Sets up the UI and fetches initial data to display.
+     */
+    
     public CustomerView() {
     	 super();
          this.customerDAO = new CustomerDAO();
@@ -48,10 +45,14 @@ public class CustomerView extends MainView {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 500);
         setLocationRelativeTo(null);
-        pack(); // Adjusts the frame to fit the components
-        setVisible(true); // Make sure the frame is visible
+        pack(); 
+        setVisible(true); 
     }
 
+    /**
+     * Initializes the UI components of the CustomerView.
+     */
+    
     private void initializeUI() {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(84, 11, 131));
@@ -67,11 +68,15 @@ public class CustomerView extends MainView {
         add(titlePanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Set frame properties
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Center on screen
+        setLocationRelativeTo(null); 
     }
+    
+    /**
+     * Sets up the table model and structure for displaying customer data.
+     */
 
     private void setupTable() {
         String[] columnNames = {"Customer Number", "Company Name", "Contact Last Name", "Contact First Name", "Phone",
@@ -88,6 +93,10 @@ public class CustomerView extends MainView {
 
         table = new JTable(tableModel);
     }
+    
+    /**
+     * Sets up the control panel with buttons for various actions like search, add, edit, delete, and save.
+     */
 
     private void setupControlPanel() {
         JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
@@ -108,10 +117,18 @@ public class CustomerView extends MainView {
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
-        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); // Add space
+        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER);
         this.add(buttonPanelHolder, BorderLayout.SOUTH);
     }
 
+    /**
+     * Creates and returns a JButton with specified text and action listener.
+     *
+     * @param text The text to display on the button.
+     * @param listener The ActionListener to attach to the button.
+     * @return A JButton instance.
+     */
+    
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.setForeground(Color.BLACK);
@@ -121,10 +138,14 @@ public class CustomerView extends MainView {
         return button;
     }
     
-  
+    /**
+     * Gathers user input for adding a new customer. Presents a form to the user to enter new customer details.
+     *
+     * @return A Customer object with the details entered by the user, or null if the operation is canceled.
+     */
 
     public Customer gatherUserInputForAddCustomer() {
-        // Define fields for customer details
+        
         JTextField customerNumberField = new JTextField(10);
         JTextField customerNameField = new JTextField(10);
         JTextField contactLastNameField = new JTextField(10);
@@ -138,12 +159,12 @@ public class CustomerView extends MainView {
         JTextField countryField = new JTextField(10);
         JTextField creditLimitField = new JTextField(10);
 
-        // Fetch the list of Sales Rep Employee Numbers
+       
         CustomerDAO customerDAO = new CustomerDAO();
         List<Integer> salesRepEmployeeNumbers = customerDAO.fetchSalesRepEmployeeNumbers();
         JComboBox<Integer> salesRepEmployeeNumberField = new JComboBox<>(salesRepEmployeeNumbers.toArray(new Integer[0]));
 
-        // Panel for the form
+       
         JPanel panel = new JPanel(new GridLayout(0, 2));
         panel.add(new JLabel("Customer Number:")); panel.add(customerNumberField);
         panel.add(new JLabel("Company Name:")); panel.add(customerNameField);
@@ -159,7 +180,7 @@ public class CustomerView extends MainView {
         panel.add(new JLabel("Sales Rep Employee Number:")); panel.add(salesRepEmployeeNumberField);
         panel.add(new JLabel("Credit Limit:")); panel.add(creditLimitField);
 
-        // Show confirm dialog with the form
+     
         int result = JOptionPane.showConfirmDialog(null, panel, "Enter New Customer Details", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
@@ -177,7 +198,7 @@ public class CustomerView extends MainView {
                 int salesRepEmployeeNumber = (int) salesRepEmployeeNumberField.getSelectedItem();
                 BigDecimal creditLimit = new BigDecimal(creditLimitField.getText());
 
-                // Assuming the existence of a constructor in Customer class that takes all these fields
+               
                 return new Customer(customerNumber, customerName, contactLastName, contactFirstName, 
                                     phone, addressLine1, addressLine2, city, state, 
                                     postalCode, country, salesRepEmployeeNumber, creditLimit);
@@ -186,10 +207,15 @@ public class CustomerView extends MainView {
                 return null;
             }
         }
-        return null; // Return null if the user cancels or an error occurs
+        return null; 
     }
     
-    
+
+    /**
+     * Gathers user input for updating an existing customer. Presents a pre-filled form with the customer's current details.
+     *
+     * @param customer The Customer object to be updated.
+     */
 
     public void gatherUserInputForUpdateCustomer(Customer customer) {
        
@@ -207,7 +233,7 @@ public class CustomerView extends MainView {
         
         CustomerDAO customerDAO = new CustomerDAO();
 
-        // Fetch the list of Sales Rep Employee Numbers
+        
         List<Integer> salesRepEmployeeNumbers = customerDAO.fetchSalesRepEmployeeNumbers();
         JComboBox<Integer> salesRepEmployeeNumberField = new JComboBox<>(salesRepEmployeeNumbers.toArray(new Integer[0]));
         salesRepEmployeeNumberField.setSelectedItem(customer.getSalesRepEmployeeNumber());
@@ -266,6 +292,11 @@ public class CustomerView extends MainView {
         }
     }
 
+    /**
+     * Gathers user input for the customer number to be deleted.
+     *
+     * @return The customer number to delete, or null if the operation is canceled.
+     */
    
     public Integer gatherUserInputForDeleteCustomer() {
         String customerNumberStr = JOptionPane.showInputDialog(this, "Enter Customer Number to delete:");
@@ -286,7 +317,7 @@ public class CustomerView extends MainView {
                         "Confirm Deletion", JOptionPane.YES_NO_OPTION);
 
                     if (confirm == JOptionPane.YES_OPTION) {
-                        return customerNumber; // Return customer number to delete
+                        return customerNumber; 
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Customer not found.");
@@ -298,6 +329,11 @@ public class CustomerView extends MainView {
         return null; 
     }
 
+    /**
+     * Gathers the user input for searching customers. Prompts the user to enter a search string.
+     *
+     * @return The search string entered by the user, or null if the operation is canceled.
+     */
 
     public String gatherUserInputForSearch() {
         JTextField searchField = new JTextField(20);
@@ -313,9 +349,14 @@ public class CustomerView extends MainView {
         return null;
     }
 
-        
+    /**
+     * Updates the table with the provided list of search results.
+     *
+     * @param searchResults A list of Customer objects representing the search results.
+     */    
+    
         public void updateTableWithSearchResults(List<Customer> searchResults) {
-            tableModel.setRowCount(0); // Clear existing rows
+            tableModel.setRowCount(0); 
 
             for (Customer customer : searchResults) {
                 Object[] row = {
@@ -337,19 +378,20 @@ public class CustomerView extends MainView {
             }
         }
     
-   
+        /**
+         * Fetches and displays customer data from the database in the table.
+         *
+         * @return A list of customer data as String arrays.
+         */
+        
         public List<String[]> fetchAndDisplayCustomers() {
             CustomerDAO customerDAO = new CustomerDAO();
             List<String[]> customers = customerDAO.fetchCustomers();
-            tableModel.setRowCount(0); // Clear the existing rows
+            tableModel.setRowCount(0);
           
             for (String[] customer : customers) {
-                tableModel.addRow(customer); // Add row to the table model
+                tableModel.addRow(customer); 
             }
 			return customers;
         }
     }
-
-
-
-
