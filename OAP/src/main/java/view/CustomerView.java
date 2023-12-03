@@ -17,8 +17,8 @@ import model.CustomerDAO;
  * It includes functionality to display, add, edit, delete, and search customers using a graphical user interface.
  * The class uses a CustomerDAO instance for database operations and interacts with the user through various UI components.
  *
- * @author Author Name
- * @version 1.0
+ * @author 7080
+ * @version 3.12.2023
  */
 
 public class CustomerView extends MainView {
