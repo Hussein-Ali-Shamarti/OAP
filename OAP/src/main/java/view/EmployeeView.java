@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -25,11 +26,12 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+//import com.OBJ2100.ExamApp.gui.listeners.AboutAppListener;
 
 import model.Employee;
 import model.EmployeeDAO;
-import controller.EmployeeHandler;
 
+import controller.EmployeeHandler;
 
 
 
@@ -41,14 +43,15 @@ public class EmployeeView extends MainView {
     private static final long serialVersionUID = 1L;
     private DefaultTableModel tableModel;
     private JTable table;
+  
     private EmployeeHandler employeeHandler;
+  
     
     public EmployeeView() {
     	
         super();
         this.employeeDAO = new EmployeeDAO();
         this.employeeHandler = new EmployeeHandler(this, this.employeeDAO);
-        setLayout(new BorderLayout());
         initializeUI();
         fetchAndDisplayEmployees();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -107,7 +110,6 @@ public class EmployeeView extends MainView {
         JButton editButton = createButton("Edit", employeeHandler.getUpdateEmployeeButtonListener());
         JButton deleteButton = createButton("Delete", employeeHandler.getDeleteEmployeeButtonListener());
         JButton saveEmployeeButton = createButton("Save to File", employeeHandler.getSaveEmployeeButtonListener());
-
         controlPanel.add(searchButton);
         controlPanel.add(addButton);
         controlPanel.add(editButton);
@@ -273,9 +275,8 @@ public class EmployeeView extends MainView {
 	        }
 	    }
 
-
 	public void updateTableWithSearchResults(List<Employee> searchResults) {
-	    tableModel.setRowCount(0); 
+	    tableModel.setRowCount(0); // Fjern eksisterende rader
 
 	    for (Employee employee : searchResults) {
 	        Object[] row = new Object[]{

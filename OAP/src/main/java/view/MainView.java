@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -16,7 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 
-import controller.OrderListener;
+
+
 
 
 
@@ -142,7 +142,7 @@ public class MainView extends JFrame {
             });
         }
     }
-    
+
     public class CustomerListener implements ActionListener {
 
         /**
@@ -161,7 +161,26 @@ public class MainView extends JFrame {
         }
     }
 
+    public class OrderListener implements ActionListener {
+
+        /**
+         * Invoked when an action occurs, in this case, opens the {@link OrderView}.
+         *
+         * @param e The event representing the user's action.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open OrderView when "Orders" button is pressed
+            SwingUtilities.invokeLater(() -> {
+                OrderView orderView = new OrderView();
+                orderView.setVisible(true);
+            });
+        }
+    }
+
 }
+
+
 	
 
     

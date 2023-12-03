@@ -62,46 +62,81 @@ public class OrderDAO {
 
 	// CRUD-methods
 
-	public boolean addOrder(Order order, OrderDetails orderDetails) {
-		String insertOrderSQL = "INSERT INTO orders( requiredDate, shippedDate, status, comments, customerNumber, orderDate) VALUES(?, ?, ?, ?, ?, ?)";
+	public boolean addOrder(Order order, List<OrderDetails> orderDetailsList) {
+	    String insertOrderSQL = "INSERT INTO orders(requiredDate, shippedDate, status, comments, customerNumber, orderDate) VALUES(?, ?, ?, ?, ?, ?)";
+	    String insertOrderDetailsSQL = "INSERT INTO orderdetails(orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES(?, ?, ?, ?, ?)";
 
-		try {
-			Connection conn = DataBaseConnection.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
+	    Connection conn = null;
+	    PreparedStatement pstmtOrder = null;
+	    PreparedStatement pstmtOrderDetails = null;
 
-			// pstmt.setInt(1, order.getOrderNumber());
-			pstmt.setDate(1,
-					order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
-			pstmt.setDate(2,
-					order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
-			pstmt.setString(3, order.getStatus());
-			pstmt.setString(4, order.getComments());
-			pstmt.setInt(5, order.getCustomerNumber());
-			pstmt.setDate(6, order.getOrderDate() != null ? new java.sql.Date(order.getOrderDate().getTime()) : null);
+	    try {
+	        conn = DataBaseConnection.getConnection();
+	        conn.setAutoCommit(false); // Start transaction
 
-			pstmt.executeUpdate();
-			ResultSet generatedKeys = pstmt.getGeneratedKeys();
+	        // Insert the order
+	        pstmtOrder = conn.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
+	        pstmtOrder.setDate(1, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
+	        pstmtOrder.setDate(2, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
+	        pstmtOrder.setString(3, order.getStatus());
+	        pstmtOrder.setString(4, order.getComments());
+	        pstmtOrder.setInt(5, order.getCustomerNumber());
+	        pstmtOrder.setDate(6, order.getOrderDate() != null ? new java.sql.Date(order.getOrderDate().getTime()) : null);
 
-			if (generatedKeys.next()) {
-				long generatedKey = generatedKeys.getLong(1);
-				String insertOrderDetailsSQL = "INSERT INTO orderdetails (orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES ( ?, ?, ?, ?, ?)";
+	        int affectedRowsOrder = pstmtOrder.executeUpdate();
+	        if (affectedRowsOrder == 0) {
+	            conn.rollback(); // Rollback transaction if the order insertion failed
+	            return false;
+	        }
 
-				PreparedStatement pstm1 = conn.prepareStatement(insertOrderDetailsSQL);
-				pstm1.setInt(1, (int) generatedKey);
-				pstm1.setString(2, orderDetails.getProductCode());
-				pstm1.setInt(3, orderDetails.getQuantityOrdered());
-				pstm1.setDouble(4, orderDetails.getPriceEach());
-				pstm1.setInt(5, orderDetails.getOrderLineNr());
-				pstm1.executeUpdate();
-				return true;
-			} else {
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	        // Retrieve generated order number
+	        ResultSet generatedKeys = pstmtOrder.getGeneratedKeys();
+	        if (!generatedKeys.next()) {
+	            conn.rollback(); // Rollback transaction if no order number generated
+	            return false;
+	        }
+	        int generatedOrderNumber = generatedKeys.getInt(1);
+
+	        // Insert each order detail
+	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
+	        for (OrderDetails orderDetail : orderDetailsList) {
+	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
+	            pstmtOrderDetails.setString(2, orderDetail.getProductCode());
+	            pstmtOrderDetails.setInt(3, orderDetail.getQuantityOrdered());
+	            pstmtOrderDetails.setDouble(4, orderDetail.getPriceEach());
+	            pstmtOrderDetails.setInt(5, orderDetail.getOrderLineNr());
+
+	            pstmtOrderDetails.addBatch();
+	        }
+	        pstmtOrderDetails.executeBatch();
+
+	        conn.commit(); // Commit the transaction
+	        return true;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        if (conn != null) {
+	            try {
+	                conn.rollback(); // Rollback transaction on error
+	            } catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+	        return false;
+	    } finally {
+	        // Clean up resources
+	        try {
+	            if (pstmtOrder != null) pstmtOrder.close();
+	            if (pstmtOrderDetails != null) pstmtOrderDetails.close();
+	            if (conn != null) {
+	                conn.setAutoCommit(true); // Reset auto-commit to default
+	                conn.close();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
 
 	// Update
 	public boolean editOrder(Order order, int OrderNumber) {
@@ -154,24 +189,53 @@ public class OrderDAO {
 	    return null; // or handle this case as needed
 	}
 	// Delete
-	public boolean deleteOrder(int OrderNumber) {
-		String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
+	public boolean deleteOrder(int orderNumber) {
+	    String deleteOrderDetailsSQL = "DELETE FROM orderdetails WHERE OrderNumber = ?";
+	    String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
 
-		try (Connection conn = DataBaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(deleteOrderSQL)) {
+	    Connection conn = null;
+	    PreparedStatement pstmtOrderDetails = null;
+	    PreparedStatement pstmtOrder = null;
 
-			pstmt.setInt(1, OrderNumber);
+	    try {
+	        conn = DataBaseConnection.getConnection();
+	        conn.setAutoCommit(false); // Start transaction
 
-			int affectedRows = pstmt.executeUpdate();
-			System.out.println("Deleted");
+	        // First, delete child records in orderdetails
+	        pstmtOrderDetails = conn.prepareStatement(deleteOrderDetailsSQL);
+	        pstmtOrderDetails.setInt(1, orderNumber);
+	        pstmtOrderDetails.executeUpdate();
 
-			return affectedRows > 0;
+	        // Then, delete the order
+	        pstmtOrder = conn.prepareStatement(deleteOrderSQL);
+	        pstmtOrder.setInt(1, orderNumber);
+	        int affectedRows = pstmtOrder.executeUpdate();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	        conn.commit(); // Commit transaction
+
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        if (conn != null) {
+	            try {
+	                conn.rollback(); // Rollback transaction on error
+	            } catch (SQLException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        // Clean up resources
+	        try {
+	            if (pstmtOrderDetails != null) pstmtOrderDetails.close();
+	            if (pstmtOrder != null) pstmtOrder.close();
+	            if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
 
 	// Read
 	public Order getOrder(int OrderNumber) {
@@ -347,5 +411,24 @@ public class OrderDAO {
 	    return searchResults;
 	}
 
+	/*public boolean checkProductCodeExists(String productCode) {
+	    String query = "SELECT COUNT(*) FROM products WHERE productCode = ?";
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+	        
+	        pstmt.setString(1, productCode);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0; // Check if count is greater than zero
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Handle exception, possibly log it or throw a custom exception
+	    }
+	    return false; // Return false if productCode does not exist or in case of an exception
+	}
+*/
 
 }

@@ -1,5 +1,6 @@
 /**
  * Represents an order entity with information such as order number, dates, status, comments,
+
  * customer number, and associated order date.
  * 
  * <p>Orders may also contain order details, which are not implemented in this version.</p>
@@ -23,6 +24,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,7 +35,6 @@ import model.ProductDAO;
 import database.DataBaseConnection;
 import model.OrderDetails;
 import model.Products;
-import view.OrderView.UpdateButtonListener;
 
 public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -64,7 +65,6 @@ public class OrderDetailsView extends JFrame {
         "Order Line Number"
     };
 
-    private DefaultTableModel orderDetailsTableModel;
     private JTable orderDetailsTable;
 
     public OrderDetailsView() {
@@ -85,7 +85,6 @@ public class OrderDetailsView extends JFrame {
         initializeUI();
         fetchAndDisplayOrderDetails();
         setVisible(true);
-        setupTable();
    
 
                 
@@ -113,8 +112,8 @@ public class OrderDetailsView extends JFrame {
              PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM orderdetails");
              ResultSet rs = pstmt.executeQuery()) {
 
-            DefaultTableModel model = (DefaultTableModel) orderDetailsTable.getModel();
-            model.setRowCount(0);
+            tableModel  = (DefaultTableModel) orderDetailsTable.getModel();
+            tableModel.setRowCount(0);
 
             while (rs.next()) {
                 Object[] row = {
@@ -124,7 +123,7 @@ public class OrderDetailsView extends JFrame {
                     rs.getDouble("priceEach"),
                     rs.getInt("orderLineNumber")
                 };
-                model.addRow(row);
+                tableModel.addRow(row);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error fetching order details: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -182,35 +181,36 @@ public class OrderDetailsView extends JFrame {
 
 	    if (searchResults == null || searchResults.isEmpty()) {
 	        System.out.println("No results found for: " + searchCriteria);
-	    } else {
+	    } else {	   
+	    	 updateOrderDetailsTable(searchResults);
+
 	        System.out.println("Found " + searchResults.size() + " results for: " + searchCriteria);
 	    }
 
 	    // Update the table on the Event Dispatch Thread
-	    SwingUtilities.invokeLater(() -> updateOrderDetailsTable(searchResults));
 	}
 
 
 
 	private void updateOrderDetailsTable(List<OrderDetails> searchResults) {
-	    DefaultTableModel model = (DefaultTableModel) orderDetailsTable.getModel();
-	    model.setRowCount(0); // Clear existing rows
-
+		tableModel  =  (DefaultTableModel) orderDetailsTable.getModel();
+	    tableModel.setRowCount(0); // Clear existing rows
 	    for (OrderDetails orderDetail : searchResults) {
 	        Object[] rowData = {
 	            orderDetail.getOrderNumber(),
 	            orderDetail.getProductCode(),
 	            orderDetail.getQuantityOrdered(),
 	            orderDetail.getPriceEach(),
-	            orderDetail.getOrderLineNumber()
+	            orderDetail.getOrderLineNr()
 	        };
-	        model.addRow(rowData);
+	       System.out.println(orderDetail.getOrderLineNr());
+	        tableModel.addRow(rowData);
 	    }
 
 	    // Print out the updated table data for debugging
-	    for (int i = 0; i < model.getRowCount(); i++) {
-	        for (int j = 0; j < model.getColumnCount(); j++) {
-	            System.out.print(model.getValueAt(i, j) + " ");
+	    for (int i = 0; i < tableModel.getRowCount(); i++) {
+	        for (int j = 0; j < tableModel.getColumnCount(); j++) {
+	            System.out.print(tableModel.getValueAt(i, j) + " ");
 	        }
 	        System.out.println();
 	    }
@@ -325,10 +325,10 @@ public class OrderDetailsView extends JFrame {
 
     private BigDecimal calculateTotalForOrderNumber(int orderNumber) {
         BigDecimal total = BigDecimal.ZERO;
-        for (int i = 0; i < orderDetailsTableModel.getRowCount(); i++) {
-            if (((Integer) orderDetailsTableModel.getValueAt(i, 0)).intValue() == orderNumber) {
-                int quantity = (Integer) orderDetailsTableModel.getValueAt(i, 2);
-                BigDecimal price = new BigDecimal(orderDetailsTableModel.getValueAt(i, 3).toString());
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            if (((Integer) tableModel.getValueAt(i, 0)).intValue() == orderNumber) {
+                int quantity = (Integer) tableModel.getValueAt(i, 2);
+                BigDecimal price = new BigDecimal(tableModel.getValueAt(i, 3).toString());
                 total = total.add(price.multiply(BigDecimal.valueOf(quantity)));
             }
         }
@@ -341,8 +341,8 @@ public class OrderDetailsView extends JFrame {
     }
     
     private boolean isOrderNumberPresentInTable(int orderNumber) {
-        for (int i = 0; i < orderDetailsTableModel.getRowCount(); i++) {
-            if (((Integer) orderDetailsTableModel.getValueAt(i, 0)).intValue() == orderNumber) {
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            if (((Integer) tableModel.getValueAt(i, 0)).intValue() == orderNumber) {
                 return true;
             }
         }
@@ -363,7 +363,7 @@ public class OrderDetailsView extends JFrame {
                         rs.getDouble("priceEach"),
                         rs.getInt("orderLineNumber")
                     };
-                    orderDetailsTableModel.addRow(row);
+                    tableModel.addRow(row);
                 }
             }
         } catch (SQLException e) {
@@ -383,7 +383,7 @@ public class OrderDetailsView extends JFrame {
 	}
 	
     private void setupTable() {
-        orderDetailsTableModel = new DefaultTableModel(null, COLUMN_NAMES) {
+    	tableModel = new DefaultTableModel(null, COLUMN_NAMES) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -392,7 +392,7 @@ public class OrderDetailsView extends JFrame {
             }
         };
 
-        orderDetailsTable = new JTable(orderDetailsTableModel);
+        orderDetailsTable = new JTable(tableModel);
         orderDetailsTable.setPreferredScrollableViewportSize(new Dimension(750, 400));
         orderDetailsTable.setFillsViewportHeight(true);
     }
@@ -501,7 +501,7 @@ public class OrderDetailsView extends JFrame {
                         productCodeField.setFocusable(false);
                         productCodeField.setBackground(new Color(240, 240, 240));
 
-                        JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNumber()), 10);
+                        JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNr()), 10);
                         JTextField quantityOrderedField = new JTextField(String.valueOf(orderDetails.getQuantityOrdered()), 10);
 
                         JTextField quantityInStockField = new JTextField("", 10);
