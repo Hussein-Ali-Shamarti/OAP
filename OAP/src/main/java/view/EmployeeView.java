@@ -268,7 +268,7 @@ public class EmployeeView extends MainView {
 	     * @return The employee number to delete, or null if the operation is canceled.
 	     */
 	    
-	 public Integer gatherUserInputForDelete() {
+	 public Integer gatherUserInputForDeleteEmployee() {
 	        String employeeNumberStr = JOptionPane.showInputDialog(this, "Enter Employee Number to delete:");
 	        if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {
 	            try {
@@ -303,7 +303,7 @@ public class EmployeeView extends MainView {
 	     * @return The search string entered by the user, or null if the operation is canceled.
 	     */
 	 
-	 public String gatherInputForSearch() {
+	 public String gatherInputForSearchEmployee() {
 	        JTextField searchField = new JTextField(20);
 	        JPanel panel = new JPanel();
 	        panel.add(new JLabel("Search Employees:"));
