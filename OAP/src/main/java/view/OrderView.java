@@ -11,15 +11,12 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,7 +31,6 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,16 +41,14 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controller.AddOrderButtonListener;
-import controller.DeleteOrderButtonListener;
-import controller.SearchOrderButtonListener;
-import controller.UpdateOrderButtonListener;
+
 import model.ProductDAO;
 import model.ProductEntry;
 import model.OrderDAO;
 import model.Order;
 import model.OrderDetails;
 import model.OrderInput;
+import controller.OrderHandler;
 
 
 public class OrderView extends MainView {
@@ -65,6 +59,7 @@ public class OrderView extends MainView {
 	private JComboBox<String> productNameDropdown;
 	private JComboBox<String> productCodeDropdown;
     private ProductDAO ProductDAO;
+    private OrderHandler orderHandler;
 	private JTextField quantityInStockField;
 	private JTextField buyPriceField;
 	private JTextField msrpField;
@@ -74,6 +69,7 @@ public class OrderView extends MainView {
 		super();
 		this.OrderDAO = new OrderDAO(); // Initialize OrderDAO first
 		this.ProductDAO = new ProductDAO(); // Initialize ProductDAO
+		this.orderHandler = new OrderHandler(this, this.OrderDAO);
 		ProductDAO.getProducts();
 		this.quantityInStockField = new JTextField(10);
 		this.buyPriceField = new JTextField(10);
@@ -178,11 +174,11 @@ public class OrderView extends MainView {
 		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
 		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		controlPanel.setBackground(new Color(90, 23, 139));
-		JButton searchButton = createButton("Search", new SearchOrderButtonListener(this, OrderDAO));
-		JButton addButton = createButton("Add", new AddOrderButtonListener(this, OrderDAO));
-		JButton editButton = createButton("Edit", new UpdateOrderButtonListener(this, OrderDAO, ProductDAO));
-		JButton deleteButton = createButton("Delete", new DeleteOrderButtonListener(this, OrderDAO));
-		JButton saveOrderButton = createButton("Save to File", new SaveOrderButtonListener());
+		JButton searchButton = createButton("Search", orderHandler.getSearchOrderButtonListener());
+		JButton addButton = createButton("Add", orderHandler.getAddOrderButtonListener());
+		JButton editButton = createButton("Edit", orderHandler.getUpdateOrderButtonListener());
+		JButton deleteButton = createButton("Delete", orderHandler.getDeleteOrderButtonListener());
+		JButton saveOrderButton = createButton("Save to File", orderHandler.getSaveOrderButtonListener());
 		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
 		// In your OrderView class constructor or appropriate method
 
@@ -220,7 +216,7 @@ public class OrderView extends MainView {
 		return button;
 	}
 
-	List<String[]> fetchAndDisplayOrders() {
+	public List<String[]> fetchAndDisplayOrders() {
 	    List<String[]> orders = new ArrayList<>();
 	    tableModel.setRowCount(0); // Clear the existing rows
 
@@ -571,11 +567,22 @@ public class OrderView extends MainView {
         }
 
     }
+    
+    public String gatherInfoForPaymentCheck() {
+        // Prompt the user to enter a customer number for payment status check
+        return JOptionPane.showInputDialog(this, "Enter Customer Number to check payment status:");
+
+
+	}
+	
+	public String gatherInfoForDeliverCheck() {
+        // Prompt the user to enter an Order Number for status check
+        return JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
+    }
 
 
 
-	// Add this method to your CheckStatusButtonListener class
-	private class CheckStatusButtonListener implements ActionListener {
+	public class CheckStatusButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// Prompt the user to enter an Order Number for status check
@@ -645,44 +652,8 @@ public class OrderView extends MainView {
 		}
 	}
 	
-	private void saveOrdersToFile() {
-	    JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setDialogTitle("Specify a CSV file to save");
-	    fileChooser.setSelectedFile(new File("Orders.csv")); // Set default file name
-
-	    int userSelection = fileChooser.showSaveDialog(null);
-
-	    if (userSelection == JFileChooser.APPROVE_OPTION) {
-	        File fileToSave = fileChooser.getSelectedFile();
-
-	        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-	            List<String[]> orders = fetchAndDisplayOrders(); // Fetch order data
-
-	            // Write header row (optional)
-	            writer.write("Order Number, Order Date, Required Date, Shipped Date, Status, Comments, Customer Number");
-	            writer.newLine();
-
-	            // Write data rows
-	            for (String[] order : orders) {
-	                String line = String.join(",", order); // Comma as delimiter
-	                writer.write(line);
-	                writer.newLine();
-	            }
-	            JOptionPane.showMessageDialog(null, "CSV file saved successfully at " + fileToSave.getAbsolutePath());
-	        } catch (IOException ex) {
-	            JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	        }
-	    }
-	}
-	private class SaveOrderButtonListener implements ActionListener {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	        saveOrdersToFile();
-	    }
-	}
-	
 	
 
 
+	}
 
-}

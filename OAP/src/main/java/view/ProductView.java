@@ -400,3 +400,4 @@ public class ProductView extends MainView {
         return products; // If you need to use the products elsewhere in your class
     }
 }
+

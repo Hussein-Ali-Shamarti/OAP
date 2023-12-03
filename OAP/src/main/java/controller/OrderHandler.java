@@ -119,10 +119,6 @@ public class OrderHandler {
     }
     
 
-    
-        
-    
-
 
     public void saveOrdersToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
@@ -198,6 +194,17 @@ public class OrderHandler {
             JOptionPane.showMessageDialog(orderView, "Order Status for Order Number " + orderNumber + ": " + status);
         } else {
             JOptionPane.showMessageDialog(orderView, "No order found for Order Number: " + orderNumber);
+            
+            
         }
+        
     }
-}
+      
+
+    	
+    	
+
+ }
+    
+    
+
