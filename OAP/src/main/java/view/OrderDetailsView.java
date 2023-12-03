@@ -35,7 +35,6 @@ import model.ProductDAO;
 import database.DataBaseConnection;
 import model.OrderDetails;
 import model.Products;
-import view.OrderView.UpdateOrderButtonListener;
 
 public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
