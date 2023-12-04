@@ -3,8 +3,9 @@ package model;
 /**
  * Represents a product line and encapsulates its attributes.
  * Author: Ole
- * Version: 2023-11-06
+ * Version: 11.06.2023
  */
+
 public class ProductLine  {
 
     private String productLine;

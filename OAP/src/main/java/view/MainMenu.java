@@ -8,22 +8,33 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * The MainMenu class represents a panel containing buttons for navigating the main menu of an application.
+ * This panel is typically used as a main menu screen with options like "Products," "Orders," "Customers," and "Employees."
+ * 
+ * @author Ole
+ * @version dato
+ */
 public class MainMenu extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+     * Constructs a MainMenu panel with specified action listeners for its buttons.
+     *
+     * @param productsListener   The action listener for the "Products" button.
+     * @param orderListener     The action listener for the "Orders" button.
+     * @param customersListener The action listener for the "Customers" button.
+     * @param employeesListener The action listener for the "Employees" button.
+     */
+    public MainMenu(ActionListener productsListener, ActionListener orderListener, ActionListener customersListener, ActionListener employeesListener) {
+        setBackground(Color.WHITE);
 
-	public MainMenu(ActionListener productsListener, ActionListener orderListener, ActionListener customersListener, ActionListener employeesListener) {
-        setBackground(Color.WHITE); // White background
-
-        // Create buttons with listeners
         JButton productsButton = createButton("Products", productsListener);
         JButton ordersButton = createButton("Orders", orderListener);
         JButton customersButton = createButton("Customers", customersListener);
         JButton employeesButton = createButton("Employees", employeesListener);
-        // Add buttons in a horizontal row
+
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         add(productsButton);
         add(ordersButton);
@@ -31,13 +42,20 @@ public class MainMenu extends JPanel {
         add(employeesButton);
     }
 
+    /**
+     * Creates a customized JButton with the specified text and action listener.
+     *
+     * @param text     The text to display on the button.
+     * @param listener The action listener to attach to the button.
+     * @return A customized JButton.
+     */
     private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        button.setForeground(Color.BLACK); // Black text color
-        button.setBackground(Color.WHITE); // White background color
-        button.setFocusPainted(false); // Remove focus highlighting for better appearance
-        button.addActionListener(listener); // Add the listener
-        button.setPreferredSize(new Dimension(120, 50)); // Smaller size
+        button.setForeground(Color.BLACK);
+        button.setBackground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.addActionListener(listener);
+        button.setPreferredSize(new Dimension(120, 50));
         return button;
     }
 }

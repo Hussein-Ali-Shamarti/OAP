@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import database.DataBaseConnection;
 
 /**
- * The EmployeeDAO class is responsible for handling all database operations related to employees.
+ * EmployeeDAO class is responsible for handling all database operations related to employees.
  * This includes searching, adding, editing, fetching, and deleting employee records. 
  * The class utilizes prepared statements to securely interact with the database.
  *
@@ -100,7 +100,7 @@ public class EmployeeDAO {
      */
 	
 	public boolean addEmployee(Employee employee) {
-	    String employeesTable = "employees"; // Assuming you have a table name for employees
+	    String employeesTable = "employees"; 
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement pstm = connection.prepareStatement(
 	                "INSERT INTO " + employeesTable + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
@@ -126,8 +126,17 @@ public class EmployeeDAO {
      /**
      * Edits an existing employee's details in the database.
      *
-     * @param employee The Employee object with updated details.
+     * @param employees Table name where the employee data is stored.
+     * @param employeeNumber The unique identifier of the employee to be edited.
+     * @param firstName The new first name of the employee.
+     * @param lastName The new last name of the employee.
+     * @param extension The new extension number of the employee.
+     * @param email The new email address of the employee.
+     * @param officeCode The new office code associated with the employee.
+     * @param reportsTo The employee number of the manager to whom this employee reports.
+     * @param jobTitle The new job title of the employee.
      * @return true if the operation was successful, false otherwise.
+     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
 
 	public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {

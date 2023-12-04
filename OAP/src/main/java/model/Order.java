@@ -1,21 +1,18 @@
+package model;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Represents an order entity with information such as order number, dates, status, comments,
  * customer number, and associated order date.
  * 
- * <p>Orders may also contain order details, which are not implemented in this version.</p>
+ * Orders may also contain order details, which are not implemented in this version.
  * 
  * @author Kim
  * @version 07.11.2023
  */
-package model;
-
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 
 public class Order {
 
@@ -25,7 +22,6 @@ public class Order {
     private Date shippedDate;
     private String status;
     private String comments;
-    //private String productCode; // New field for product code
     private List<OrderDetails> orderDetailsList;
 
     
@@ -49,11 +45,22 @@ public class Order {
         this.comments = comments;
         this.customerNumber = customerNumber;
         this.orderDate = orderDate;
-        //this.productCode = productCode; // Initialize the product code
-       // this.orderDetailsList = new ArrayList<>();
+      
         
 
     }
+    
+    /**
+     * Constructs an Order object with the specified details.
+     * 
+     * @param orderNumber The unique identifier for the order.
+     * @param requiredDate The date by which the order is required.
+     * @param shippedDate The date on which the order was shipped.
+     * @param status The current status of the order (e.g., "Shipped", "Pending").
+     * @param comments Additional comments about the order.
+     * @param customerNumber The unique identifier of the customer who placed the order.
+     * @param orderDate The date on which the order was placed.
+     */
     
     public Order(int orderNumber, Date requiredDate, Date shippedDate, String status, String comments, int customerNumber, Date orderDate) {
     	this.orderNumber = orderNumber;
@@ -63,9 +70,7 @@ public class Order {
         this.comments = comments;
         this.customerNumber = customerNumber;
         this.orderDate = orderDate;
-        //this.productCode = productCode; // Initialize the product code
-       // this.orderDetailsList = new ArrayList<>();
-        
+      
     
     }
     
@@ -195,37 +200,46 @@ public class Order {
         this.customerNumber = customerNumber;
     }
     
-   
-    
-
-   @Override
+    @Override
     public String toString() {
-    	return "orderID: " + orderNumber +", orderDate: +" + orderDate + ", requiredDate: "+requiredDate+", shippedDate: "+shippedDate+", status: "+status+", comments: "+comments;
- 
+        /**
+         * Provides a string representation of the Order object, including various order details.
+         *
+         * @return A string that represents the order, including order number, dates, status, and comments.
+         */
+        return "orderID: " + orderNumber + ", orderDate: " + orderDate + ", requiredDate: " + requiredDate + 
+               ", shippedDate: " + shippedDate + ", status: " + status + ", comments: " + comments;
     }
-   
 
+    public BigDecimal calculateOrderTotal() {
+        /**
+         * Calculates the total value of the order by summing the subtotal of each order detail.
+         *
+         * @return The total value of the order as a BigDecimal.
+         */
+        BigDecimal total = BigDecimal.ZERO;
+        for (OrderDetails details : orderDetailsList) {
+            total = total.add(details.calculateSubTotal());
+        }
+        return total;
+    }
 
-// Constructor not shown for brevity
+    public List<OrderDetails> getOrderDetailsList() {
+        /**
+         * Retrieves the list of OrderDetails associated with this order.
+         *
+         * @return A list of OrderDetails objects.
+         */
+        return orderDetailsList;
+    }
 
-   // Calculate the total price for the order
-   public BigDecimal calculateOrderTotal() {
-       BigDecimal total = BigDecimal.ZERO;
-       for (OrderDetails details : orderDetailsList) {
-           total = total.add(details.calculateSubTotal());
-       }
-       return total;
-   }
-
-   // Getters and setters for orderDetailsList
-   public List<OrderDetails> getOrderDetailsList() {
-       return orderDetailsList;
-   }
-
-   public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
-       this.orderDetailsList = orderDetailsList;
-   }
-
-
+    public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
+        /**
+         * Sets the list of OrderDetails for this order.
+         *
+         * @param orderDetailsList The list of OrderDetails objects to be associated with this order.
+         */
+        this.orderDetailsList = orderDetailsList;
+    }
 
 }

@@ -15,27 +15,18 @@ import model.EmployeeDAO;
 import view.EmployeeView;
 
 /**
- * The EmployeeHandler class is responsible for handling the business logic 
- * associated with employee management in the application. It coordinates the 
- * interactions between the EmployeeView and EmployeeDAO, facilitating operations 
- * such as adding, updating, deleting, searching, and saving employee data.
+ * Handles the business logic associated with employee management in the application.
+ * This class coordinates interactions between the EmployeeView for user interface
+ * actions and EmployeeDAO for data persistence, facilitating operations like add,
+ * update, delete, search, and save of employee data.
  * 
  * @author 7080
  * @version 2.12.2023
  */
-
 public class EmployeeHandler {
 	
-	 /**
-     * The view component for employee management operations.
-     */
 	
 	private final EmployeeView employeeView;
-    
-    /**
-     * The DAO component for performing CRUD operations on employee data.
-     */
-	
     private final EmployeeDAO employeeDAO;
     
     /**
@@ -51,16 +42,16 @@ public class EmployeeHandler {
     }
     
     /**
-     * Returns an ActionListener for adding a new employee.
+     * Provides an ActionListener for adding a new employee.
      * 
-     * @return ActionListener for the add employee action.
+     * @return An ActionListener that triggers the addition of a new employee.
      */
     public ActionListener getAddEmployeeButtonListener() {
         return this::addEmployee;
     }
     
     /**
-     * Returns an ActionListener for updating an employee.
+     * Provides an ActionListener for updating an employee.
      * 
      * @return ActionListener for the update employee action.
      */
@@ -69,7 +60,7 @@ public class EmployeeHandler {
     }
     
     /**
-     * Returns an ActionListener for deleting an employee.
+     * Provides an ActionListener for deleting an employee.
      * 
      * @return ActionListener for the delete employee action.
      */
@@ -78,7 +69,7 @@ public class EmployeeHandler {
     }
     
     /**
-     * Returns an ActionListener for searching employees.
+     * Provides an ActionListener for searching employees.
      * 
      * @return ActionListener for the search employee action.
      */
@@ -87,7 +78,7 @@ public class EmployeeHandler {
     }
     
     /**
-     * Returns an ActionListener for saving employee data to a file.
+     * Provides an ActionListener for saving employee data to a file.
      * 
      * @return ActionListener for the save employee data action.
      */
@@ -96,7 +87,8 @@ public class EmployeeHandler {
     }
     
     /**
-     * Handles the addition of a new employee.
+     * Handles the addition of a new employee. Gathers user input from the EmployeeView
+     * and adds the new employee through EmployeeDAO.
      * 
      * @param e The action event that triggers the add operation.
      */
@@ -114,7 +106,8 @@ public class EmployeeHandler {
     }
     
     /**
-     * Handles updating an existing employee.
+     * Handles the updating of an existing employee. It fetches the employee details
+     * based on the provided employee number and updates the employee's data.
      * 
      * @param e The action event that triggers the update operation.
      */
@@ -155,7 +148,8 @@ public class EmployeeHandler {
     }
     
     /**
-     * Handles the deletion of an employee.
+     * Handles the deletion of an employee. Deletes the employee specified by the
+     * employee number obtained from EmployeeView.
      * 
      * @param e The action event that triggers the delete operation.
      */
@@ -173,7 +167,8 @@ public class EmployeeHandler {
     }
     
     /**
-     * Handles searching for employees based on a specified criteria.
+     * Handles the searching of employees based on criteria provided through EmployeeView.
+     * 
      * 
      * @param e The action event that triggers the search operation.
      */
@@ -186,7 +181,8 @@ public class EmployeeHandler {
     }
     
     /**
-     * Handles saving the current employee data to a file.
+     * Handles saving the current employee data to a file. It allows the user to choose
+     * a file destination and saves the employee data in CSV format.
      * 
      * @param e The action event that triggers the save operation.
      */
@@ -201,9 +197,10 @@ public class EmployeeHandler {
         }
     }
     /**
-     * Writes the employee data to the specified file.
+     * Writes employee data to the specified file in CSV format.
      * 
-     * @param fileToSave The file to which the employee data will be written.
+     * @param fileToSave The file where employee data will be written.
+     * @throws IOException If an I/O error occurs while writing to the file.
      */
     
     public void writeEmployeeDataToFile(File fileToSave) {

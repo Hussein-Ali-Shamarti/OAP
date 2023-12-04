@@ -15,13 +15,11 @@ import model.Customer;
 import model.CustomerDAO;
 import view.CustomerView;
 
-
-
 /**
- * CustomerHandler class handles the user interactions related to Customer operations
- * in the application. It acts as a bridge between the CustomerView and CustomerDAO,
- * facilitating actions such as adding, updating, deleting, and searching for customers.
- * It also includes functionalities to save customer data to a file.
+ * Handles business logic associated with customer management in the application.
+ * Coordinates interactions between CustomerView for user interface actions and
+ * CustomerDAO for data persistence, enabling operations like adding, updating,
+ * deleting, searching, and saving customer data.
  * 
  * @author 7080
  * @version 2.12.2023
@@ -34,10 +32,11 @@ public class CustomerHandler {
     private final CustomerDAO customerDAO;
 
     /**
-     * Constructs a new {@code CustomerHandler} with the given {@link CustomerView} and {@link CustomerDAO}.
+     * Constructs a new CustomerHandler with the specified CustomerView and CustomerDAO.
      *
-     * @param customerView The associated product view.
-     * @param customerDAO  The data access object for managing customers.
+     * @param customerView The CustomerView instance used for UI interactions.
+     * @param customerDAO The CustomerDAO instance used for data access operations.
+
      */
     public CustomerHandler(CustomerView customerView, CustomerDAO customerDAO) {
         this.customerView = customerView;
@@ -91,11 +90,11 @@ public class CustomerHandler {
 
 
     /**
-     * Handles the addition of a new customer.
+     * Handles the addition of a new customer. Gathers user input from the CustomerView
+     * and adds the new customer through CustomerDAO.
      * 
-     * @param e The action event that triggers the add operation.
+     * @param e The action event that triggers the addition operation.
      */
-    
    
 
     public void addCustomer(ActionEvent e) {
@@ -115,10 +114,10 @@ public class CustomerHandler {
     }
 
     /**
-     * Handles the updating of a customer's information based on a user-provided customer number.
-     * Fetches the relevant customer from the database and prompts the user to edit their details.
-     *
-     * @param e The ActionEvent that triggers the update method.
+     * Handles the updating of a customer's information. Fetches the relevant customer
+     * from the database based on user-provided customer number and prompts for editing details.
+     * 
+     * @param e The action event that triggers the update operation.
      */
     
     public void updateCustomer(ActionEvent e) {
@@ -164,6 +163,12 @@ public class CustomerHandler {
             }
         }
     }
+    
+    /**
+     * Handles searching for customers based on user-provided search criteria.
+     * 
+     * @param e The action event that triggers the search operation.
+     */
 
     public void searchCustomer(ActionEvent e) {
         String searchCriteria = customerView.gatherUserInputForSearch();
@@ -174,7 +179,11 @@ public class CustomerHandler {
         }
     }
 
-
+    /**
+     * Inner class to handle saving customer data to a file when the associated
+     * action is performed.
+     */
+    
     public class SaveCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -182,11 +191,15 @@ public class CustomerHandler {
         }
     }
 
-
+    /**
+     * Handles saving the current customer data to a CSV file. Prompts the user
+     * to choose a file destination and writes the data in CSV format.
+     */
+    
     public void saveCustomersToFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
-        fileChooser.setSelectedFile(new File("Customer.csv")); // Set default file name
+        fileChooser.setSelectedFile(new File("Customer.csv")); 
 
         int userSelection = fileChooser.showSaveDialog(null);
 
@@ -197,17 +210,17 @@ public class CustomerHandler {
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
-                List<String[]> customers = customerView.fetchAndDisplayCustomers(); // Fetch customer data from view
+                List<String[]> customers = customerView.fetchAndDisplayCustomers(); 
 
-                // Write header row (optional)
+                
                 writer.write("Customer Number, Customer Name, Contact Last Name, Contact First Name, " +
                         "Phone, Address Line 1, Address Line 2, City, State, Postal Code, Country, " +
                         "Sales Rep Employee Number, Credit Limit");
                 writer.newLine();
 
-                // Write data rows
+                
                 for (String[] customer : customers) {
-                    String line = String.join(",", customer); // Comma as delimiter
+                    String line = String.join(",", customer); 
                     writer.write(line);
                     writer.newLine();
                 }

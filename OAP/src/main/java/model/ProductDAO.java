@@ -1,18 +1,3 @@
-
-/**
- * File: ProductDAO.java
- * Description: This class serves as the Data Access Object (DAO) for managing CRUD (Create, Read, Update, Delete) operations
- * related to products in the database. It acts as an intermediary between the application's model (Products) and the database,
- * providing methods to add, search, update, and delete products. The class encapsulates the database interactions and ensures
- * proper handling of database connections and SQL queries.
- * The methods in this class are designed to handle various aspects of product management, such as adding new products,
- * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
- * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
- * @author Ole
- * @version 08.11.2023
- 
- */
-
 package model;
 
 import java.sql.Connection;
@@ -27,6 +12,18 @@ import java.util.Map;
 
 import database.DataBaseConnection;
 
+/**
+ * This class serves as the Data Access Object (DAO) for managing CRUD (Create, Read, Update, Delete) operations
+ * related to products in the database. It acts as an intermediary between the application's model (Products) and the database,
+ * providing methods to add, search, update, and delete products. The class encapsulates the database interactions and ensures
+ * proper handling of database connections and SQL queries.
+ * The methods in this class are designed to handle various aspects of product management, such as adding new products,
+ * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
+ * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
+ * @author Ole
+ * @version 08.11.2023
+ */
+
 public class ProductDAO {
 
     /**
@@ -34,6 +31,7 @@ public class ProductDAO {
      * @param product The product to be added.
      * @return True if the product is added successfully, false otherwise.
      */
+	
     public boolean addProduct(Products product) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -98,6 +96,14 @@ public class ProductDAO {
         return searchResults;
     }
     
+    /**
+     * Fetches all product details from the database.
+     * This method retrieves various attributes of each product, including code, name, line, scale, vendor, 
+     * description, quantity in stock, buy price, and MSRP. The data for each product is stored in a string array.
+     *
+     * @return A list of string arrays, where each array represents a product and its details.
+     */
+    
     public List<String[]> fetchProducts() {
         List<String[]> products = new ArrayList<>();
 
@@ -121,7 +127,7 @@ public class ProductDAO {
                 products.add(product);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            e.printStackTrace(); 
         }
 
         return products;
@@ -157,6 +163,15 @@ public class ProductDAO {
             return false;
         }
     }
+    
+    /**
+     * Fetches a single product's details from the database based on its product code.
+     * This method executes a SQL query to retrieve all attributes of a product with the specified code.
+     * If found, it maps the result set to a Products object.
+     *
+     * @param productCode The unique code of the product to be retrieved.
+     * @return A Products object containing the details of the product, or null if the product is not found.
+     */
     
     public Products fetchProductFromDatabase(String productCode) {
         try (Connection connection = DataBaseConnection.getConnection();
@@ -226,8 +241,16 @@ public class ProductDAO {
             e.printStackTrace();
         }
 
-        return null; // Return null if product name is not found or if an exception occurs
+        return null; 
     }
+    
+    /**
+     * Retrieves the product name corresponding to a given product code.
+     * This method queries the database for the name of the product associated with the specified product code.
+     *
+     * @param productCode The unique code of the product for which the name is being retrieved.
+     * @return The name of the product if found, or null if there is no product with the given code.
+     */
     
     public String getProductNameByCode(String productCode) {
         String query = "SELECT productName FROM products WHERE productCode = ?";
@@ -243,7 +266,7 @@ public class ProductDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Return null if product code is not found or if an exception occurs
+        return null; 
     }
 
     /**
@@ -326,25 +349,20 @@ public class ProductDAO {
             try (PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?")) {
                 preparedStatement.setString(1, productLine);
 
-                // Execute the query
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    // Check if a row with the product line exists
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {               
                     if (resultSet.next() && resultSet.getInt(1) > 0) {
-                        return true; // Product line exists
+                        return true; 
                     }
                 }
             }
         } catch (SQLException ex) {
-            // Log the exception or handle it based on your application's requirements
             ex.printStackTrace();
-            
-            // Provide a user-friendly error message
+
             String errorMessage = "Error checking product line existence. Please try again later or contact support.";
-            // Rethrow the exception as a runtime exception with the user-friendly message
             throw new RuntimeException(errorMessage, ex);
         }
 
-        return false; // Product line doesn't exist or an error occurred
+        return false; 
     }
 
     /**
@@ -363,12 +381,19 @@ public class ProductDAO {
                 productNames.add(resultSet.getString("productName"));
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log the exception
+            e.printStackTrace(); 
         }
 
         return productNames;
     }
 
+    /**
+     * Retrieves all product details from the database.
+     * This method returns a map where each key is a product name and the corresponding value is the product code.
+     *
+     * @return A map containing product names as keys and product codes as values.
+     */
+    
     public Map<String, String> getAllProductDetails() {
         Map<String, String> productDetails = new HashMap<>();
 
@@ -377,50 +402,51 @@ public class ProductDAO {
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                String productName = resultSet.getString("productName"); // Adjust the column name based on your database
-                String productCode = resultSet.getString("productCode"); // Adjust the column name based on your database
+                String productName = resultSet.getString("productName"); 
+                String productCode = resultSet.getString("productCode"); 
                 productDetails.put(productName, productCode);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exception (Consider logging this or throwing a custom exception)
         }
 
         return productDetails;
     }
+    
+    /**
+     * Retrieves detailed information for a product identified by its product code.
+     * This method returns a map containing various details of the product, such as quantity in stock, buy price, and MSRP.
+     *
+     * @param productCode The code of the product for which details are being retrieved.
+     * @return A map containing key-value pairs of product details.
+     */
 
     public Map<String, Object> getProductDetailsByCode(String productCode) {
         Map<String, Object> productDetails = new HashMap<>();
-        Connection connection = null; // Initialize connection
+        Connection connection = null; 
 
         try {
-            connection = DataBaseConnection.getConnection(); // Get the database connection
+            connection = DataBaseConnection.getConnection();
 
-            String query = "SELECT * FROM products WHERE productCode = ?"; // Adjust this query to fit your database schema
+            String query = "SELECT * FROM products WHERE productCode = ?"; 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, productCode);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        // Assuming you have columns like 'quantityInStock', 'buyPrice', 'MSRP', etc.
-                        // Adjust the column names based on your database schema
                         productDetails.put("quantityInStock", resultSet.getInt("quantityInStock"));
                         productDetails.put("buyPrice", resultSet.getDouble("buyPrice"));
                         productDetails.put("MSRP", resultSet.getDouble("MSRP"));
-                        // Add more columns as needed
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle the exception appropriately
         } finally {
-            // Close the connection in the finally block
             if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    // Handle the exception appropriately
                 }
             }
         }
@@ -428,6 +454,13 @@ public class ProductDAO {
         return productDetails;
     }
 
+    /**
+     * Retrieves a mapping of product names to their corresponding codes.
+     * This method queries the database and constructs a map where the key is the product name and the value is the product code.
+     *
+     * @return A map containing product names as keys and their corresponding product codes as values.
+     */
+    
     public Map<String, String> getProductNamesToCodes() {
         Map<String, String> productNamesToCodes = new HashMap<>();
         String query = "SELECT productName, productCode FROM products";
@@ -442,9 +475,9 @@ public class ProductDAO {
                 productNamesToCodes.put(productName, productCode);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log the exception
+            e.printStackTrace();
         }
 
         return productNamesToCodes;
     }
-    }
+ }

@@ -1,28 +1,22 @@
+package model;
+
+import javax.swing.JTextField;
 /**
  * Represents an order entity with information such as order number, dates, status, comments,
-
  * customer number, and associated order date.
- * 
- * <p>Orders may also contain order details, which are not implemented in this version.</p>
+ * Orders may also contain order details, which are not implemented in this version.
  * 
  * @author 7094
  * @version 07.11.2023
  */
-package model;
 
-import javax.swing.JTextField;
-
-/**
- * Represents a product entry in an order, containing fields for product code, quantity ordered,
- * order line number, buy price, and manufacturer's suggested retail price (MSRP).
- */
 public class ProductEntry {
-    // Attributes of ProductEntry
     private JTextField productCodeField;
     private JTextField quantityOrderedField;
     private JTextField orderLineNumberField;
     private JTextField buyPriceField;
     private JTextField msrpField;
+    
     /**
      * Constructs a new ProductEntry with the given fields.
      * 
@@ -32,6 +26,7 @@ public class ProductEntry {
      * @param buyPriceField          The text field for buy price.
      * @param msrpField              The text field for MSRP.
      */
+    
     public ProductEntry(JTextField productCode, JTextField quantityOrdered, JTextField orderLineNumber, JTextField buyPrice, JTextField msrp) {
         this.productCodeField = productCode;
         this.quantityOrderedField = quantityOrdered;
@@ -39,6 +34,10 @@ public class ProductEntry {
         this.buyPriceField = buyPrice;
         this.msrpField = msrp;
     }
+    
+    /**
+     * Constructs a new ProductEntry instance with initialized text fields.
+     */
 
     public ProductEntry() {
         this.productCodeField = new JTextField(10);
@@ -47,43 +46,103 @@ public class ProductEntry {
         this.buyPriceField = new JTextField(10);
         this.msrpField = new JTextField(10);
     }
-    // Getters and setters for all fields
-
+  
+    /**
+     * Retrieves the text field for the product code.
+     *
+     * @return The JTextField for the product code.
+     */
+    
     public JTextField getProductCodeField() {
         return productCodeField;
     }
+    
+    /**
+     * Sets the text field for the product code.
+     *
+     * @param productCodeField The JTextField to set for the product code.
+     */
 
     public void setProductCodeField(JTextField productCodeField) {
         this.productCodeField = productCodeField;
     }
+    
+    /**
+     * Retrieves the text field for the quantity ordered.
+     *
+     * @return The JTextField for the quantity ordered.
+     */
 
     public JTextField getQuantityOrderedField() {
         return quantityOrderedField;
     }
+    
+    /**
+     * Sets the text field for the quantity ordered.
+     *
+     * @param quantityOrderedField The JTextField to set for the quantity ordered.
+     */
 
     public void setQuantityOrderedField(JTextField quantityOrderedField) {
         this.quantityOrderedField = quantityOrderedField;
     }
+    
+    /**
+     * Retrieves the text field for the order line number.
+     *
+     * @return The JTextField for the order line number.
+     */
 
     public JTextField getOrderLineNumberField() {
         return orderLineNumberField;
     }
 
+
+    /**
+     * Sets the text field for the order line number.
+     *
+     * @param orderLineNumberField The JTextField to set for the order line number.
+     */
+
     public void setOrderLineNumberField(JTextField orderLineNumberField) {
         this.orderLineNumberField = orderLineNumberField;
     }
+    
+    /**
+     * Retrieves the text field for the buy price.
+     *
+     * @return The JTextField for the buy price.
+     */
 
     public JTextField getBuyPriceField() {
         return buyPriceField;
     }
 
+    /**
+     * Sets the text field for the buy price.
+     *
+     * @param buyPriceField The JTextField to set for the buy price.
+     */
+    
     public void setBuyPriceField(JTextField buyPriceField) {
         this.buyPriceField = buyPriceField;
     }
+    
+    /**
+     * Retrieves the text field for the MSRP (Manufacturer's Suggested Retail Price).
+     *
+     * @return The JTextField for the MSRP.
+     */
 
     public JTextField getMsrpField() {
         return msrpField;
     }
+    
+    /**
+     * Sets the text field for the MSRP (Manufacturer's Suggested Retail Price).
+     *
+     * @param msrpField The JTextField to set for the MSRP.
+     */
 
     public void setMsrpField(JTextField msrpField) {
         this.msrpField = msrpField;

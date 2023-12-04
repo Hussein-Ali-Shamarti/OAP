@@ -1,12 +1,3 @@
-
-/**
- * File: OrderHandler.java
- * Description:
- * Manages order operations (add, update, delete, retrieve) within a CMS, ensuring proper handling and status tracking of orders.
- * @author 7094
- * @version 09.11.2023
- */
-
 package model;
 
 import java.sql.Connection;
@@ -19,6 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import database.DataBaseConnection;
 
+/**
+ * The OrderDAO class is responsible for handling all database operations related to orders.
+ * This includes searching, adding, editing, fetching, and deleting order records.
+ * The class utilizes prepared statements for secure interaction with the database.
+ *
+ * @author Hussein
+ * @version 
+ */
 
 public class OrderDAO {
 
@@ -27,6 +26,15 @@ public class OrderDAO {
 			+ "CAST(requiredDate AS CHAR) LIKE ? OR " + "CAST(shippedDate AS CHAR )LIKE ? OR " + "status LIKE ? OR "
 			+ "comments LIKE ? OR " + "CAST(customerNumber AS CHAR) LIKE ?  ";
 
+
+    /**
+     * Searches for orders in the database based on the provided search criteria.
+     * The method uses a SQL query with LIKE clauses to find matches across various order attributes.
+     *
+     * @param searchCriteria The string to search for in various order attributes.
+     * @return A list of Order objects that match the search criteria.
+     */
+	
 	public List<Order> searchOrder(String searchCriteria) {
 		List<Order> searchResults = new ArrayList<>();
 
@@ -50,6 +58,14 @@ public class OrderDAO {
 
 		return searchResults;
 	}
+	
+	/**
+     * Maps a row from a ResultSet to an Order object.
+     *
+     * @param resultSet The ResultSet from a SQL query.
+     * @return An Order object populated with data from the ResultSet.
+     * @throws SQLException If there is an issue accessing the ResultSet data.
+     */
 
 	private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
 		return new Order(resultSet.getInt("orderNumber"), resultSet.getDate("requiredDate"),
@@ -59,9 +75,15 @@ public class OrderDAO {
 		);
 	}
 
-
-	// CRUD-methods
-
+	/**
+	 * Adds a new order along with its details to the database.
+	 *
+	 * @param order The Order object containing order information.
+	 * @param orderDetailsList The list of OrderDetails associated with this order.
+	 * @return true if the order is successfully added, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+	
 	public boolean addOrder(Order order, List<OrderDetails> orderDetailsList) {
 	    String insertOrderSQL = "INSERT INTO orders(requiredDate, shippedDate, status, comments, customerNumber, orderDate) VALUES(?, ?, ?, ?, ?, ?)";
 	    String insertOrderDetailsSQL = "INSERT INTO orderdetails(orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES(?, ?, ?, ?, ?)";
@@ -72,9 +94,9 @@ public class OrderDAO {
 
 	    try {
 	        conn = DataBaseConnection.getConnection();
-	        conn.setAutoCommit(false); // Start transaction
+	        conn.setAutoCommit(false); 
 
-	        // Insert the order
+	        
 	        pstmtOrder = conn.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
 	        pstmtOrder.setDate(1, order.getRequiredDate() != null ? new java.sql.Date(order.getRequiredDate().getTime()) : null);
 	        pstmtOrder.setDate(2, order.getShippedDate() != null ? new java.sql.Date(order.getShippedDate().getTime()) : null);
@@ -85,19 +107,19 @@ public class OrderDAO {
 
 	        int affectedRowsOrder = pstmtOrder.executeUpdate();
 	        if (affectedRowsOrder == 0) {
-	            conn.rollback(); // Rollback transaction if the order insertion failed
+	            conn.rollback(); 
 	            return false;
 	        }
 
-	        // Retrieve generated order number
+	       
 	        ResultSet generatedKeys = pstmtOrder.getGeneratedKeys();
 	        if (!generatedKeys.next()) {
-	            conn.rollback(); // Rollback transaction if no order number generated
+	            conn.rollback(); 
 	            return false;
 	        }
 	        int generatedOrderNumber = generatedKeys.getInt(1);
 
-	        // Insert each order detail
+	       
 	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
 	        for (OrderDetails orderDetail : orderDetailsList) {
 	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
@@ -110,25 +132,25 @@ public class OrderDAO {
 	        }
 	        pstmtOrderDetails.executeBatch();
 
-	        conn.commit(); // Commit the transaction
+	        conn.commit(); 
 	        return true;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        if (conn != null) {
 	            try {
-	                conn.rollback(); // Rollback transaction on error
+	                conn.rollback(); 
 	            } catch (SQLException ex) {
 	                ex.printStackTrace();
 	            }
 	        }
 	        return false;
 	    } finally {
-	        // Clean up resources
+	        
 	        try {
 	            if (pstmtOrder != null) pstmtOrder.close();
 	            if (pstmtOrderDetails != null) pstmtOrderDetails.close();
 	            if (conn != null) {
-	                conn.setAutoCommit(true); // Reset auto-commit to default
+	                conn.setAutoCommit(true); 
 	                conn.close();
 	            }
 	        } catch (SQLException e) {
@@ -137,8 +159,16 @@ public class OrderDAO {
 	    }
 	}
 
+	/**
+	 * Edits an existing order in the database based on the provided Order object and OrderNumber.
+	 *
+	 * @param order The Order object containing the updated information.
+	 * @param OrderNumber The unique identifier of the order to be updated.
+	 * @return true if the update is successful, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
 
-	// Update
+	
 	public boolean editOrder(Order order, int OrderNumber) {
 		String updateOrderSQL = "UPDATE orders SET requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ?, orderDate = ? WHERE OrderNumber = ?";
 
@@ -162,7 +192,16 @@ public class OrderDAO {
 			return false;
 		}
 	}
-	//Delete for OrderDetailsView
+	
+	/**
+	 * Retrieves order details based on the order number and line number.
+	 *
+	 * @param orderNumber The unique identifier of the order.
+	 * @param orderLineNumber The line number of the order detail.
+	 * @return An OrderDetails object if found, null otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+	
 	public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
 	    String sql = "SELECT * FROM orderdetails WHERE orderNumber = ? AND orderLineNumber = ?";
 
@@ -173,7 +212,6 @@ public class OrderDAO {
 
 	        try (ResultSet rs = pstmt.executeQuery()) {
 	            if (rs.next()) {
-	                // Assuming you have a constructor in OrderDetails class that accepts these parameters
 	                return new OrderDetails(
 	                    rs.getInt("quantityOrdered"),
 	                    rs.getDouble("priceEach"),
@@ -186,9 +224,17 @@ public class OrderDAO {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-	    return null; // or handle this case as needed
+	    return null; 
 	}
-	// Delete
+	
+	/**
+	 * Deletes an order and its associated details from the database based on the order number.
+	 *
+	 * @param orderNumber The unique identifier of the order to be deleted.
+	 * @return true if the deletion is successful, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+
 	public boolean deleteOrder(int orderNumber) {
 	    String deleteOrderDetailsSQL = "DELETE FROM orderdetails WHERE OrderNumber = ?";
 	    String deleteOrderSQL = "DELETE FROM orders WHERE OrderNumber = ?";
@@ -199,25 +245,23 @@ public class OrderDAO {
 
 	    try {
 	        conn = DataBaseConnection.getConnection();
-	        conn.setAutoCommit(false); // Start transaction
+	        conn.setAutoCommit(false); 
 
-	        // First, delete child records in orderdetails
 	        pstmtOrderDetails = conn.prepareStatement(deleteOrderDetailsSQL);
 	        pstmtOrderDetails.setInt(1, orderNumber);
 	        pstmtOrderDetails.executeUpdate();
 
-	        // Then, delete the order
 	        pstmtOrder = conn.prepareStatement(deleteOrderSQL);
 	        pstmtOrder.setInt(1, orderNumber);
 	        int affectedRows = pstmtOrder.executeUpdate();
 
-	        conn.commit(); // Commit transaction
+	        conn.commit(); 
 
 	        return affectedRows > 0;
 	    } catch (SQLException e) {
 	        if (conn != null) {
 	            try {
-	                conn.rollback(); // Rollback transaction on error
+	                conn.rollback(); 
 	            } catch (SQLException ex) {
 	                ex.printStackTrace();
 	            }
@@ -225,7 +269,6 @@ public class OrderDAO {
 	        e.printStackTrace();
 	        return false;
 	    } finally {
-	        // Clean up resources
 	        try {
 	            if (pstmtOrderDetails != null) pstmtOrderDetails.close();
 	            if (pstmtOrder != null) pstmtOrder.close();
@@ -235,9 +278,15 @@ public class OrderDAO {
 	        }
 	    }
 	}
+	
+	/**
+	 * Retrieves an order from the database based on the order number.
+	 *
+	 * @param OrderNumber The unique identifier of the order to be retrieved.
+	 * @return An Order object if found, null otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
 
-
-	// Read
 	public Order getOrder(int OrderNumber) {
 		String selectOrderSQL = "SELECT * FROM orders WHERE OrderNumber = ?";
 		Order order = null;
@@ -255,8 +304,7 @@ public class OrderDAO {
 				String status = rs.getString("status");
 				String comments = rs.getString("comments");
 				int customerNumber = rs.getInt("customerNumber");
-				// String productCode = rs.getString("productCode"); // Fetch the product code
-
+				
 				order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
 			}
 
@@ -267,7 +315,15 @@ public class OrderDAO {
 		return order;
 	}
 	
-	// In your OrderDAO class
+	/**
+	 * Deletes a specific order detail based on order number and line number.
+	 *
+	 * @param orderNumber The unique identifier of the order.
+	 * @param orderLineNumber The line number of the order detail to be deleted.
+	 * @return true if the deletion is successful, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+	
 	public boolean deleteOrderDetail(int orderNumber, int orderLineNumber) {
 	    String deleteOrderDetailSQL = "DELETE FROM orderdetails WHERE OrderNumber = ? AND orderLineNumber = ?";
 
@@ -287,14 +343,16 @@ public class OrderDAO {
 	        return false;
 	    }
 	}
+	
+	/**
+	 * Retrieves all order details from the database.
+	 *
+	 * @return A list of OrderDetails objects representing all order details in the database.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
 
-
-	// Define SQL queries for the "orderDetails" table
 	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
 
-	// Add more SQL queries for CRUD operations if needed
-
-	// Retrieve order details by order number
 	public List<OrderDetails> getOrderDetailsByOrderNumber() {
 		List<OrderDetails> orderDetailsList = new ArrayList<>();
 
@@ -304,14 +362,13 @@ public class OrderDAO {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// Retrieve data from the result set and create OrderDetails objects
+
 				int orderNumber = rs.getInt("orderNumber");
 				String productCode = rs.getString("productCode");
 				int quantityOrdered = rs.getInt("quantityOrdered");
 				double priceEach = rs.getDouble("priceEach");
 				int orderLineNumber = rs.getInt("orderLineNumber");
 
-				// Pass orderNumber as well when creating OrderDetails
 				OrderDetails orderDetails = new OrderDetails(quantityOrdered, priceEach, productCode, orderNumber,
 						orderLineNumber);
 				orderDetailsList.add(orderDetails);
@@ -319,12 +376,19 @@ public class OrderDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			// Add logging here to log the error message and details
+
 		}
-		return orderDetailsList; // Return the list of order details
+		return orderDetailsList; 
 	}
 
-	// Add this method to your OrderHandler class
+	/**
+	 * Retrieves the status of an order based on its order number.
+	 *
+	 * @param orderNumber The unique identifier of the order.
+	 * @return The status of the order as a String.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+	
 	public String getOrderStatus(int orderNumber) {
 		String selectOrderStatusSQL = "SELECT status FROM orders WHERE OrderNumber = ?";
 		String status = null;
@@ -340,6 +404,14 @@ public class OrderDAO {
 		}
 		return status;
 	}
+	
+	/**
+	 * Checks if a customer has made any payments.
+	 *
+	 * @param customerNumber The unique identifier of the customer.
+	 * @return true if the customer has made payments, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
 
 	public boolean checkPaymentStatus(int customerNumber) {
 		String checkPaymentStatusSQL = "SELECT COUNT(*) FROM payments WHERE customerNumber = ? AND paymentDate IS NOT NULL";
@@ -357,8 +429,16 @@ public class OrderDAO {
 		return false;
 	}
 
+	/**
+	 * Checks if a customer exists in the database.
+	 *
+	 * @param customerNumber The unique identifier of the customer.
+	 * @return true if the customer exists, false otherwise.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+	
 	public boolean customerExists(int customerNumber) {
-		// Your code to check if the customer exists
+
 		String checkCustomerExistsSQL = "SELECT COUNT(*) FROM customers WHERE customerNumber = ?";
 		try (Connection conn = DataBaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(checkCustomerExistsSQL)) {
@@ -374,7 +454,14 @@ public class OrderDAO {
 		return false;
 	}
 	
-	// Add this method to the OrderDAO class
+	/**
+	 * Searches for order details in the database based on the provided search criteria.
+	 *
+	 * @param searchCriteria The string to search for in various order detail attributes.
+	 * @return A list of OrderDetails objects that match the search criteria.
+	 * @throws SQLException If there is an issue with database access or query execution.
+	 */
+
 	public List<OrderDetails> searchOrderDetails(String searchCriteria) {
 	    List<OrderDetails> searchResults = new ArrayList<>();
 	    String searchOrderDetailsSQL = "SELECT * FROM orderdetails WHERE " +
@@ -387,7 +474,6 @@ public class OrderDAO {
 	    try (Connection connection = DataBaseConnection.getConnection();
 	         PreparedStatement preparedStatement = connection.prepareStatement(searchOrderDetailsSQL)) {
 	        
-	        // Setting the search criteria for all the placeholders
 	        for (int i = 1; i <= 5; i++) {
 	            preparedStatement.setString(i, "%" + searchCriteria + "%");
 	        }

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * Represents information about a customer, including customer number, company name,
  * contact name, sales representative, credit limit, and address information.
  * 
- * <p>This class serves as an entity class for the "customer" entity.</p>
+ * This class serves as an entity class for the "customer" entity.
  * 
  * @author Henrik
  * @version 07.11.23

@@ -23,6 +23,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
+/**
+ * The MenuBar class represents the menu bar for the main application window.
+ * It provides various menu items and actions for interacting with the application.
+ * @author 
+ * @version
+ */
+
 public class MenuBar {
 
     protected JMenuBar menuBar;
@@ -34,75 +41,87 @@ public class MenuBar {
     protected JMenuItem aboutMenuItem;
     protected JMenu helpMenu;
     protected JMenuItem helpMenuItem;
-    protected boolean includeExtendedMenuItems; // Flag to include extended menu items
-
+    protected boolean includeExtendedMenuItems;
+    
+    /**
+     * Constructs a MenuBar with the specified inclusion of extended menu items.
+     *
+     * @param includeExtendedMenuItems True if extended menu items should be included; otherwise, false.
+     */
+    
     public MenuBar(boolean includeExtendedMenuItems) {
         this.includeExtendedMenuItems = includeExtendedMenuItems;
-        // Initialize the menu bar
+     
         menuBar = new JMenuBar();
 
-        // Create a File menu
+       
         fileMenu = new JMenu("file");
 
-        // Add items to the File menu
+  
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");
         testDatabaseConnectionItem.addActionListener(new TestConnectionListener());
         sqlQueryItem = new JMenuItem("SQL Query");
-        sqlQueryItem.addActionListener(new SQLQueryListener()); // dont know
+        sqlQueryItem.addActionListener(new SQLQueryListener()); 
         exitMenuItem = new JMenuItem("Exit");
 
-        // Add extended menu items if the flag is true
         if (includeExtendedMenuItems) {
             addExtendedMenuItems();
         }
 
-        // Add the rest of the items to the File menu
         fileMenu.add(testDatabaseConnectionItem);
         fileMenu.add(sqlQueryItem);
         fileMenu.add(exitMenuItem);
 
-        // Create an About menu
         aboutMenu = new JMenu("About");
         aboutMenuItem = createMenuItem("About", "About.txt");
         aboutMenu.add(aboutMenuItem);
 
-        // Create a Help menu
         helpMenu = new JMenu("Help");
         helpMenuItem = createMenuItem("Help", "Help.txt");
         helpMenu.add(helpMenuItem);
 
-        // Add menus to the menu bar
         menuBar.add(fileMenu);
         menuBar.add(aboutMenu);
         menuBar.add(helpMenu);
         
     }
 
+    /**
+     * Gets the menu bar associated with this MenuBar.
+     *
+     * @return The JMenuBar instance.
+     */
+    
     public JMenuBar getMenuBar() {
         return menuBar;
     }
     
+    /**
+     * Adds extended menu items, if included, to the File menu.
+     */
 
     private void addExtendedMenuItems() {
-        // Add extended menu items
         
         JMenuItem uploadCsv = new JMenuItem("Upload Csv");
-
-        // Add action listeners
        
        uploadCsv.addActionListener(new UploadCsvListener());
-
-        // Add items to the File menu
         
         fileMenu.add(uploadCsv);
     }
+    
+    /**
+     * Creates a menu item with the specified text and associated file content.
+     *
+     * @param text     The text to display on the menu item.
+     * @param filePath The path to the file containing the content.
+     * @return The created JMenuItem.
+     */
 
     private JMenuItem createMenuItem(String text, String filePath) {
         JMenuItem menuItem = new JMenuItem(text);
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Read text from file and display it in a JOptionPane
                 try {
                     String content = readTextFromFile(filePath);
                     JOptionPane.showMessageDialog(null, content, text, JOptionPane.INFORMATION_MESSAGE);
@@ -114,6 +133,14 @@ public class MenuBar {
         return menuItem;
     }
 
+    /**
+     * Reads the content of a text file located at the specified filePath.
+     *
+     * @param filePath The path to the text file.
+     * @return The content of the text file as a String.
+     * @throws IOException If an error occurs while reading the file.
+     */
+    
     private String readTextFromFile(String filePath) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream("/documents/" + filePath)) {
             if (inputStream != null) {
@@ -125,6 +152,10 @@ public class MenuBar {
         }
     }
 
+    /**
+     * ActionListener for the "Upload CSV" menu item.
+     * Allows users to select a CSV file for bulk import and notifies about the import result.
+     */
    
     private class UploadCsvListener implements ActionListener {
         @Override
@@ -146,86 +177,110 @@ public class MenuBar {
             }
         }
     }
-
-
+    
+    /**
+     * ActionListener for the "Test Database Connection" menu item.
+     * Attempts to establish a database connection and displays a message box indicating the result.
+     */
     
     private class TestConnectionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Try to get a connection and show a message depending on whether it was successful
             try {
                 Connection conn = DataBaseConnection.getConnection();
-                // If no exception is thrown, the connection is successful
                 JOptionPane.showMessageDialog(null, "Database connection successful!");
-                // Don't forget to close the connection when done
                 conn.close();
             } catch (SQLException ex) {
-                // If there's an exception, the connection failed
                 JOptionPane.showMessageDialog(null, "Failed to connect to the database: " + ex.getMessage());
             }
         }
     }
     
- // ActionListener for sqlQueryItem
+    /**
+     * ActionListener for the "SQL Query" menu item.
+     * Displays a dialog for entering an SQL query and executes it. Displays the results or errors in a message box.
+     */
+    
     private class SQLQueryListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Create a text area for user input
             JTextArea queryInput = new JTextArea(10, 40);
             queryInput.setWrapStyleWord(true);
             queryInput.setLineWrap(true);
             JScrollPane scrollPane = new JScrollPane(queryInput);
 
-            // Show dialog with text area
             int option = JOptionPane.showConfirmDialog(null, scrollPane, "Enter SQL Query",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-            // If user clicks OK, process the query
             if (option == JOptionPane.OK_OPTION) {
                 String sql = queryInput.getText();
                 executeSqlQuery(sql);
             }
         }
 
+        /**
+         * Executes an SQL query and displays the results or errors in a message box.
+         *
+         * @param sql The SQL query to execute.
+         */
+        
         private void executeSqlQuery(String sql) {
             try (Connection conn = DataBaseConnection.getConnection();
                  Statement stmt = conn.createStatement()) {
                  
-                // Check if the query is a SELECT or an action query (INSERT/UPDATE/DELETE)
                 if (sql.trim().toUpperCase().startsWith("SELECT")) {
                     executeSelectQuery(stmt, sql);
                 } else {
                     executeActionQuery(stmt, sql);
                 }
             } catch (SQLException ex) {
-                // Handle any SQL errors
                 JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
             }
         }
+        
+        /**
+         * Executes a SELECT SQL query and displays the results in a table.
+         *
+         * @param stmt The Statement object to execute the query.
+         * @param sql  The SELECT SQL query.
+         * @throws SQLException If a database error occurs.
+         */
 
         private void executeSelectQuery(Statement stmt, String sql) throws SQLException {
             ResultSet rs = stmt.executeQuery(sql);
-            // Convert ResultSet to a more friendly format, like a JTable
             JTable table = new JTable(buildTableModel(rs));
             JOptionPane.showMessageDialog(null, new JScrollPane(table));
         }
+        
+        /**
+         * Executes a non-SELECT SQL query and displays the number of affected rows.
+         *
+         * @param stmt The Statement object to execute the query.
+         * @param sql  The non-SELECT SQL query.
+         * @throws SQLException If a database error occurs.
+         */
+
 
         private void executeActionQuery(Statement stmt, String sql) throws SQLException {
             int affectedRows = stmt.executeUpdate(sql);
-            // Inform the user of the result
             JOptionPane.showMessageDialog(null, affectedRows + " rows affected.");
         }
 
+        /**
+         * Builds a DefaultTableModel from a ResultSet, allowing the data to be displayed in a JTable.
+         *
+         * @param rs The ResultSet containing query results.
+         * @return A DefaultTableModel representing the data from the ResultSet.
+         * @throws SQLException If a database error occurs while processing the ResultSet.
+         */
         private DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
             ResultSetMetaData metaData = rs.getMetaData();
-            // Names of columns
             Vector<String> columnNames = new Vector<>();
             int columnCount = metaData.getColumnCount();
             for (int column = 1; column <= columnCount; column++) {
                 columnNames.add(metaData.getColumnName(column));
             }
 
-            // Data of the table
             Vector<Vector<Object>> data = new Vector<>();
             while (rs.next()) {
                 Vector<Object> vector = new Vector<>();
@@ -237,9 +292,6 @@ public class MenuBar {
 
             return new DefaultTableModel(data, columnNames);
         }
+
     }
-
-    
-
-
 }

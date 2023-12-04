@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-
 import javax.swing.JFileChooser;
 
 import model.Order;
@@ -17,44 +16,108 @@ import model.OrderDetails;
 import model.OrderInput;
 import view.OrderView;
 
+/**
+ * Manages business logic related to order processing in the application.
+ * Interacts with OrderView for UI elements and OrderDAO for database operations.
+ * Facilitates adding, updating, deleting, searching orders, and saving order data to file.
+ * 
+ * @author 
+ * @version 2.12.2023
+ */
+
 public class OrderHandler {
 
     private final OrderView orderView;
     private final OrderDAO orderDAO;
+    
+    /**
+     * Constructs a new OrderHandler with the specified OrderView and OrderDAO.
+     *
+     * @param orderView The OrderView instance used for UI interactions.
+     * @param orderDAO The OrderDAO instance used for data access operations.
+     */
 
     public OrderHandler(OrderView orderView, OrderDAO orderDAO) {
         this.orderView = orderView;
         this.orderDAO = orderDAO;
     }
+    
+    /**
+     * Creates an ActionListener for adding a new order.
+     *
+     * @return ActionListener to add a new order.
+     */
 
+    /**
+     * Creates an ActionListener for adding a new order.
+     *
+     * @return ActionListener to add a new order.
+     */
     public ActionListener getAddOrderButtonListener() {
         return this::addOrder;
     }
 
+    /**
+     * Creates an ActionListener for updating an existing order.
+     *
+     * @return ActionListener to update an order.
+     */
     public ActionListener getUpdateOrderButtonListener() {
         return this::updateOrder;
     }
 
+    /**
+     * Creates an ActionListener for deleting an order.
+     *
+     * @return ActionListener to delete an order.
+     */
     public ActionListener getDeleteOrderButtonListener() {
         return this::deleteOrder;
     }
 
+    /**
+     * Creates an ActionListener for searching orders.
+     *
+     * @return ActionListener to search orders.
+     */
     public ActionListener getSearchOrderButtonListener() {
         return this::searchOrder;
     }
 
+    /**
+     * Creates an ActionListener for saving orders to a file.
+     *
+     * @return ActionListener to save orders.
+     */
     public ActionListener getSaveOrderButtonListener() {
         return this::saveOrdersToFile;
     }
 
+    /**
+     * Creates an ActionListener for checking payment status.
+     *
+     * @return ActionListener to check payment status.
+     */
     public ActionListener getPaymentButtonListener() {
         return this::checkPaymentStatus;
     }
 
+    /**
+     * Creates an ActionListener for checking order status.
+     *
+     * @return ActionListener to check order status.
+     */
     public ActionListener getCheckStatusButtonListener() {
         return this::checkOrderStatus;
     }
 
+    /**
+     * Handles the addition of a new order. Gathers user input for order details
+     * and processes the addition of the order through OrderDAO.
+     *
+     * @param e The action event that triggers the add operation.
+     */
+    
     private void addOrder(ActionEvent e) {
         OrderInput orderAndDetails = orderView.gatherUserInputForAddOrder();
 
@@ -70,6 +133,13 @@ public class OrderHandler {
             }
         }
     }
+    
+    /**
+     * Handles updating an existing order. Fetches the order based on the provided
+     * order number and prompts the user for update details.
+     *
+     * @param e The action event that triggers the update operation.
+     */
 
     private void updateOrder(ActionEvent e) {
         String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
@@ -96,6 +166,12 @@ public class OrderHandler {
         }
     }
 
+    /**
+     * Handles the deletion of an order. Deletes the order specified by the user.
+     *
+     * @param e The action event that triggers the delete operation.
+     */
+    
     private void deleteOrder(ActionEvent e) {
         Integer orderNumberToDelete = orderView.gatherUserInputForDeleteOrder();
 
@@ -109,6 +185,12 @@ public class OrderHandler {
             }
         }
     }
+    
+    /**
+     * Handles searching for orders based on user-provided criteria.
+     *
+     * @param e The action event that triggers the search operation.
+     */
 
     private void searchOrder(ActionEvent e) {
         String searchCriteria = orderView.gatherUserInputForSearch();
@@ -118,7 +200,12 @@ public class OrderHandler {
         }
     }
     
-
+    /**
+     * Handles saving the current order data to a file. Prompts the user
+     * to choose a file destination and writes the data in CSV format.
+     *
+     * @param e The action event that triggers the save operation.
+     */
 
     public void saveOrdersToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
@@ -147,6 +234,13 @@ public class OrderHandler {
             }
         }
     }
+    
+    /**
+     * Checks the payment status of a customer. Verifies if the specified customer
+     * has made all required payments.
+     *
+     * @param e The action event that triggers the payment status check.
+     */
 
     private void checkPaymentStatus(ActionEvent e) {
         String customerNumberString = orderView.gatherInfoForPaymentCheck();
@@ -160,7 +254,8 @@ public class OrderHandler {
             }
         }
     }
-
+    
+ 
     public void checkPaymentStatus(OrderView orderView, int customerNumber) {
         if (orderDAO.customerExists(customerNumber)) {
             boolean paid = orderDAO.checkPaymentStatus(customerNumber);
@@ -173,6 +268,14 @@ public class OrderHandler {
             JOptionPane.showMessageDialog(orderView, "Customer with Customer Number " + customerNumber + " does not exist.");
         }
     }
+    
+    /**
+     * Checks the status of an order. Retrieves and displays the current status
+     * of the specified order.
+     *
+     * @param e The action event that triggers the order status check.
+     */
+
 
     public void checkOrderStatus(ActionEvent e) {
         String orderNumberString = orderView.gatherInfoForDeliverCheck();
@@ -199,11 +302,7 @@ public class OrderHandler {
         }
         
     }
-      
-
-    	
-    	
-
+  
  }
     
     

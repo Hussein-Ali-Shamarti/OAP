@@ -1,13 +1,11 @@
 package model;
 
 /**
-/**
-* File: Employee.java
-* Description: This is an entity class for "Employee" and encapsulates the basic information of an employee.
+* This is an entity class for "Employee" and encapsulates the basic information of an employee.
 * This class represents information about an employee's attributes, such as employee number, firstname, lastname,
 * job title, email, role, and more.
 * 
-* <p>The class inherits from the Address class, incorporating address-related information.</p>
+* The class inherits from the Address class, incorporating address-related information.
 * 
 * @author Marziyeh
 * @version 11.11.2023
@@ -37,7 +35,7 @@ public class Employee extends Address {
      * @param jobTitle                The job title of the employee.
      */
     public Employee(int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
-        super(null, null, null, null, null, null, null); // Initialize the Addresses when they are taken into use
+        super(null, null, null, null, null, null, null); 
         this.employeeNumber = employeeNumber;
         this.firstName = firstName;
         this.lastName = lastName;

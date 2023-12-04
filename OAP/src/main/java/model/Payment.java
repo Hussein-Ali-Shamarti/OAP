@@ -1,12 +1,3 @@
-/**
- * 
- * File: Payment.java
- * Description: This is an entity class for the payments and encapsulates the details of a payment, including the date of payment and the amount.
- * The payment data comes from a 3rd-party and should be final (not editable).
- * @author Kim
- * @version 07.11.2023
-*/ 
-
 package model;
 
 import java.util.Date;
@@ -14,17 +5,15 @@ import java.util.Date;
 /**
  * Represents a payment, including check number, payment date, and the paid amount.
  * 
- * <p>This class contains a constructor and getter methods for retrieving check number,
- * payment date, and the total paid amount.</p>
- * 
- * <p>Note: The check number is a unique serial number consisting of two letters followed by 6 digits.</p>
+ * This class contains a constructor and getter methods for retrieving check number,
+ * payment date, and the total paid amount.
  * 
  * @author Kim
- * @version [Version Date]
+ * @version 07.11.2023
  */
 public class Payment {
     
-    // Declaration of private data fields 
+  
     private final String checkNr;
     private final Date paymentDate;
     private final double amount;

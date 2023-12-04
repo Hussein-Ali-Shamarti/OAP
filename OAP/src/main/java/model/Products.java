@@ -6,7 +6,7 @@ import java.util.List;
  * Represents information about a product, including its code, name, scale, vendor, description,
  * stock quantity, buy price, and MSRP (Manufacturer's Suggested Retail Price).
  * 
- * <p>This class serves as an entity class for the "product" entity and encapsulates basic information about a product.</p>
+ * This class serves as an entity class for the "product" entity and encapsulates basic information about a product.
  * 
  * @author Ole
  * @version 09.11.2023
@@ -49,13 +49,28 @@ public class Products {
         this.msrp = msrp;
     }
     
+    /**
+     * Retrieves a list of all product names from the database.
+     * This method is intended to fetch the names of all products and return them in a list.
+     *
+     * @return A List of String containing the names of all products.
+     *         Returns null if the product names could not be retrieved.
+     */
+    
     public List<String> getAllProductNames() {
-        // Implementation goes here
         return null;
     }
+    
+    /**
+     * Retrieves the name of the product associated with a given product code.
+     * This method queries the database to find the product name corresponding to the specified product code.
+     *
+     * @param productCode The product code for which the product name is to be retrieved.
+     * @return The name of the product associated with the given product code.
+     *         Returns an empty string if no product is found or if an error occurs.
+     */
 
     public String getProductNameByCode(String productCode) {
-        // Implementation goes here
         return "";
     }
 

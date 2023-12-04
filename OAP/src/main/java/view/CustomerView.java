@@ -2,9 +2,6 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-
-
-
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.List; 
@@ -12,9 +9,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CustomerHandler;
-
-
-
 import model.Customer;
 import model.CustomerDAO;
 
@@ -123,7 +117,7 @@ public class CustomerView extends MainView {
 
         JPanel buttonPanelHolder = new JPanel(new BorderLayout());
         buttonPanelHolder.add(controlPanel, BorderLayout.NORTH);
-        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER);
+        buttonPanelHolder.add(Box.createVerticalStrut(10), BorderLayout.CENTER); 
         this.add(buttonPanelHolder, BorderLayout.SOUTH);
     }
 
