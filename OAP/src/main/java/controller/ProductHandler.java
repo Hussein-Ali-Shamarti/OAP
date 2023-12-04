@@ -193,7 +193,6 @@ public class ProductHandler {
      * file location and writes the product data in CSV format. Reports any file I/O errors encountered.
      *
      * @param e The action event triggering the save operation.
-     * @throws IOException If an I/O error occurs while writing to the file.
      */
     
     public void saveProductsToFile(ActionEvent e) {
@@ -204,7 +203,6 @@ public class ProductHandler {
      * Saves the product data to a CSV file chosen by the user. It writes details such as product
      * code, name, line, etc. Alerts the user upon successful save or error.
      *
-     * @throws IOException If an I/O error occurs while writing to the file.
      */
     
     public void saveProductsToFile() {

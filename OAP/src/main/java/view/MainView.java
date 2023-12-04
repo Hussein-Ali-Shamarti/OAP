@@ -18,7 +18,6 @@ import javax.swing.SwingUtilities;
  * The MainView class represents the main view of the application.
  * It provides the user interface for the application's main menu and layout.
  * @author Ole
- * @version dato
  */
 
 
@@ -95,6 +94,11 @@ public class MainView extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * An ActionListener implementation for handling product-related events.
+     * This class defines the behavior when specific product-related actions occur.
+     */
+    
     public class ProductListener implements ActionListener {
 
         /**
@@ -111,6 +115,11 @@ public class MainView extends JFrame {
             });
         }
 }
+    
+    /**
+     * An ActionListener implementation for handling employee-related events.
+     * This class defines the behavior when specific employee-related actions occur.
+     */
     
     public class EmployeeListener implements ActionListener {
 
@@ -129,6 +138,11 @@ public class MainView extends JFrame {
         }
     }
 
+    /**
+     * An ActionListener implementation for handling customer-related events.
+     * This class defines the behavior when specific customer-related actions occur.
+     */
+    
     public class CustomerListener implements ActionListener {
 
         /**
@@ -147,6 +161,11 @@ public class MainView extends JFrame {
         }
     }
 
+    /**
+     * An ActionListener implementation for handling order-related events.
+     * This class defines the behavior when specific order-related actions occur.
+     */
+    
     public class OrderListener implements ActionListener {
 
         /**

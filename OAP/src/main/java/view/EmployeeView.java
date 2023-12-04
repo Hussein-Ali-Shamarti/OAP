@@ -29,7 +29,6 @@ import controller.EmployeeHandler;
  * The class uses an EmployeeDAO instance for database operations and interacts with the user through various UI components.
  *
  * @author 7080
- * @version 2.12.2023
  */
 
 public class EmployeeView extends MainView {

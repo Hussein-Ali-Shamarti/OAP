@@ -26,7 +26,6 @@ public class DeliveryDAO {
      * 
      * @param orderNumber The unique order number for the shipment.
      * @return The status of the shipment as a String.
-     * @throws SQLException If a database access error occurs or the query fails to execute.
      */
 	
     public String checkShipmentStatus(int orderNumber) {

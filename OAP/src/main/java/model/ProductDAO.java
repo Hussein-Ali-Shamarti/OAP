@@ -20,8 +20,8 @@ import database.DataBaseConnection;
  * The methods in this class are designed to handle various aspects of product management, such as adding new products,
  * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
  * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
+ * 
  * @author Ole
- * @version 08.11.2023
  */
 
 public class ProductDAO {
@@ -194,7 +194,7 @@ public class ProductDAO {
 
     /**
      * Deletes a product from the database based on the product code.
-     * @param productCode The product code of the product to be deleted.
+     * @param productCodes The product code of the product to be deleted.
      * @return True if the product is deleted successfully, false otherwise.
      */
     public boolean deleteProducts(List<String> productCodes) {

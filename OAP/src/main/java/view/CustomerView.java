@@ -17,7 +17,6 @@ import model.CustomerDAO;
  * The class uses a CustomerDAO instance for database operations and interacts with the user through various UI components.
  *
  * @author 7080
- * @version 3.12.2023
  */
 
 public class CustomerView extends MainView {

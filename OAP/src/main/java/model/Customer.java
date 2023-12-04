@@ -29,8 +29,15 @@ public class Customer extends Address {
      * @param customerName            The customer name.
      * @param contactLastName        The contact's last name.
      * @param contactFirstName       The contact's first name.
-     * @param salesRepEmployeeNumber  The sales representative's employee number.
-     * @param creditLimit             The credit limit.
+     * @param phone                  The phone number.
+     * @param addressLine1           The first line of the address.
+     * @param addressLine2           The second line of the address.
+     * @param city                   The city of the address.
+     * @param state                  The state or region of the address.
+     * @param postalCode             The postal code of the address.
+     * @param country                The country of the address.
+     * @param salesRepEmployeeNumber The sales representative's employee number.
+     * @param creditLimit            The credit limit.
      */
     public Customer(int customerNumber, String customerName, String contactLastName, String contactFirstName,
                     String phone, String addressLine1, String addressLine2, String city,
@@ -44,7 +51,6 @@ public class Customer extends Address {
         this.salesRepEmployeeNumber = salesRepEmployeeNumber;
         this.creditLimit = creditLimit;
     }
-
     /**
      * Gets the customer number.
      * 

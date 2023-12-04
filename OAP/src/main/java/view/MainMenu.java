@@ -13,7 +13,6 @@ import javax.swing.JPanel;
  * This panel is typically used as a main menu screen with options like "Products," "Orders," "Customers," and "Employees."
  * 
  * @author Ole
- * @version dato
  */
 public class MainMenu extends JPanel {
 

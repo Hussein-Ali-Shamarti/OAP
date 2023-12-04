@@ -210,35 +210,38 @@ public class Order {
         return "orderID: " + orderNumber + ", orderDate: " + orderDate + ", requiredDate: " + requiredDate + 
                ", shippedDate: " + shippedDate + ", status: " + status + ", comments: " + comments;
     }
+    
+    /**
+     * Calculates the total value of the order by summing the subtotal of each order detail.
+     *
+     * @return The total value of the order as a BigDecimal.
+     */
 
     public BigDecimal calculateOrderTotal() {
-        /**
-         * Calculates the total value of the order by summing the subtotal of each order detail.
-         *
-         * @return The total value of the order as a BigDecimal.
-         */
         BigDecimal total = BigDecimal.ZERO;
         for (OrderDetails details : orderDetailsList) {
             total = total.add(details.calculateSubTotal());
         }
         return total;
     }
+    
+    /**
+     * Retrieves the list of OrderDetails associated with this order.
+     *
+     * @return A list of OrderDetails objects.
+     */
 
     public List<OrderDetails> getOrderDetailsList() {
-        /**
-         * Retrieves the list of OrderDetails associated with this order.
-         *
-         * @return A list of OrderDetails objects.
-         */
         return orderDetailsList;
     }
 
+    /**
+     * Sets the list of OrderDetails for this order.
+     *
+     * @param orderDetailsList The list of OrderDetails objects to be associated with this order.
+     */
+    
     public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
-        /**
-         * Sets the list of OrderDetails for this order.
-         *
-         * @param orderDetailsList The list of OrderDetails objects to be associated with this order.
-         */
         this.orderDetailsList = orderDetailsList;
     }
 

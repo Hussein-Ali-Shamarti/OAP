@@ -10,13 +10,24 @@ import java.sql.SQLException;
  * Provides methods for establishing a connection to the database and preparing SQL statements.
  * This class manages the database connection details and offers utility methods for database operations.
  * 
- * @author 
+ * @author 7094
  * @version 2.12.2023
  */
 
 public class DataBaseConnection {
+    /**
+     * The URL of the database.
+     */
     protected static String dbUrl = "jdbc:mysql://sql11.freesqldatabase.com:3306/sql11665772";
+
+    /**
+     * The username used to connect to the database.
+     */
     protected static String user = "sql11665772";
+
+    /**
+     * The password used to connect to the database.
+     */
     protected static String password = "m5kZbc2aMA";
 
     /**
@@ -50,6 +61,12 @@ public class DataBaseConnection {
         return user;
     }
 
+    /**
+     * Gets the database connection password.
+     *
+     * @return The password used to connect to the database.
+     */
+    
     public static String getPassword() {
         return password;
     }

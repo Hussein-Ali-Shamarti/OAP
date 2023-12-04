@@ -6,16 +6,42 @@ package model;
  * It serves as a base for more specific address implementations.
  * 
  * @author Henrik
- * @version: 07.11.2023
  */
 
 public abstract class Address {
-    protected String addressLine2;
+    /**
+     * The first line of the address.
+     */
     protected String addressLine1;
+
+    /**
+     * The second line of the address.
+     */
+    protected String addressLine2;
+
+    /**
+     * The city of the address.
+     */
     protected String city;
+
+    /**
+     * The state or region of the address.
+     */
     protected String state;
+
+    /**
+     * The postal code of the address.
+     */
     protected String postalCode;
+
+    /**
+     * The country of the address.
+     */
     private String country;
+
+    /**
+     * The phone number associated with the address.
+     */
     private String phone;
 
     /**

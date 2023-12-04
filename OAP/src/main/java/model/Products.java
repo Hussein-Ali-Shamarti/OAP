@@ -9,7 +9,6 @@ import java.util.List;
  * This class serves as an entity class for the "product" entity and encapsulates basic information about a product.
  * 
  * @author Ole
- * @version 09.11.2023
  */
 public class Products {
 

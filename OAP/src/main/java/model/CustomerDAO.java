@@ -51,7 +51,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
  *
  * @param searchCriteria The criteria used for searching customers.
  * @return A list of customers that match the search criteria.
- * @throws SQLException If a database access error occurs or the SQL query fails to execute.
  */
    
     public List<Customer> searchCustomers(String searchCriteria) {
@@ -109,7 +108,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      *
      * @param customer The Customer object to be added.
      * @return true if the customer is successfully added, false otherwise.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
     
     public boolean addCustomer(Customer customer) {
@@ -160,7 +158,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      * @param salesRepEmployeeNumber New sales rep employee number for the customer.
      * @param creditLimit New credit limit for the customer.
      * @return true if the operation was successful, false otherwise.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
 
     public boolean editCustomer(int customerNumber, String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, BigDecimal creditLimit) {
@@ -196,7 +193,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      *
      * @param customerNumber The unique identifier of the customer.
      * @return The Customer object if found, null otherwise.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
     
     public Customer fetchCustomerData(int customerNumber) {
@@ -236,7 +232,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      *
      * @param customerNumber The unique identifier of the customer to be deleted.
      * @return true if the customer was successfully deleted, false otherwise.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
     
     public boolean deleteCustomer(int customerNumber) {
@@ -256,7 +251,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      * Fetches the employee numbers of all sales representatives from the database.
      *
      * @return A list of integers representing the employee numbers of sales representatives.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
 
     public List<Integer> fetchSalesRepEmployeeNumbers() {
@@ -296,7 +290,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
      * Fetches all customer data from the database. Each customer's data is represented as a String array.
      *
      * @return A list of String arrays, each representing a customer's data.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
    
     

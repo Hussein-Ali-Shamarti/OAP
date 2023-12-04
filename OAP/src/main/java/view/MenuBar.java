@@ -21,22 +21,62 @@ import java.util.Vector;
 /**
  * The MenuBar class represents the menu bar for the main application window.
  * It provides various menu items and actions for interacting with the application.
- * @author 
- * @version
+ * 
+ * @author 7120
  */
 
 public class MenuBar {
 
-    protected JMenuBar menuBar;
-    protected JMenu fileMenu;
-    protected JMenuItem testDatabaseConnectionItem;
-    protected JMenuItem sqlQueryItem;
-    protected JMenuItem exitMenuItem;
-    protected JMenu aboutMenu;
-    protected JMenuItem aboutMenuItem;
-    protected JMenu helpMenu;
-    protected JMenuItem helpMenuItem;
-    protected boolean includeExtendedMenuItems;
+	/**
+	 * Represents the main menu bar of the application's user interface.
+	 */
+	protected JMenuBar menuBar;
+
+	/**
+	 * Represents the "File" menu in the application's user interface.
+	 */
+	protected JMenu fileMenu;
+
+	/**
+	 * Represents the "Test Database Connection" menu item in the "File" menu.
+	 */
+	protected JMenuItem testDatabaseConnectionItem;
+
+	/**
+	 * Represents the "SQL Query" menu item in the "File" menu.
+	 */
+	protected JMenuItem sqlQueryItem;
+
+	/**
+	 * Represents the "Exit" menu item in the "File" menu.
+	 */
+	protected JMenuItem exitMenuItem;
+
+	/**
+	 * Represents the "About" menu in the application's user interface.
+	 */
+	protected JMenu aboutMenu;
+
+	/**
+	 * Represents the "About" menu item in the "About" menu.
+	 */
+	protected JMenuItem aboutMenuItem;
+
+	/**
+	 * Represents the "Help" menu in the application's user interface.
+	 */
+	protected JMenu helpMenu;
+
+	/**
+	 * Represents the "Help" menu item in the "Help" menu.
+	 */
+	protected JMenuItem helpMenuItem;
+
+	/**
+	 * A boolean flag indicating whether to include extended menu items.
+	 */
+	protected boolean includeExtendedMenuItems;
+
     
     /**
      * Constructs a MenuBar with the specified inclusion of extended menu items.

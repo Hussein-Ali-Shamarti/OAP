@@ -27,8 +27,8 @@ import view.OrderView;
  * Interacts with OrderView for UI elements and OrderDAO for database operations.
  * Facilitates adding, updating, deleting, searching orders, and saving order data to file.
  * 
- * @author 
- * @version 2.12.2023
+ * @author 7094
+ * 
  */
 
 public class OrderHandler {

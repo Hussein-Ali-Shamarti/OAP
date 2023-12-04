@@ -8,9 +8,7 @@ import java.math.RoundingMode;
  * This class contains a constructor, getter and setter methods, and a method to calculate
  * the subtotal price of an order.
  * 
- * @Author 7094
- * @CoAuthor Kim
- * @version 07.11.2023
+ * @author 7094
  */
 
 public class OrderDetails {
@@ -28,7 +26,7 @@ public class OrderDetails {
     * @param priceEach       The unit price of the product.
     * @param productCode     The product code.
     * @param orderNumber     The order number.
-    * @param orderLineNr     The order line number.
+    * @param orderLineNumber     The order line number.
     */
 
 	   public OrderDetails(int quantityOrdered, double priceEach, String productCode, int orderNumber, int orderLineNumber) {
@@ -128,7 +126,7 @@ public String toString() {
    /**
     * Sets the order line number.
     * 
-    * @param orderLineNr The order line number to set.
+    * @param orderLineNumber The order line number to set.
     */
    
    public void setOrderLineNumber(int orderLineNumber) {

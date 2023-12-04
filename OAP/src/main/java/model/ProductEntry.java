@@ -7,7 +7,6 @@ import javax.swing.JTextField;
  * Orders may also contain order details, which are not implemented in this version.
  * 
  * @author 7094
- * @version 07.11.2023
  */
 
 public class ProductEntry {
@@ -20,11 +19,11 @@ public class ProductEntry {
     /**
      * Constructs a new ProductEntry with the given fields.
      * 
-     * @param productCodeField       The text field for product code.
-     * @param quantityOrderedField   The text field for quantity ordered.
-     * @param orderLineNumberField   The text field for order line number.
-     * @param buyPriceField          The text field for buy price.
-     * @param msrpField              The text field for MSRP.
+     * @param productCode     The text field for product code.
+     * @param quantityOrdered  The text field for quantity ordered.
+     * @param orderLineNumber   The text field for order line number.
+     * @param buyPrice        The text field for buy price.
+     * @param msrp             The text field for MSRP.
      */
     
     public ProductEntry(JTextField productCode, JTextField quantityOrdered, JTextField orderLineNumber, JTextField buyPrice, JTextField msrp) {

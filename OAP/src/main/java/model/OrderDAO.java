@@ -16,7 +16,6 @@ import database.DataBaseConnection;
  * The class utilizes prepared statements for secure interaction with the database.
  *
  * @author Hussein
- * @version 
  */
 
 
@@ -83,8 +82,7 @@ public class OrderDAO {
 	 *
 	 * @param order The Order object containing order information.
 	 * @param orderDetailsList The list of OrderDetails associated with this order.
-	 * @return true if the order is successfully added, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
+	 * @return true if the order is successfully added, false otherwise..
 	 */
 	
 	public boolean addOrder(Order order, List<OrderDetails> orderDetailsList) {
@@ -168,7 +166,6 @@ public class OrderDAO {
 	 * @param order The Order object containing the updated information.
 	 * @param OrderNumber The unique identifier of the order to be updated.
 	 * @return true if the update is successful, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	public boolean editOrder(Order order, int OrderNumber) {
@@ -201,7 +198,6 @@ public class OrderDAO {
 	 * @param orderNumber The unique identifier of the order.
 	 * @param orderLineNumber The line number of the order detail.
 	 * @return An OrderDetails object if found, null otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 	
 	public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
@@ -234,7 +230,6 @@ public class OrderDAO {
 	 *
 	 * @param orderNumber The unique identifier of the order to be deleted.
 	 * @return true if the deletion is successful, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	public boolean deleteOrder(int orderNumber) {
@@ -286,7 +281,6 @@ public class OrderDAO {
 	 *
 	 * @param OrderNumber The unique identifier of the order to be retrieved.
 	 * @return An Order object if found, null otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	public Order getOrder(int OrderNumber) {
@@ -323,7 +317,6 @@ public class OrderDAO {
 	 * @param orderNumber The unique identifier of the order.
 	 * @param orderLineNumber The line number of the order detail to be deleted.
 	 * @return true if the deletion is successful, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 	
 	public boolean deleteOrderDetail(int orderNumber, int orderLineNumber) {
@@ -350,7 +343,6 @@ public class OrderDAO {
 	 * Retrieves all order details from the database.
 	 *
 	 * @return A list of OrderDetails objects representing all order details in the database.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
@@ -388,7 +380,6 @@ public class OrderDAO {
 	 *
 	 * @param orderNumber The unique identifier of the order.
 	 * @return The status of the order as a String.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 	
 	public String getOrderStatus(int orderNumber) {
@@ -412,7 +403,6 @@ public class OrderDAO {
 	 *
 	 * @param customerNumber The unique identifier of the customer.
 	 * @return true if the customer has made payments, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	public boolean checkPaymentStatus(int customerNumber) {
@@ -436,7 +426,6 @@ public class OrderDAO {
 	 *
 	 * @param customerNumber The unique identifier of the customer.
 	 * @return true if the customer exists, false otherwise.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 	
 	public boolean customerExists(int customerNumber) {
@@ -461,7 +450,6 @@ public class OrderDAO {
 	 *
 	 * @param searchCriteria The string to search for in various order detail attributes.
 	 * @return A list of OrderDetails objects that match the search criteria.
-	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
 	public List<OrderDetails> searchOrderDetails(String searchCriteria) {

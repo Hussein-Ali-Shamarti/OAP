@@ -136,7 +136,6 @@ public class EmployeeDAO {
      * @param reportsTo The employee number of the manager to whom this employee reports.
      * @param jobTitle The new job title of the employee.
      * @return true if the operation was successful, false otherwise.
-     * @throws SQLException If a database access error occurs or the SQL query fails to execute.
      */
 
 	public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
@@ -194,12 +193,13 @@ public class EmployeeDAO {
 	    return null; 
 	}
 
-	 /**
-     * Deletes an employee from the database based on their employee number.
-     *
-     * @param employeeNumber The unique identifier of the employee to be deleted.
-     * @return true if the operation was successful, false otherwise.
-     */
+	/**
+	 * Deletes an employee from the database based on their employee number.
+	 *
+	 * @param employees      The name of the table or collection where the employee should be deleted from.
+	 * @param employeeNumber The unique identifier of the employee to be deleted.
+	 * @return true if the operation was successful, false otherwise.
+	 */
 	
 	public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
 	    try (Connection connection = DataBaseConnection.getConnection();
