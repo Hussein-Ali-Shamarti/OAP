@@ -29,6 +29,7 @@ public class OrderHandler {
 
     private final OrderView orderView;
     private final OrderDAO orderDAO;
+
     
     /**
      * Constructs a new OrderHandler with the specified OrderView and OrderDAO.
@@ -36,6 +37,9 @@ public class OrderHandler {
      * @param orderView The OrderView instance used for UI interactions.
      * @param orderDAO The OrderDAO instance used for data access operations.
      */
+
+//    private static final String placeholderProductCode = "UNKNOWN"; // Define it here
+
 
     public OrderHandler(OrderView orderView, OrderDAO orderDAO) {
         this.orderView = orderView;
@@ -117,23 +121,30 @@ public class OrderHandler {
      *
      * @param e The action event that triggers the add operation.
      */
-    
+
     private void addOrder(ActionEvent e) {
         OrderInput orderAndDetails = orderView.gatherUserInputForAddOrder();
+        System.out.println(orderView.gatherUserInputForAddOrder());
 
         if (orderAndDetails != null) {
             Order order = orderAndDetails.getOrder();
             List<OrderDetails> orderDetailsList = orderAndDetails.getOrderDetailsList();
+            System.out.println(orderDetailsList.toString()+"test10");
+          //  String placeholderProductCode = "UNKNOWN"; // Define the placeholderProductCode here
 
-            boolean success = orderDAO.addOrder(order, orderDetailsList);
-            if (success) {
-                JOptionPane.showMessageDialog(orderView, "New order added successfully!");
-            } else {
-                JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
+          //  for(OrderDetails orderdetails:orderDetailsList) {
+            	
+                boolean success = orderDAO.addOrder(order, orderDetailsList);
+                if (success) {
+                    JOptionPane.showMessageDialog(orderView, "New order added successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
+                }
+
             }
+
         }
-    }
-    
+
     /**
      * Handles updating an existing order. Fetches the order based on the provided
      * order number and prompts the user for update details.

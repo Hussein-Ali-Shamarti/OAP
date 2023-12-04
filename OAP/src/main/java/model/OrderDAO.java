@@ -19,6 +19,9 @@ import database.DataBaseConnection;
  * @version 
  */
 
+
+
+
 public class OrderDAO {
 
 	private static final String SEARCH_ORDER_SQL = "SELECT * FROM orders WHERE "
@@ -123,11 +126,11 @@ public class OrderDAO {
 	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
 	        for (OrderDetails orderDetail : orderDetailsList) {
 	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
-	            pstmtOrderDetails.setString(2, orderDetail.getProductCode());
+	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); // Set the actual product code
 	            pstmtOrderDetails.setInt(3, orderDetail.getQuantityOrdered());
 	            pstmtOrderDetails.setDouble(4, orderDetail.getPriceEach());
 	            pstmtOrderDetails.setInt(5, orderDetail.getOrderLineNr());
-
+	            System.out.println("productCode"+orderDetail.getProductCode());
 	            pstmtOrderDetails.addBatch();
 	        }
 	        pstmtOrderDetails.executeBatch();
@@ -168,7 +171,6 @@ public class OrderDAO {
 	 * @throws SQLException If there is an issue with database access or query execution.
 	 */
 
-	
 	public boolean editOrder(Order order, int OrderNumber) {
 		String updateOrderSQL = "UPDATE orders SET requiredDate = ?, shippedDate = ?, status = ?, comments = ?, customerNumber = ?, orderDate = ? WHERE OrderNumber = ?";
 

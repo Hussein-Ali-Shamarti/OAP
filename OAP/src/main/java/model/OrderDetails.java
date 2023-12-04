@@ -54,6 +54,12 @@ public class OrderDetails {
 	       this.orderLineNumber = orderLineNumber;
 	   }
 
+   @Override
+public String toString() {
+	return productCode;
+	   
+   }   
+   
 	   /**
 	    * Gets the quantity of products ordered.
 	    *
