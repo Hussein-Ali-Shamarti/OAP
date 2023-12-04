@@ -31,7 +31,7 @@ import controller.EmployeeHandler;
  * @author 7080
  */
 
-public class EmployeeView extends MainView {
+public class EmployeeView extends JFrame {
 
 	
 	/**

@@ -48,7 +48,7 @@ import controller.OrderHandler;
  * @author 7094
  */
 
-public class OrderView extends MainView {
+public class OrderView extends JFrame {
 
 	/**
 	 * The serial version UID for object serialization.
@@ -762,7 +762,6 @@ public class OrderView extends MainView {
 			new OrderDetailsView();
 		}
 	}
-	
 	/**
 	 * Fetches and displays orders in the table.
 	 *

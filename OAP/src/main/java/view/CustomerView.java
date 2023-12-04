@@ -19,7 +19,7 @@ import model.CustomerDAO;
  * @author 7080
  */
 
-public class CustomerView extends MainView {
+public class CustomerView extends JFrame {
 	
 
 	/**

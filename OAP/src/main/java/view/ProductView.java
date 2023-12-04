@@ -31,7 +31,7 @@ import model.Products;
  * @author 7120
  */
 
-public class ProductView extends MainView {
+public class ProductView extends JFrame {
 
 	/**
 	 * The serial version UID for serialization.
