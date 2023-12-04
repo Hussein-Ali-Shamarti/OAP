@@ -1,13 +1,3 @@
-/**
- * Represents an order entity with information such as order number, dates, status, comments,
-
- * customer number, and associated order date.
- * 
- * <p>Orders may also contain order details, which are not implemented in this version.</p>
- * 
- * @author 7094
- * @version 07.11.2023
- */
 package view;
 
 import java.awt.*;
@@ -30,30 +20,119 @@ import model.ProductDAO;
 import database.DataBaseConnection;
 import model.OrderDetails;
 
+/**
+ * A graphical user interface for displaying and managing order details. This class extends JFrame
+ * and provides a user interface for viewing order details, searching for orders, and interacting
+ * with order-related information.
+ * orders may also contain order details, which are not implemented in this version.
+ * 
+ * @author 7094
+ */
+
 public class OrderDetailsView extends JFrame {
+	/**
+	 * The serial version UID for object serialization.
+	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The label for displaying the total.
+	 */
 	private JLabel totalLabel;
+
+	/**
+	 * The input field for entering an order number.
+	 */
 	private JTextField orderNumberInput;
+
+	/**
+	 * The field for displaying quantity in stock.
+	 */
 	private JTextField quantityInStockField;
+
+	/**
+	 * The field for displaying the buy price.
+	 */
 	private JTextField buyPriceField;
+
+	/**
+	 * The field for displaying MSRP (Manufacturer's Suggested Retail Price).
+	 */
 	private JTextField msrpField;
+
+	/**
+	 * The field for entering an order line number.
+	 */
 	private JTextField orderLineNumberField;
+
+	/**
+	 * The field for entering a product code.
+	 */
 	private JTextField productCodeField;
+
+	/**
+	 * The field for entering the quantity ordered.
+	 */
 	private JTextField quantityOrderedField;
+
+	/**
+	 * The table model used for managing table data.
+	 */
 	private DefaultTableModel tableModel;
+
+	/**
+	 * The OrderDAO responsible for handling order-related data access.
+	 */
 	private OrderDAO orderDAO;
+
+	/**
+	 * The JComboBox for selecting product names.
+	 */
 	private JComboBox<String> productNameDropdown;
+
+	/**
+	 * The JComboBox for selecting product codes.
+	 */
 	private JComboBox<String> productCodeDropdown;
+
+	/**
+	 * The JTextField for entering search criteria.
+	 */
 	private JTextField searchField;
+
+	/**
+	 * The JButton for initiating a search.
+	 */
 	private JButton searchButton;
+
+	/**
+	 * The ProductDAO responsible for handling product-related data access.
+	 */
 	private ProductDAO productHandler;
-	private Map<String, String> products; 
 
+	/**
+	 * A map containing product names and their corresponding codes.
+	 */
+	private Map<String, String> products;
+
+	/**
+	 * The column names for the order details table.
+	 */
 	private static final String[] COLUMN_NAMES = { "Order Number", "Product Code", "Quantity Ordered", "Price Each",
-			"Order Line Number" };
+	    "Order Line Number" };
 
+	/**
+	 * The table component for displaying order details.
+	 */
 	private JTable orderDetailsTable;
 
+	/**
+	 * Constructs an instance of the OrderDetailsView class.
+	 * This constructor initializes the orderDAO and productHandler, fetches products data,
+	 * and sets up the user interface for displaying order details.
+	 * It also populates the UI with order details data and initializes event listeners.
+	 */	
+	
 	public OrderDetailsView() {
 		super();
 		this.orderDAO = new OrderDAO(); 
@@ -80,6 +159,12 @@ public class OrderDetailsView extends JFrame {
 
 	}
 
+	/**
+	 * Initializes the user interface for the OrderDetailsView.
+	 * This method sets the title, size, and location of the frame.
+	 * It also sets up the control panel, top panel, and order details table.
+	 */
+	
 	private void initializeUI() {
 		setTitle("Order Details");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -92,7 +177,15 @@ public class OrderDetailsView extends JFrame {
 		add(new JScrollPane(orderDetailsTable), BorderLayout.CENTER);
 	}
 
-	private void setupProductDropdowns() {
+	/**
+	 * Sets up the product name and product code dropdowns with data from the productHandler.
+	 * It populates the dropdowns with product names and their corresponding codes.
+	 * Also, configures the product code dropdown to be non-editable and sets its text color.
+	 * Adds an ActionListener to the product code dropdown to update product details fields
+	 * when a product code is selected.
+	 */
+	
+	public void setupProductDropdowns() {
 		productNameDropdown = new JComboBox<>();
 		productCodeDropdown = new JComboBox<>();
 
@@ -118,7 +211,14 @@ public class OrderDetailsView extends JFrame {
 
 	}
 
-	private void updateProductDetailsFields(Map<String, Object> productDetails) {
+	/**
+	 * Updates the quantity in stock, buy price, and MSRP fields with the provided product details.
+	 * If the product details map is null or empty, clears the fields.
+	 *
+	 * @param productDetails A map containing product details with keys "quantityInStock," "buyPrice," and "MSRP."
+	 */
+	
+	public void updateProductDetailsFields(Map<String, Object> productDetails) {
 		if (productDetails != null && !productDetails.isEmpty()) {
 			quantityInStockField.setText(productDetails.get("quantityInStock").toString());
 			buyPriceField.setText(productDetails.get("buyPrice").toString());
@@ -130,11 +230,23 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 
-	private String findProductCodeByName(String code) {
+	/**
+	 * Finds and returns the product code associated with the given product name.
+	 *
+	 * @param code The product name for which to find the product code.
+	 * @return The product code, or null if not found.
+	 */
+	
+	public String findProductCodeByName(String code) {
 		return productHandler.getProductNameByCode(code); 
 	}
 
-	private void searchOrderDetails() {
+	/**
+	 * Searches for order details matching the given search criteria and updates the display table with the results.
+	 */
+
+	
+	public void searchOrderDetails() {
 		String searchCriteria = searchField.getText();
 		List<OrderDetails> searchResults = orderDAO.searchOrderDetails(searchCriteria);
 
@@ -148,7 +260,13 @@ public class OrderDetailsView extends JFrame {
 
 	}
 
-	private void updateOrderDetailsTable(List<OrderDetails> searchResults) {
+	/**
+	 * Updates the order details table with the provided list of order details.
+	 * 
+	 * @param searchResults A list of OrderDetails objects to populate the table with.
+	 */
+	
+	public void updateOrderDetailsTable(List<OrderDetails> searchResults) {
 		tableModel = (DefaultTableModel) orderDetailsTable.getModel();
 		tableModel.setRowCount(0);
 		for (OrderDetails orderDetail : searchResults) {
@@ -166,7 +284,13 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 
-	private void setupTopPanel() {
+	/**
+	 * Sets up the top panel of the Order Details view, which includes the title label and search functionality.
+	 * 
+	 * The top panel displays the title "Order Details" and allows users to search for specific order details.
+	 */
+	
+	public void setupTopPanel() {
 		JPanel topPanel = new JPanel(new BorderLayout());
 		topPanel.setBackground(new Color(84, 11, 131));
 
@@ -188,7 +312,13 @@ public class OrderDetailsView extends JFrame {
 		getContentPane().add(topPanel, BorderLayout.NORTH);
 	}
 	
-	private void setupControlPanel() {
+	/**
+	 * Sets up the control panel of the Order Details view, which includes buttons for editing and deleting order details.
+	 * 
+	 * The control panel also provides input fields for specifying the order number.
+	 */
+	
+	public void setupControlPanel() {
 		JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		JButton editButton = createButton("Edit", new UpdateButtonListener(orderDAO, productHandler));
@@ -198,6 +328,15 @@ public class OrderDetailsView extends JFrame {
 		orderNumberInput = new JTextField("Enter Order Number To Calculate", 18);
 		orderNumberInput.setForeground(Color.GRAY);
 		orderNumberInput.addFocusListener(new FocusAdapter() {
+			
+			/**
+			 * Called when the focus is gained by the orderNumberInput field.
+			 * 
+			 * This method removes the placeholder text and changes the text color to black when the input field is focused.
+			 * 
+			 * @param e The FocusEvent indicating the focus gained event.
+			 */
+			
 			@Override
 			public void focusGained(FocusEvent e) {
 				JTextField source = (JTextField) e.getComponent();
@@ -206,6 +345,14 @@ public class OrderDetailsView extends JFrame {
 					source.setForeground(Color.BLACK);
 				}
 			}
+			
+			/**
+			 * Called when the focus is lost from the orderNumberInput field.
+			 * 
+			 * This method restores the default placeholder text and color if the input field is empty.
+			 * 
+			 * @param e The FocusEvent indicating the focus lost event.
+			 */
 
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -235,8 +382,15 @@ public class OrderDetailsView extends JFrame {
 		add(controlPanel, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Creates a custom-styled JButton with the specified text and ActionListener.
+	 *
+	 * @param text     The text to display on the button.
+	 * @param listener The ActionListener to be triggered when the button is clicked.
+	 * @return A customized JButton instance.
+	 */
 	
-	private JButton createButton(String text, ActionListener listener) {
+	public JButton createButton(String text, ActionListener listener) {
 		JButton button = new JButton(text);
 		button.setForeground(Color.BLACK);
 		button.setBackground(new Color(84, 11, 131));
@@ -244,8 +398,13 @@ public class OrderDetailsView extends JFrame {
 		button.addActionListener(listener);
 		return button;
 	}
+	
+	/**
+	 * Sets up the table for displaying order details.
+	 * It configures the table model, column names, and cell editability.
+	 */
 
-	private void setupTable() {
+	public void setupTable() {
 		tableModel = new DefaultTableModel(null, COLUMN_NAMES) {
 			private static final long serialVersionUID = 1L;
 
@@ -260,15 +419,43 @@ public class OrderDetailsView extends JFrame {
 		orderDetailsTable.setFillsViewportHeight(true);
 	}
 
+	/**
+	 * ActionListener implementation for the "Update" button in the Order Details view.
+	 * This listener is used to handle updating order details.
+	 */
+	
 	public class UpdateButtonListener implements ActionListener {
+		
+		 /**
+	     * The OrderDAO instance for accessing order data.
+	     */
+		
 		private OrderDAO orderDAO;
+		
+		/**
+	     * The ProductDAO instance for accessing product data.
+	     */
+		
 		private ProductDAO productDAO;
+		
+		 /**
+	     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
+	     *
+	     * @param orderDAO    The OrderDAO instance for accessing order data.
+	     * @param productDAO  The ProductDAO instance for accessing product data.
+	     */
 
 		public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
 			this.orderDAO = orderDAO;
 			this.productDAO = productDAO;
 		}
 
+		 /**
+	     * Called when the "Update" button is clicked.
+	     *
+	     * @param e The ActionEvent associated with the button click.
+	     */
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
@@ -355,7 +542,20 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 	
-	private class DeleteButtonListener implements ActionListener {
+	/**
+	 * ActionListener implementation for the "Delete" button in the Order Details view.
+	 * This listener is used to handle deleting order details.
+	 */
+	
+	public class DeleteButtonListener implements ActionListener {
+		
+	    /**
+	     * Called when the "Delete" button is clicked.
+	     *
+	     * @param e The ActionEvent associated with the button click.
+	     */
+
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JPanel panel = new JPanel(new GridLayout(0, 1));
@@ -397,8 +597,12 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 	
+	/**
+	 * Calculates and displays the total order amount for the specified order number.
+	 * This method retrieves order details from the table, calculates the total, and updates the total label.
+	 */
 
-	private void calculateAndDisplayTotalForOrder() {
+	public void calculateAndDisplayTotalForOrder() {
 		String orderNumberStr = orderNumberInput.getText().trim();
 		if (orderNumberStr.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Please enter an order number.");
@@ -417,7 +621,15 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 
-	private BigDecimal calculateTotalForOrderNumber(int orderNumber) {
+	/**
+	 * Calculates the total amount for the specified order number by iterating through the table rows,
+	 * multiplying the quantity by the price for each item, and summing up the results.
+	 *
+	 * @param orderNumber The order number for which the total amount should be calculated.
+	 * @return The calculated total amount for the specified order number, rounded to 2 decimal places.
+	 */
+	
+	public BigDecimal calculateTotalForOrderNumber(int orderNumber) {
 		BigDecimal total = BigDecimal.ZERO;
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 			if (((Integer) tableModel.getValueAt(i, 0)).intValue() == orderNumber) {
@@ -428,12 +640,25 @@ public class OrderDetailsView extends JFrame {
 		}
 		return total.setScale(2, RoundingMode.HALF_UP);
 	}
+	
+	/**
+	 * Updates the total label in the user interface with the provided total amount.
+	 *
+	 * @param total The total amount to display in the label.
+	 */
 
-	private void updateOrderTotal(BigDecimal total) {
+	public void updateOrderTotal(BigDecimal total) {
 		totalLabel.setText("Total: $" + total.toPlainString());
 	}
 
-	private boolean isOrderNumberPresentInTable(int orderNumber) {
+	/**
+	 * Checks if the given order number is present in the table's data.
+	 *
+	 * @param orderNumber The order number to check for presence in the table.
+	 * @return true if the order number is found in the table, false otherwise.
+	 */
+	
+	public boolean isOrderNumberPresentInTable(int orderNumber) {
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 			if (((Integer) tableModel.getValueAt(i, 0)).intValue() == orderNumber) {
 				return true;
@@ -442,7 +667,14 @@ public class OrderDetailsView extends JFrame {
 		return false;
 	}
 
-	private void fetchSpecificOrderDetails(int orderNumber) {
+	/**
+	 * Fetches specific order details from the database for the given order number
+	 * and populates them in the tableModel to display in the table.
+	 *
+	 * @param orderNumber The order number for which to fetch details.
+	 */
+	
+	public void fetchSpecificOrderDetails(int orderNumber) {
 		try (Connection conn = DataBaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM orderdetails WHERE orderNumber = ?")) {
 
@@ -460,8 +692,12 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 
+	/**
+	 * Fetches all order details from the database and populates them in the tableModel
+	 * to display in the table.
+	 */
 
-	private void fetchAndDisplayOrderDetails() {
+	public void fetchAndDisplayOrderDetails() {
 		try (Connection conn = DataBaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM orderdetails");
 				ResultSet rs = pstmt.executeQuery()) {

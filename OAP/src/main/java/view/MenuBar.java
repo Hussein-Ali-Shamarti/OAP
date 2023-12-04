@@ -111,6 +111,8 @@ public class MenuBar {
             }
         });
         
+       
+
         if (includeExtendedMenuItems) {
             addExtendedMenuItems();
         }
