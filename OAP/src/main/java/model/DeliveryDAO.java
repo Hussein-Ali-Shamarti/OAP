@@ -13,7 +13,6 @@ import database.DataBaseConnection;
  * This class is part of the model layer and interfaces directly with the database for order-related operations.
  * 
  * @author Albert
- * @version 09.11.2023
  */
 
 public class DeliveryDAO {

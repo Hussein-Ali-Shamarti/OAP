@@ -15,11 +15,8 @@ import database.DataBaseConnection;
  * This includes searching, adding, editing, fetching, and deleting order records.
  * The class utilizes prepared statements for secure interaction with the database.
  *
- * @author Hussein
+ * @author 7094
  */
-
-
-
 
 public class OrderDAO {
 
@@ -124,7 +121,7 @@ public class OrderDAO {
 	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
 	        for (OrderDetails orderDetail : orderDetailsList) {
 	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
-	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); // Set the actual product code
+	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); 
 	            pstmtOrderDetails.setInt(3, orderDetail.getQuantityOrdered());
 	            pstmtOrderDetails.setDouble(4, orderDetail.getPriceEach());
 	            pstmtOrderDetails.setInt(5, orderDetail.getOrderLineNr());

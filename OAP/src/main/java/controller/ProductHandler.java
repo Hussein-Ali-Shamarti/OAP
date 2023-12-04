@@ -20,8 +20,7 @@ import view.ProductView;
  *
  * This class allows users to interact with product data, perform CRUD operations, and save product information to a CSV file.
  *
- * @author Ole
- * @version 1.0
+ * @author 7120
  */
 
 public class ProductHandler {

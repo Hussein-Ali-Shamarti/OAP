@@ -21,7 +21,6 @@ import view.EmployeeView;
  * update, delete, search, and save of employee data.
  * 
  * @author 7080
- * @version 2.12.2023
  */
 public class EmployeeHandler {
 	

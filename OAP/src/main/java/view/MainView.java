@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 /**
  * The MainView class represents the main view of the application.
  * It provides the user interface for the application's main menu and layout.
- * @author Ole
+ * @author 7120
  */
 
 

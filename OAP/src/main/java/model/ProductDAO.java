@@ -21,7 +21,7 @@ import database.DataBaseConnection;
  * searching for products based on criteria, updating product information, and deleting products. Additionally, it provides
  * methods to retrieve product details, check the existence of a product line, and obtain mappings between product names and codes.
  * 
- * @author Ole
+ * @author 7120
  */
 
 public class ProductDAO {

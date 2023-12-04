@@ -28,7 +28,7 @@ import model.Products;
  * The class interacts with the controller (ProductHandler) and the model (ProductDAO and Products) to facilitate user actions
  * and maintain the consistency of product data.
  * 
- * @author Ole
+ * @author 7120
  */
 
 public class ProductView extends MainView {

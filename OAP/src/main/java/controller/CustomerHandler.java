@@ -22,7 +22,6 @@ import view.CustomerView;
  * deleting, searching, and saving customer data.
  * 
  * @author 7080
- * @version 2.12.2023
  */
 
 

@@ -8,8 +8,7 @@ import java.math.BigDecimal;
  * 
  * This class serves as an entity class for the "customer" entity.
  * 
- * @author Henrik
- * @version 07.11.23
+ * @author 7091
  */
 public class Customer extends Address {
 

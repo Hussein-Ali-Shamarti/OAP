@@ -10,7 +10,6 @@ import java.util.List;
  * Orders may also contain order details, which are not implemented in this version.
  * 
  * @author 7094
- * @version 07.11.2023
  */
 
 public class OrderInput {

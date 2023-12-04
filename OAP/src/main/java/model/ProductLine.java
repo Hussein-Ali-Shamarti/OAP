@@ -2,7 +2,7 @@ package model;
 
 /**
  * Represents a product line and encapsulates its attributes.
- * @author ole
+ * @author 7120
  */
 
 public class ProductLine  {
