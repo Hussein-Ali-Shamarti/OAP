@@ -21,20 +21,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.border.EmptyBorder;
-
 import model.OrderDAO;
 import model.ProductDAO;
 import database.DataBaseConnection;
 import model.OrderDetails;
-import model.Products;
 
 public class OrderDetailsView extends JFrame {
 	private static final long serialVersionUID = 1L;
