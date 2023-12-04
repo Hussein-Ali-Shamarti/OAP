@@ -17,7 +17,6 @@ import database.DataBaseConnection;
  * It provides methods to perform various operations such as adding, editing, deleting, and fetching customer details.
  * 
  * @author 7080
- * @version 2.12.2023
  */
 
  public class CustomerDAO {

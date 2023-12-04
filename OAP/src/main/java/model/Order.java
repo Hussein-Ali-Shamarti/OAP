@@ -10,8 +10,7 @@ import java.util.List;
  * 
  * Orders may also contain order details, which are not implemented in this version.
  * 
- * @author Kim
- * @version 07.11.2023
+ * @author 7088
  */
 
 public class Order {

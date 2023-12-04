@@ -1,14 +1,3 @@
-/**
- * ProductView class represents the graphical user interface for managing products.
- * It extends the MainView class and provides functionality for displaying, adding, updating, and deleting products in a table format.
- * The class interacts with the controller (ProductHandler) and the model (ProductDAO and Products) to facilitate user actions
- * and maintain the consistency of product data.
- * 
- * @author Ole
- * @version 1.0
- */
-
-
 package view;
 
 import java.awt.BorderLayout;
@@ -33,14 +22,41 @@ import controller.ProductHandler;
 import model.ProductDAO;
 import model.Products;
 
+/**
+ * ProductView class represents the graphical user interface for managing products.
+ * It extends the MainView class and provides functionality for displaying, adding, updating, and deleting products in a table format.
+ * The class interacts with the controller (ProductHandler) and the model (ProductDAO and Products) to facilitate user actions
+ * and maintain the consistency of product data.
+ * 
+ * @author 7120
+ */
 
 public class ProductView extends MainView {
 
-    private static final long serialVersionUID = 1L;
-    private DefaultTableModel tableModel;
-    private JTable table;
-    private ProductDAO productDAO;
-    private ProductHandler productHandler;
+	/**
+	 * The serial version UID for serialization.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The table model used for managing table data.
+	 */
+	private DefaultTableModel tableModel;
+
+	/**
+	 * The table component for displaying product data.
+	 */
+	private JTable table;
+
+	/**
+	 * The Data Access Object (DAO) for product data access.
+	 */
+	private ProductDAO productDAO;
+
+	/**
+	 * The handler for product-related operations.
+	 */
+	private ProductHandler productHandler;
 
     /**
      * Gets the JTable component.
@@ -339,21 +355,24 @@ public class ProductView extends MainView {
      * Performs a search based on user input and updates the table with the search results.
      *
      * @param searchCriteria The search criteria entered by the user.
+     * @return A list of Products representing the search results.
      */
     public List<Products> performSearch(String searchCriteria) {
-        // Placeholder logic: You should implement the actual database search here
-        // This code assumes you have a ProductHandler class to handle database operations
         ProductDAO productHandler = new ProductDAO();
         List<Products> searchResults = productHandler.searchProducts(searchCriteria);
 
         return searchResults;
     }
     
-    // Update the table with the search results
-    public void updateTableWithSearchResults(List<Products> searchResults) {
-        tableModel.setRowCount(0); // Clear existing rows from the table
+    /**
+     * Updates the table with the provided search results.
+     *
+     * @param searchResults A list of Products representing the search results to display in the table.
+     */
 
-        // Populate the table with the search results
+    public void updateTableWithSearchResults(List<Products> searchResults) {
+        tableModel.setRowCount(0);
+
         for (Products product : searchResults) {
             Object[] row = {
                 product.getProductCode(),

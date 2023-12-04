@@ -12,7 +12,7 @@ import javax.swing.JPanel;
  * The MainMenu class represents a panel containing buttons for navigating the main menu of an application.
  * This panel is typically used as a main menu screen with options like "Products," "Orders," "Customers," and "Employees."
  * 
- * @author Ole
+ * @author 7120
  */
 public class MainMenu extends JPanel {
 

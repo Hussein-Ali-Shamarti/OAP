@@ -8,8 +8,7 @@ import java.util.Date;
  * This class contains a constructor and getter methods for retrieving check number,
  * payment date, and the total paid amount.
  * 
- * @author Kim
- * @version 07.11.2023
+ * @author 7088
  */
 public class Payment {
     

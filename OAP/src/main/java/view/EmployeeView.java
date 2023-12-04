@@ -34,11 +34,35 @@ import controller.EmployeeHandler;
 public class EmployeeView extends MainView {
 
 	
-    private static final long serialVersionUID = 1L;
-    private DefaultTableModel tableModel;
-    private JTable table;
-    private EmployeeHandler employeeHandler;
-    private EmployeeDAO employeeDAO;
+	/**
+	 * The serial version UID for serialization.
+	 */
+	
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The table model used for managing table data.
+	 */
+	
+	private DefaultTableModel tableModel;
+
+	/**
+	 * The table component for displaying employee data.
+	 */
+	
+	private JTable table;
+
+	/**
+	 * The handler for employee-related operations.
+	 */
+	
+	private EmployeeHandler employeeHandler;
+
+	/**
+	 * The Data Access Object (DAO) for employee data access.
+	 */
+	
+	private EmployeeDAO employeeDAO;
   
     /**
      * Constructor to initialize the EmployeeView. Sets up the UI and fetches initial data to display.

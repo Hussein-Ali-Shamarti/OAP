@@ -15,11 +15,8 @@ import database.DataBaseConnection;
  * This includes searching, adding, editing, fetching, and deleting order records.
  * The class utilizes prepared statements for secure interaction with the database.
  *
- * @author Hussein
+ * @author 7094
  */
-
-
-
 
 public class OrderDAO {
 
@@ -124,7 +121,7 @@ public class OrderDAO {
 	        pstmtOrderDetails = conn.prepareStatement(insertOrderDetailsSQL);
 	        for (OrderDetails orderDetail : orderDetailsList) {
 	            pstmtOrderDetails.setInt(1, generatedOrderNumber);
-	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); // Set the actual product code
+	            pstmtOrderDetails.setString(2, orderDetail.getProductCode()); 
 	            pstmtOrderDetails.setInt(3, orderDetail.getQuantityOrdered());
 	            pstmtOrderDetails.setDouble(4, orderDetail.getPriceEach());
 	            pstmtOrderDetails.setInt(5, orderDetail.getOrderLineNr());
@@ -340,13 +337,17 @@ public class OrderDAO {
 	}
 	
 	/**
-	 * Retrieves all order details from the database.
-	 *
-	 * @return A list of OrderDetails objects representing all order details in the database.
+	 * SQL query for selecting all order details from the database.
 	 */
-
+	
 	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
 
+	/**
+	 * Retrieves a list of order details for a specific order number from the database.
+	 *
+	 * @return A list of OrderDetails objects representing the details of the order.
+	 */
+	
 	public List<OrderDetails> getOrderDetailsByOrderNumber() {
 		List<OrderDetails> orderDetailsList = new ArrayList<>();
 

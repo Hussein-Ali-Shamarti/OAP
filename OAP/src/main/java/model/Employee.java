@@ -7,8 +7,7 @@ package model;
 * 
 * The class inherits from the Address class, incorporating address-related information.
 * 
-* @author Marziyeh
-* @version 11.11.2023
+* @author 7070
 */ 
 
 public class Employee extends Address {

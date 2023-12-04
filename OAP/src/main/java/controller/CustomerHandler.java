@@ -22,14 +22,13 @@ import view.CustomerView;
  * deleting, searching, and saving customer data.
  * 
  * @author 7080
- * @version 2.12.2023
  */
 
 
 public class CustomerHandler {
 
     private final CustomerView customerView;
-    private final CustomerDAO customerDAO;
+    private final CustomerDAO customerDAO; 
 
     /**
      * Constructs a new CustomerHandler with the specified CustomerView and CustomerDAO.

@@ -17,13 +17,16 @@ import javax.swing.SwingUtilities;
 /**
  * The MainView class represents the main view of the application.
  * It provides the user interface for the application's main menu and layout.
- * @author Ole
+ * @author 7120
  */
 
 
 public class MainView extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * The menu bar that contains various menus and options for the application's user interface.
+     */
     protected JMenuBar menuBar;
     
     /**

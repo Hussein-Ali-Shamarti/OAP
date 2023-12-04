@@ -22,11 +22,31 @@ import model.CustomerDAO;
 public class CustomerView extends MainView {
 	
 
-    private static final long serialVersionUID = 1L;
-    private DefaultTableModel tableModel;
-    private CustomerHandler customerHandler;
-    private CustomerDAO customerDAO;
-    private JTable table;
+	/**
+	 * The serial version UID for serialization.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The table model used for managing table data.
+	 */
+	private DefaultTableModel tableModel;
+
+	/**
+	 * The handler for customer-related operations.
+	 */
+	private CustomerHandler customerHandler;
+
+	/**
+	 * The Data Access Object (DAO) for customer data access.
+	 */
+	private CustomerDAO customerDAO;
+
+	/**
+	 * The table component for displaying customer data.
+	 */
+	private JTable table;
+
 
     /**
      * Constructor to initialize the CustomerView. Sets up the UI and fetches initial data to display.

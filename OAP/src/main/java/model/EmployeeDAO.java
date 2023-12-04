@@ -17,7 +17,6 @@ import database.DataBaseConnection;
  * The class utilizes prepared statements to securely interact with the database.
  *
  * @author 7080
- * @version 2.12.2023
  */
 
 public class EmployeeDAO {

@@ -5,7 +5,7 @@ package model;
  * including first and second address lines, city, state, postal code, country, and phone.
  * It serves as a base for more specific address implementations.
  * 
- * @author Henrik
+ * @author 7091
  */
 
 public abstract class Address {

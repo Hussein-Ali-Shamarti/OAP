@@ -11,7 +11,6 @@ import java.sql.SQLException;
  * This class manages the database connection details and offers utility methods for database operations.
  * 
  * @author 7094
- * @version 2.12.2023
  */
 
 public class DataBaseConnection {
