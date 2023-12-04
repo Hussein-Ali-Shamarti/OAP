@@ -130,26 +130,19 @@ public class OrderHandler {
 
     private void addOrder(ActionEvent e) {
         OrderInput orderAndDetails = orderView.gatherUserInputForAddOrder();
-        System.out.println(orderView.gatherUserInputForAddOrder());
-
         if (orderAndDetails != null) {
             Order order = orderAndDetails.getOrder();
             List<OrderDetails> orderDetailsList = orderAndDetails.getOrderDetailsList();
-            System.out.println(orderDetailsList.toString()+"test10");
-          //  String placeholderProductCode = "UNKNOWN"; // Define the placeholderProductCode here
-
-          //  for(OrderDetails orderdetails:orderDetailsList) {
-            	
-                boolean success = orderDAO.addOrder(order, orderDetailsList);
-                if (success) {
-                    JOptionPane.showMessageDialog(orderView, "New order added successfully!");
-                } else {
-                    JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
-                }
-
+            
+            boolean success = orderDAO.addOrder(order, orderDetailsList);
+            if (success) {
+                JOptionPane.showMessageDialog(orderView, "New order added successfully!");
+            } else {
+                JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
             }
-
         }
+    }
+        
 
     /**
      * Handles updating an existing order. Fetches the order based on the provided
