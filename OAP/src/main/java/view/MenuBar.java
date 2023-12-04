@@ -98,6 +98,7 @@ public class MenuBar {
         sqlQueryItem = new JMenuItem("SQL Query");
         sqlQueryItem.addActionListener(new SQLQueryListener()); 
         exitMenuItem = new JMenuItem("Exit");
+       
 
         if (includeExtendedMenuItems) {
             addExtendedMenuItems();
