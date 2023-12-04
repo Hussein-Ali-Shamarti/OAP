@@ -29,7 +29,7 @@ import view.CustomerView;
 public class CustomerHandler {
 
     private final CustomerView customerView;
-    private final CustomerDAO customerDAO;
+    private final CustomerDAO customerDAO; 
 
     /**
      * Constructs a new CustomerHandler with the specified CustomerView and CustomerDAO.

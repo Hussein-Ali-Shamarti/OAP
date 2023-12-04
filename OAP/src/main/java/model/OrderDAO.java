@@ -340,13 +340,17 @@ public class OrderDAO {
 	}
 	
 	/**
-	 * Retrieves all order details from the database.
-	 *
-	 * @return A list of OrderDetails objects representing all order details in the database.
+	 * SQL query for selecting all order details from the database.
 	 */
-
+	
 	private static final String SELECT_ORDER_DETAILS_SQL = "SELECT * FROM orderDetails";
 
+	/**
+	 * Retrieves a list of order details for a specific order number from the database.
+	 *
+	 * @return A list of OrderDetails objects representing the details of the order.
+	 */
+	
 	public List<OrderDetails> getOrderDetailsByOrderNumber() {
 		List<OrderDetails> orderDetailsList = new ArrayList<>();
 

@@ -73,169 +73,165 @@ public class Products {
         return "";
     }
 
-
-   /**
-    * get the product code
-    * @return productCode
-    */
-
+    /**
+     * Get the product code.
+     *
+     * @return The product code.
+     */
     public String getProductCode() {
         return productCode;
     }
 
     /**
-     * set the productCode
-     * @param productCode
+     * Set the product code.
+     *
+     * @param productCode The product code to set.
      */
-
     public void setProductCode(String productCode) {
         this.productCode = productCode;
     }
 
     /**
-    * get the productName  
-    * @return productName
-    */
-
+     * Get the product name.
+     *
+     * @return The product name.
+     */
     public String getProductName() {
         return productName;
     }
 
     /**
-     * set the productName
-     * @param productName
+     * Set the product name.
+     *
+     * @param productName The product name to set.
      */
-
     public void setProductName(String productName) {
         this.productName = productName;
     }
-    /**
-     * get the productLine  
-     * @return productLine
-     */
-
-     public String getProductLine() {
-         return productLine;
-     }
-
-     /**
-      * set the productLine
-      * @param productLine
-      */
-
-     public void setProductLine(String productLine) {
-         this.productLine = productLine;
-     }
 
     /**
-     * get the productScale
-     * @return productScale
+     * Get the product line.
+     *
+     * @return The product line.
      */
-  
+    public String getProductLine() {
+        return productLine;
+    }
 
+    /**
+     * Set the product line.
+     *
+     * @param productLine The product line to set.
+     */
+    public void setProductLine(String productLine) {
+        this.productLine = productLine;
+    }
+
+    /**
+     * Get the product scale.
+     *
+     * @return The product scale.
+     */
     public String getProductScale() {
         return productScale;
     }
 
     /**
-     * set the productScale
-     * @param productScale
+     * Set the product scale.
+     *
+     * @param productScale The product scale to set.
      */
-
     public void setProductScale(String productScale) {
         this.productScale = productScale;
     }
 
     /**
-     * get the productVendor
-     * @return productVendor
-     */ 
-
+     * Get the product vendor.
+     *
+     * @return The product vendor.
+     */
     public String getProductVendor() {
         return productVendor;
     }
 
     /**
-     * set the productVendor
-     * @param productVendor
+     * Set the product vendor.
+     *
+     * @param productVendor The product vendor to set.
      */
-
     public void setProductVendor(String productVendor) {
         this.productVendor = productVendor;
     }
 
     /**
-     * get the productDescription
-     * @return productDescription
+     * Get the product description.
+     *
+     * @return The product description.
      */
-
     public String getProductDescription() {
         return productDescription;
-    } 
-    
+    }
+
     /**
-     * set the productDescription
-     * @param productDescription
+     * Set the product description.
+     *
+     * @param productDescription The product description to set.
      */
-
-
     public void setProductDescription(String productDescription) {
         this.productDescription = productDescription;
-    }   
+    }
 
     /**
-     * get the quantityInStock
-     * @return quantityInStock
+     * Get the quantity in stock.
+     *
+     * @return The quantity in stock.
      */
-
-
     public int getQuantityInStock() {
         return quantityInStock;
-    } 
-    
-    /**
-     * set the quantityInStock
-     * @param quantityInStock
-     */
+    }
 
+    /**
+     * Set the quantity in stock.
+     *
+     * @param quantityInStock The quantity in stock to set.
+     */
     public void setQuantityInStock(int quantityInStock) {
         this.quantityInStock = quantityInStock;
-    }   
+    }
 
     /**
-     * get the buyPrice
-     * @return buyPrice
+     * Get the buy price.
+     *
+     * @return The buy price.
      */
-
     public double getBuyPrice() {
         return buyPrice;
-    }   
+    }
 
     /**
-     * set the buyPrice
-     * @param buyPrice
+     * Set the buy price.
+     *
+     * @param buyPrice The buy price to set.
      */
-
     public void setBuyPrice(double buyPrice) {
         this.buyPrice = buyPrice;
-    }   
+    }
 
     /**
-     * get the msrp
-     * @return msrp
+     * Get the MSRP (Manufacturer's Suggested Retail Price).
+     *
+     * @return The MSRP.
      */
-
     public double getMsrp() {
         return msrp;
-    }  
-    
-    /**
-     * set the msrp
-     * @param msrp
-     */
+    }
 
+    /**
+     * Set the MSRP (Manufacturer's Suggested Retail Price).
+     *
+     * @param msrp The MSRP to set.
+     */
     public void setMsrp(double msrp) {
         this.msrp = msrp;
-    }   
-    
+    }
 }
