@@ -200,7 +200,6 @@ public class EmployeeHandler {
      * Writes employee data to the specified file in CSV format.
      * 
      * @param fileToSave The file where employee data will be written.
-     * @throws IOException If an I/O error occurs while writing to the file.
      */
     
     public void writeEmployeeDataToFile(File fileToSave) {

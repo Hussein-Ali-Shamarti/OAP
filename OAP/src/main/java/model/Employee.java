@@ -176,7 +176,7 @@ public class Employee extends Address {
     /**
      * Sets the firstname.
      * 
-     * @param firstname the firstName to set.
+     * @param firstName the firstName to set.
      */
 
 	public void setFirstName(String firstName) {
@@ -186,7 +186,7 @@ public class Employee extends Address {
 	/**
      * Sets the lastname.
      * 
-     * @param lastname the lastName to set.
+     * @param lastName the lastName to set.
      */
 
 	public void setLastName(String lastName) {
