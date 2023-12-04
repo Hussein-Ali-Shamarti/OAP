@@ -24,6 +24,9 @@ import javax.swing.SwingUtilities;
 public class MainView extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * The menu bar that contains various menus and options for the application's user interface.
+     */
     protected JMenuBar menuBar;
     
     /**
