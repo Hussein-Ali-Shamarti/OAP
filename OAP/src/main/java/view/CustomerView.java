@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.List; 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
 import controller.CustomerHandler;
 import model.Customer;
 import model.CustomerDAO;

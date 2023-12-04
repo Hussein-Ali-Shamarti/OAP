@@ -498,6 +498,36 @@ public class OrderDAO {
 
 	    return searchResults;
 	}
+	
+	/**
+	 * Inserts a list of orders into the database using batch processing.
+	 *
+	 * @param orders A List of Order objects representing the orders to be inserted.
+	 * @return true if all orders were successfully inserted, false otherwise.
+	 * @throws Exception If any error occurs during the database insertion process.
+	 */
+	
+	 public boolean insertOrdersIntoDatabase(List<Order> orders) throws Exception {
+	        String sql = "INSERT INTO orders (orderDate, requiredDate, shippedDate, status, comments, customerNumber) VALUES (?, ?, ?, ?, ?, ?)";
+	        try (PreparedStatement statement = DataBaseConnection.prepareStatement(sql)) {
+	            for (Order order : orders) {
+	                // Convert java.util.Date to java.sql.Date
+	                java.sql.Date sqlOrderDate = new java.sql.Date(order.getOrderDate().getTime());
+	                java.sql.Date sqlRequiredDate = new java.sql.Date(order.getRequiredDate().getTime());
+	                java.sql.Date sqlShippedDate = new java.sql.Date(order.getShippedDate().getTime());
+
+	                statement.setDate(1, sqlOrderDate);
+	                statement.setDate(2, sqlRequiredDate);
+	                statement.setDate(3, sqlShippedDate);
+	                statement.setString(4, order.getStatus());
+	                statement.setString(5, order.getComments());
+	                statement.setInt(6, order.getCustomerNumber());
+	                statement.addBatch();
+	            }
+	            int[] counts = statement.executeBatch();
+	            return counts.length == orders.size();
+	        } 
+	    }
 
 	/*public boolean checkProductCodeExists(String productCode) {
 	    String query = "SELECT COUNT(*) FROM products WHERE productCode = ?";

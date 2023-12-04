@@ -3,19 +3,14 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import controller.OrderHandler;
 import database.DataBaseConnection;
-import writeToFile.BulkImportOrders;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -166,13 +161,19 @@ public class MenuBar {
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                BulkImportOrders bulkImport = new BulkImportOrders();
-                boolean success = bulkImport.importOrders(selectedFile);
-                
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Orders imported successfully!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Failed to import orders.");
+
+                try {
+                    OrderHandler orderHandler = new OrderHandler(null, null);
+                    boolean success = orderHandler.importOrders(selectedFile);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Orders imported successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to import orders.");
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "An error occurred during the import: " + ex.getMessage());
                 }
             }
         }

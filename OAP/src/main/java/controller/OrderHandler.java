@@ -3,10 +3,16 @@ package controller;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 
@@ -266,7 +272,13 @@ public class OrderHandler {
         }
     }
     
- 
+    /**
+     * Checks the payment status for a customer with the given customer number and displays the result in a dialog box.
+     *
+     * @param orderView       The view component where the payment status message will be displayed.
+     * @param customerNumber  The customer number for which to check the payment status.
+     */
+    
     public void checkPaymentStatus(OrderView orderView, int customerNumber) {
         if (orderDAO.customerExists(customerNumber)) {
             boolean paid = orderDAO.checkPaymentStatus(customerNumber);
@@ -301,6 +313,13 @@ public class OrderHandler {
         }
     }
 
+    /**
+     * Checks the status of an order with the given order number and displays the status in a dialog box.
+     *
+     * @param orderView    The view component where the status message will be displayed.
+     * @param orderNumber  The order number for which to check the status.
+     */
+    
     public void checkOrderStatus(OrderView orderView, int orderNumber) {
         String status = orderDAO.getOrderStatus(orderNumber);
 
@@ -312,6 +331,66 @@ public class OrderHandler {
             
         }
         
+    }
+    
+    /**
+     * Imports a list of orders from a CSV file and inserts them into the database.
+     *
+     * @param csvFile The CSV file containing order data to be imported.
+     * @return true if the import and insertion were successful, false otherwise.
+     */
+    
+    public boolean importOrders(File csvFile) {
+        try {
+            List<Order> orders = parseCsvFile(csvFile);
+            return orderDAO.insertOrdersIntoDatabase(orders);
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            return false;
+        }
+    }
+  
+    /**
+     * Parses a CSV file containing order data and converts it into a List of Order objects.
+     *
+     * @param csvFile The CSV file to be parsed.
+     * @return A List of Order objects representing the orders parsed from the CSV file.
+     * @throws IOException If an error occurs while reading or parsing the CSV file.
+     */
+    
+    public List<Order> parseCsvFile(File csvFile) throws IOException {
+        List<Order> orders = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Adjust date format as necessary
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line = br.readLine(); // Read the header to skip it
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(","); // Assuming CSV values are comma-separated
+                // Make sure you have the correct number of columns in each row
+                if (values.length != 6) {
+                    throw new IOException("Invalid number of columns in CSV file");
+                }
+                
+                // Parse CSV values into Order fields
+                Date orderDate = new Date(dateFormat.parse(values[0]).getTime());
+                Date requiredDate = new Date(dateFormat.parse(values[1]).getTime());
+                Date shippedDate = new Date(dateFormat.parse(values[2]).getTime());
+                String status = values[3];
+                String comments = values[4];
+                int customerNumber = Integer.parseInt(values[5]);
+                
+                // Ensure proper values are being parsed and are not the header
+                if (!status.equals("status")) { // Assuming 'status' is not a valid order status
+                    Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+                    orders.add(order);
+                }
+            }
+        } catch (ParseException e) {
+            throw new IOException("Error parsing the date in the CSV file: " + e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            throw new IOException("Error parsing the customer number in the CSV file: " + e.getMessage(), e);
+        }
+        return orders;
     }
   
  }
