@@ -500,7 +500,6 @@ public class OrderDAO {
 	        String sql = "INSERT INTO orders (orderDate, requiredDate, shippedDate, status, comments, customerNumber) VALUES (?, ?, ?, ?, ?, ?)";
 	        try (PreparedStatement statement = DataBaseConnection.prepareStatement(sql)) {
 	            for (Order order : orders) {
-	                // Convert java.util.Date to java.sql.Date
 	                java.sql.Date sqlOrderDate = new java.sql.Date(order.getOrderDate().getTime());
 	                java.sql.Date sqlRequiredDate = new java.sql.Date(order.getRequiredDate().getTime());
 	                java.sql.Date sqlShippedDate = new java.sql.Date(order.getShippedDate().getTime());
@@ -517,25 +516,4 @@ public class OrderDAO {
 	            return counts.length == orders.size();
 	        } 
 	    }
-
-	/*public boolean checkProductCodeExists(String productCode) {
-	    String query = "SELECT COUNT(*) FROM products WHERE productCode = ?";
-	    try (Connection conn = DataBaseConnection.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(query)) {
-	        
-	        pstmt.setString(1, productCode);
-	        
-	        try (ResultSet rs = pstmt.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getInt(1) > 0; // Check if count is greater than zero
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        // Handle exception, possibly log it or throw a custom exception
-	    }
-	    return false; // Return false if productCode does not exist or in case of an exception
-	}
-*/
-
 }
