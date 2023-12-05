@@ -192,24 +192,14 @@ public class ProductHandler {
         }
     }
 
-    /**
-     * Handles the action event for saving product data to a file. Prompts the user to choose a 
-     * file location and writes the product data in CSV format. Reports any file I/O errors encountered.
-     *
-     * @param e The action event triggering the save operation.
-     */
-    
-    public void saveProductsToFile(ActionEvent e) {
-        saveProductsToFile();
-    }
-
+ 
     /**
      * Saves the product data to a CSV file chosen by the user. It writes details such as product
      * code, name, line, etc. Alerts the user upon successful save or error.
      *
      */
     
-    public void saveProductsToFile() {
+    public void saveProductsToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Products.csv"));

@@ -40,6 +40,14 @@ public class EmployeeDAO {
 	
 	
 	
+	
+	
+	//CRUD- + search-methods 
+	
+	
+	
+	
+	
 	 /**
      * Adds a new employee to the database.
      *
@@ -184,7 +192,8 @@ public class EmployeeDAO {
 	}
 
 	
-     
+  //Methods for fetching employees from database
+	
 
 	 /**
      * Fetches the details of a single employee from the database.
@@ -220,7 +229,6 @@ public class EmployeeDAO {
 	}
 
 	
-
 	 /**
      * Retrieves a list of all employees from the database.
      *

@@ -84,7 +84,7 @@ public class CustomerHandler {
      * @return ActionListener for the save Customer data action.
      */
     public ActionListener getSaveCustomerButtonListener() {
-        return new SaveCustomerButtonListener();
+        return this::saveCustomersToFile;
     }
     
     
@@ -184,24 +184,13 @@ public class CustomerHandler {
         }
     }
 
-    /**
-     * Inner class to handle saving customer data to a file when the associated
-     * action is performed.
-     */
-    
-    public class SaveCustomerButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveCustomersToFile();
-        }
-    }
 
     /**
      * Handles saving the current customer data to a CSV file. Prompts the user
      * to choose a file destination and writes the data in CSV format.
      */
     
-    public void saveCustomersToFile() {
+    public void saveCustomersToFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a CSV file to save");
         fileChooser.setSelectedFile(new File("Customer.csv")); 
