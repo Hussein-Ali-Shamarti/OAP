@@ -44,63 +44,131 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
             "country LIKE ? OR " +
             "CAST(salesRepEmployeeNumber AS CHAR) LIKE ? OR " +
             "CAST(creditLimit AS CHAR) LIKE ?";
+
+
+
+		
 /**
- * Searches for customers in the database matching the given search criteria across multiple attributes.
- * The search is flexible, allowing partial matches in fields like customer name, contact info, address, etc.
+ * Fetches all customer data from the database. Each customer's data is represented as a String array.
  *
- * @param searchCriteria The criteria used for searching customers.
- * @return A list of customers that match the search criteria.
+ * @return A list of String arrays, each representing a customer's data.
  */
-   
-    public List<Customer> searchCustomers(String searchCriteria) {
-        List<Customer> searchResults = new ArrayList<>();
 
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_CUSTOMERS_SQL)) {
 
-            for (int i = 1; i <= 13; i++) {
-                preparedStatement.setString(i, "%" + searchCriteria + "%");
-            }
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    Customer customer = mapResultSetToCustomer(resultSet);
-                    searchResults.add(customer);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+public List<String[]> fetchCustomers() {
+    List<String[]> customers = new ArrayList<>();
+    try (Connection conn = database.DataBaseConnection.getConnection();
+         Statement statement = conn.createStatement()) {
+        String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
+                     "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
+                     "salesRepEmployeeNumber, creditLimit FROM customers";
+        ResultSet resultSet = statement.executeQuery(sql);
+        while (resultSet.next()) {
+            String[] customer = {
+                resultSet.getString("customerNumber"),
+                resultSet.getString("customerName"),
+                resultSet.getString("contactLastName"),
+                resultSet.getString("contactFirstName"),
+                resultSet.getString("phone"),
+                resultSet.getString("addressLine1"),
+                resultSet.getString("addressLine2"),
+                resultSet.getString("city"),
+                resultSet.getString("state"),
+                resultSet.getString("postalCode"),
+                resultSet.getString("country"),
+                resultSet.getString("salesRepEmployeeNumber"),
+                resultSet.getString("creditLimit")
+            };
+            customers.add(customer);
         }
-
-        return searchResults;
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
     }
+    return customers;
+}
 
-    /**
-     * Maps a ResultSet row to a Customer object.
-     *
-     * @param resultSet The ResultSet containing customer data.
-     * @return A Customer object populated with data from the ResultSet.
-     * @throws SQLException If there is an issue accessing the ResultSet data.
-     */
+
+/**
+ * Fetches a single customer's data from the database based on their customer number.
+ *
+ * @param customerNumber The unique identifier of the customer.
+ * @return The Customer object if found, null otherwise.
+ */
+
+public Customer fetchCustomerData(int customerNumber) {
+    try (Connection connection = DataBaseConnection.getConnection();
+         PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customers WHERE customerNumber = ?")) {
+
+        pstmt.setInt(1, customerNumber);
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            
+            return new Customer(
+                rs.getInt("customerNumber"),
+                rs.getString("customerName"),
+                rs.getString("contactLastName"),
+                rs.getString("contactFirstName"),
+                rs.getString("phone"),
+                rs.getString("addressLine1"),
+                rs.getString("addressLine2"),
+                rs.getString("city"),
+                rs.getString("state"),
+                rs.getString("postalCode"),
+                rs.getString("country"),
+                rs.getInt("salesRepEmployeeNumber"),
+                rs.getBigDecimal("creditLimit")
+            );
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null; 
+}
+
+/**
+ * Fetches the employee numbers of all sales representatives from the database.
+ *
+ * @return A list of integers representing the employee numbers of sales representatives.
+ */
+
+public List<Integer> fetchSalesRepEmployeeNumbers() {
+    List<Integer> salesRepNumbers = new ArrayList<>();
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+
+    try {
+        
+        conn = DataBaseConnection.getConnection();
+        stmt = conn.createStatement();
+
+       
+        String sql = "SELECT DISTINCT salesRepEmployeeNumber FROM customers";
+
+        rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            salesRepNumbers.add(rs.getInt("salesRepEmployeeNumber"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); 
+    } finally {
+       
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+    }
+   }
+    return salesRepNumbers; 
+}
+
+		
+		//CRUD- + search-methods 
+
    
-    private Customer mapResultSetToCustomer(ResultSet resultSet) throws SQLException {
-        return new Customer(
-            resultSet.getInt("customerNumber"),
-            resultSet.getString("customerName"),
-            resultSet.getString("contactLastName"),
-            resultSet.getString("contactFirstName"),
-            resultSet.getString("phone"),
-            resultSet.getString("addressLine1"),
-            resultSet.getString("addressLine2"),
-            resultSet.getString("city"),
-            resultSet.getString("state"),
-            resultSet.getString("postalCode"),
-            resultSet.getString("country"),
-            resultSet.getInt("salesRepEmployeeNumber"),
-            resultSet.getBigDecimal("creditLimit")
-        );
-    }
 
     /**
      * Adds a new customer to the database using provided customer details.
@@ -187,45 +255,7 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
         }
     }
 
-    /**
-     * Fetches a single customer's data from the database based on their customer number.
-     *
-     * @param customerNumber The unique identifier of the customer.
-     * @return The Customer object if found, null otherwise.
-     */
-    
-    public Customer fetchCustomerData(int customerNumber) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customers WHERE customerNumber = ?")) {
-
-            pstmt.setInt(1, customerNumber);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                
-                return new Customer(
-                    rs.getInt("customerNumber"),
-                    rs.getString("customerName"),
-                    rs.getString("contactLastName"),
-                    rs.getString("contactFirstName"),
-                    rs.getString("phone"),
-                    rs.getString("addressLine1"),
-                    rs.getString("addressLine2"),
-                    rs.getString("city"),
-                    rs.getString("state"),
-                    rs.getString("postalCode"),
-                    rs.getString("country"),
-                    rs.getInt("salesRepEmployeeNumber"),
-                    rs.getBigDecimal("creditLimit")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null; 
-    }
-
-
+  
     /**
      * Deletes a customer from the database based on their customer number.
      *
@@ -246,82 +276,68 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
         }
     }
     
+    
     /**
-     * Fetches the employee numbers of all sales representatives from the database.
+     * Searches for customers in the database matching the given search criteria across multiple attributes.
+     * The search is flexible, allowing partial matches in fields like customer name, contact info, address, etc.
      *
-     * @return A list of integers representing the employee numbers of sales representatives.
+     * @param searchCriteria The criteria used for searching customers.
+     * @return A list of customers that match the search criteria.
      */
+       
+        public List<Customer> searchCustomers(String searchCriteria) {
+            List<Customer> searchResults = new ArrayList<>();
 
-    public List<Integer> fetchSalesRepEmployeeNumbers() {
-        List<Integer> salesRepNumbers = new ArrayList<>();
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+            try (Connection connection = DataBaseConnection.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_CUSTOMERS_SQL)) {
 
-        try {
-            
-            conn = DataBaseConnection.getConnection();
-            stmt = conn.createStatement();
+                for (int i = 1; i <= 13; i++) {
+                    preparedStatement.setString(i, "%" + searchCriteria + "%");
+                }
 
-           
-            String sql = "SELECT DISTINCT salesRepEmployeeNumber FROM customers";
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Customer customer = mapResultSetToCustomer(resultSet);
+                        searchResults.add(customer);
+                    }
+                }
 
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                salesRepNumbers.add(rs.getInt("salesRepEmployeeNumber"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        } finally {
-           
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
             } catch (SQLException e) {
-                e.printStackTrace(); 
-        }
-       }
-        return salesRepNumbers; 
-    }
-    
-    /**
-     * Fetches all customer data from the database. Each customer's data is represented as a String array.
-     *
-     * @return A list of String arrays, each representing a customer's data.
-     */
-   
-    
-    public List<String[]> fetchCustomers() {
-        List<String[]> customers = new ArrayList<>();
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String sql = "SELECT customerNumber, customerName, contactLastName, contactFirstName, " +
-                         "phone, addressLine1, addressLine2, city, state, postalCode, country, " +
-                         "salesRepEmployeeNumber, creditLimit FROM customers";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                String[] customer = {
-                    resultSet.getString("customerNumber"),
-                    resultSet.getString("customerName"),
-                    resultSet.getString("contactLastName"),
-                    resultSet.getString("contactFirstName"),
-                    resultSet.getString("phone"),
-                    resultSet.getString("addressLine1"),
-                    resultSet.getString("addressLine2"),
-                    resultSet.getString("city"),
-                    resultSet.getString("state"),
-                    resultSet.getString("postalCode"),
-                    resultSet.getString("country"),
-                    resultSet.getString("salesRepEmployeeNumber"),
-                    resultSet.getString("creditLimit")
-                };
-                customers.add(customer);
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error fetching customer data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+
+            return searchResults;
         }
-        return customers;
-    }
+        
+        /**
+         * Maps a ResultSet row to a Customer object.
+         *
+         * @param resultSet The ResultSet containing customer data.
+         * @return A Customer object populated with data from the ResultSet.
+         * @throws SQLException If there is an issue accessing the ResultSet data.
+         */
+       
+        private Customer mapResultSetToCustomer(ResultSet resultSet) throws SQLException {
+            return new Customer(
+                resultSet.getInt("customerNumber"),
+                resultSet.getString("customerName"),
+                resultSet.getString("contactLastName"),
+                resultSet.getString("contactFirstName"),
+                resultSet.getString("phone"),
+                resultSet.getString("addressLine1"),
+                resultSet.getString("addressLine2"),
+                resultSet.getString("city"),
+                resultSet.getString("state"),
+                resultSet.getString("postalCode"),
+                resultSet.getString("country"),
+                resultSet.getInt("salesRepEmployeeNumber"),
+                resultSet.getBigDecimal("creditLimit")
+            );
+        }
+
+    
+    
+    
+   
     
 }
