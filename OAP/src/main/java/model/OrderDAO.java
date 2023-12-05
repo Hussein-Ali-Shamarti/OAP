@@ -429,6 +429,37 @@ public class OrderDAO {
 		    return false;
 		}
 		
+		
+		/**
+		 * Deletes a specific order detail based on order number and line number.
+		 *
+		 * @param orderNumber The unique identifier of the order.
+		 * @param orderLineNumber The line number of the order detail to be deleted.
+		 * @return true if the deletion is successful, false otherwise.
+		 */
+		
+		public boolean deleteOrderDetail(int orderNumber, int orderLineNumber) {
+		    String deleteOrderDetailSQL = "DELETE FROM orderdetails WHERE OrderNumber = ? AND orderLineNumber = ?";
+
+		    try (Connection conn = DataBaseConnection.getConnection();
+		         PreparedStatement pstmt = conn.prepareStatement(deleteOrderDetailSQL)) {
+
+		        pstmt.setInt(1, orderNumber);
+		        pstmt.setInt(2, orderLineNumber);
+
+		        int affectedRows = pstmt.executeUpdate();
+		        System.out.println("Deleted order detail with OrderNumber: " + orderNumber + " and orderLineNumber: " + orderLineNumber);
+
+		        return affectedRows > 0;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+		
+		
+		
 		/**
 		 * Searches for order details in the database based on the provided search criteria.
 		 *
@@ -472,40 +503,13 @@ public class OrderDAO {
 		}
 		
 		/**
-		 * Deletes a specific order detail based on order number and line number.
-		 *
-		 * @param orderNumber The unique identifier of the order.
-		 * @param orderLineNumber The line number of the order detail to be deleted.
-		 * @return true if the deletion is successful, false otherwise.
-		 */
-		
-		public boolean deleteOrderDetail(int orderNumber, int orderLineNumber) {
-		    String deleteOrderDetailSQL = "DELETE FROM orderdetails WHERE OrderNumber = ? AND orderLineNumber = ?";
-
-		    try (Connection conn = DataBaseConnection.getConnection();
-		         PreparedStatement pstmt = conn.prepareStatement(deleteOrderDetailSQL)) {
-
-		        pstmt.setInt(1, orderNumber);
-		        pstmt.setInt(2, orderLineNumber);
-
-		        int affectedRows = pstmt.executeUpdate();
-		        System.out.println("Deleted order detail with OrderNumber: " + orderNumber + " and orderLineNumber: " + orderLineNumber);
-
-		        return affectedRows > 0;
-
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		        return false;
-		    }
-		}
-		
-		/**
 		 * Retrieves order details based on the order number and line number.
 		 *
 		 * @param orderNumber The unique identifier of the order.
 		 * @param orderLineNumber The line number of the order detail.
 		 * @return An OrderDetails object if found, null otherwise.
 		 */
+		
 		
 		public OrderDetails getOrderDetails(int orderNumber, int orderLineNumber) {
 		    String sql = "SELECT * FROM orderdetails WHERE orderNumber = ? AND orderLineNumber = ?";
@@ -531,6 +535,7 @@ public class OrderDAO {
 		    }
 		    return null; 
 		}
+		
 		
 		
 		/**
