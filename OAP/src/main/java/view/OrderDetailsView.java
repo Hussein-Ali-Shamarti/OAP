@@ -137,16 +137,16 @@ public class OrderDetailsView extends JFrame {
 		super();
 		this.orderDAO = new OrderDAO(); 
 		this.productHandler = new ProductDAO();
-		this.products = productHandler.getProducts();
+		this.setProducts(productHandler.getProducts());
 		this.revalidate();
 		this.repaint();
 
 		productHandler = new ProductDAO();
 
 		orderNumberInput = new JTextField(10);
-		orderLineNumberField = new JTextField(10);
-		quantityOrderedField = new JTextField(10);
-		productCodeField = new JTextField(10);
+		setOrderLineNumberField(new JTextField(10));
+		setQuantityOrderedField(new JTextField(10));
+		setProductCodeField(new JTextField(10));
 
 		initializeUI();
 		fetchAndDisplayOrderDetails();
@@ -714,6 +714,38 @@ public class OrderDetailsView extends JFrame {
 			JOptionPane.showMessageDialog(null, "Error fetching order details: " + e.getMessage(), "Database Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public JTextField getOrderLineNumberField() {
+		return orderLineNumberField;
+	}
+
+	public void setOrderLineNumberField(JTextField orderLineNumberField) {
+		this.orderLineNumberField = orderLineNumberField;
+	}
+
+	public JTextField getProductCodeField() {
+		return productCodeField;
+	}
+
+	public void setProductCodeField(JTextField productCodeField) {
+		this.productCodeField = productCodeField;
+	}
+
+	public JTextField getQuantityOrderedField() {
+		return quantityOrderedField;
+	}
+
+	public void setQuantityOrderedField(JTextField quantityOrderedField) {
+		this.quantityOrderedField = quantityOrderedField;
+	}
+
+	public Map<String, String> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Map<String, String> products) {
+		this.products = products;
 	}
 
 }
