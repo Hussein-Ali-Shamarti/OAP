@@ -85,9 +85,6 @@ public class EmployeeHandler {
         return this::saveEmployeesToFile;
     }
     
-    
-  //Controller for CRUD-methods + search
-    
     /**
      * Handles the addition of a new employee. Gathers user input from the EmployeeView
      * and adds the new employee through EmployeeDAO.
@@ -113,6 +110,7 @@ public class EmployeeHandler {
      * 
      * @param e The action event that triggers the update operation.
      */
+
     public void updateEmployee(ActionEvent e) {
         String employeeNumberStr = JOptionPane.showInputDialog(employeeView, "Enter Employee Number to edit:");
         if (employeeNumberStr != null && !employeeNumberStr.isEmpty()) {

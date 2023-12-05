@@ -107,7 +107,7 @@ public class MenuBar {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0); // Terminate the application
+                System.exit(0); 
             }
         });
         

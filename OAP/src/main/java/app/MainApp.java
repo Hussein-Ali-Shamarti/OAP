@@ -10,7 +10,7 @@ public class MainApp {
     /**
      * The main method that starts the application.
      * Instance of the mainview
-     * @param args The command-line arguments (not used in our application).
+     * @param args 
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

@@ -38,16 +38,6 @@ public class EmployeeDAO {
 	        "CAST(reportsTo AS CHAR) LIKE ? OR " +
 	        "jobTitle LIKE ?";
 	
-	
-	
-	
-	
-	//CRUD- + search-methods 
-	
-	
-	
-	
-	
 	 /**
      * Adds a new employee to the database.
      *
