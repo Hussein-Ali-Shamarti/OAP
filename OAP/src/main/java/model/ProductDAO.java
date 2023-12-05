@@ -40,6 +40,8 @@ public class ProductDAO {
      * @return True if the product is added successfully, false otherwise.
      */
 	
+	
+	
     public boolean addProduct(Products product) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -65,11 +67,15 @@ public class ProductDAO {
         }
     }
     
+    
+    
     /**
      * Updates an existing product's information in the database.
      * @param product The updated product information.
      * @return True if the product is updated successfully, false otherwise.
      */
+    
+    
     public boolean updateProduct(Products product) {
         try (Connection connection = DataBaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -95,11 +101,14 @@ public class ProductDAO {
         }
     }
     
+    
     /**
      * Deletes a product from the database based on the product code.
      * @param productCodes The product code of the product to be deleted.
      * @return True if the product is deleted successfully, false otherwise.
      */
+    
+    
     public boolean deleteProducts(List<String> productCodes) {
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE productCode = ?")) {
@@ -122,6 +131,7 @@ public class ProductDAO {
             return false;
         }
     }
+    
     
 
     /**
@@ -163,6 +173,8 @@ public class ProductDAO {
         return searchResults;
     }
     
+    
+    
     /**
      * Fetches a single product's details from the database based on its product code.
      * This method executes a SQL query to retrieve all attributes of a product with the specified code.
@@ -171,6 +183,8 @@ public class ProductDAO {
      * @param productCode The unique code of the product to be retrieved.
      * @return A Products object containing the details of the product, or null if the product is not found.
      */
+    
+    
     
     public Products fetchProductFromDatabase(String productCode) {
         try (Connection connection = DataBaseConnection.getConnection();
@@ -190,6 +204,8 @@ public class ProductDAO {
 
         return null;
     }
+    
+    
     
     /**
      * Maps a ResultSet to a Products object.
@@ -211,6 +227,8 @@ public class ProductDAO {
         );
     }
 
+    
+    
     /**
      * Retrieves a mapping of product names to product codes.
      * @return A map where the key is the product name and the value is the product code.
@@ -244,6 +262,7 @@ public class ProductDAO {
      */
     
     
+    
     public List<String[]> fetchProducts() {
         List<String[]> products = new ArrayList<>();
 
@@ -273,12 +292,15 @@ public class ProductDAO {
         return products;
     }
     
+    
+    
     /**
      * Retrieves all product details from the database.
      * This method returns a map where each key is a product name and the corresponding value is the product code.
      *
      * @return A map containing product names as keys and product codes as values.
      */
+    
     
     public Map<String, String> getAllProductDetails() {
         Map<String, String> productDetails = new HashMap<>();
@@ -298,6 +320,7 @@ public class ProductDAO {
 
         return productDetails;
     }
+    
     
     
     /**
@@ -401,14 +424,7 @@ public class ProductDAO {
         return productDetails;
     }
 
-    /**
-     * Check if the entered product line exists in the database.
-     * @param productLine The product line to check.
-     * @return true if the product line exists; false otherwise.
-     */
    
-
-    
     
     /**
      * Retrieves detailed information for a product identified by its product code.
@@ -417,6 +433,8 @@ public class ProductDAO {
      * @param productCode The code of the product for which details are being retrieved.
      * @return A map containing key-value pairs of product details.
      */
+    
+    
 
     public Map<String, Object> getProductDetailsByCode(String productCode) {
         Map<String, Object> productDetails = new HashMap<>();
@@ -450,6 +468,7 @@ public class ProductDAO {
 
         return productDetails;
     }
+    
 
     /**
      * Retrieves a mapping of product names to their corresponding codes.
@@ -457,6 +476,8 @@ public class ProductDAO {
      *
      * @return A map containing product names as keys and their corresponding product codes as values.
      */
+    
+    
     
     public Map<String, String> getProductNamesToCodes() {
         Map<String, String> productNamesToCodes = new HashMap<>();
@@ -477,6 +498,13 @@ public class ProductDAO {
 
         return productNamesToCodes;
     }
+    
+    /**
+     * Check if the entered product line exists in the database.
+     * @param productLine The product line to check.
+     * @return true if the product line exists; false otherwise.
+     */
+   
     
     public boolean isProductLineExists(String productLine) {
         try {
@@ -500,6 +528,7 @@ public class ProductDAO {
         return false; 
     }
     
+    
     /**
      * Checks if the requested quantity of a product is available in stock.
      * 
@@ -522,6 +551,7 @@ public class ProductDAO {
         }
         return false;
     }
+    
     
     /**
      * Updates the stock quantity for a given product.
