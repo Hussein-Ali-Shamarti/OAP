@@ -526,11 +526,12 @@ public class OrderDetailsView extends JFrame {
 		                int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
 		                        JOptionPane.OK_CANCEL_OPTION);
 		                if (result == JOptionPane.OK_OPTION) {
-		                    try {
+		                    int newQuantityOrdered = Integer.parseInt(quantityOrderedField.getText());
+		                    if (orderDAO.isStockAvailable(orderDetails.getProductCode(), newQuantityOrdered)) {
 		                        // Update the order details based on user input
 		                        orderDetails.setOrderLineNumber(Integer.parseInt(orderLineNumberField.getText()));
 		                        orderDetails.setProductCode(productCodeField.getText());
-		                        orderDetails.setQuantityOrdered(Integer.parseInt(quantityOrderedField.getText()));
+		                        orderDetails.setQuantityOrdered(newQuantityOrdered);
 		                        orderDetails.setPriceEach(Double.parseDouble(buyPriceField.getText()));
 
 		                        // Call OrderDAO to update the database
@@ -540,10 +541,8 @@ public class OrderDetailsView extends JFrame {
 		                        } else {
 		                            JOptionPane.showMessageDialog(null, "Failed to update order details.");
 		                        }
-		                    } catch (NumberFormatException ex) {
-		                        JOptionPane.showMessageDialog(null, "Invalid input format for numbers.");
-		                    } catch (SQLException ex) {
-		                        JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
+		                    } else {
+		                        JOptionPane.showMessageDialog(null, "Not enough stock available.");
 		                    }
 		                }
 		            } else {
@@ -552,6 +551,8 @@ public class OrderDetailsView extends JFrame {
 		            }
 		        } catch (NumberFormatException ex) {
 		            JOptionPane.showMessageDialog(null, "Invalid input format. Please enter numeric values.");
+		        } catch (SQLException ex) {
+		            JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
 		        }
 		    }
 		}
@@ -706,6 +707,8 @@ public class OrderDetailsView extends JFrame {
 					"Database Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+
 
 	/**
 	 * Fetches all order details from the database and populates them in the tableModel

@@ -495,24 +495,82 @@ public class OrderDAO {
      * @return true if the update is successful, false otherwise.
      * @throws SQLException If there is an error executing the SQL query.
      */
-    public boolean updateOrderDetails(OrderDetails orderDetails) throws SQLException {
-        String sql = "UPDATE orderdetails SET quantityOrdered = ?, priceEach = ? WHERE orderNumber = ? AND productCode = ?";
+	public boolean updateOrderDetails(OrderDetails orderDetails) throws SQLException {
+	    String sql = "UPDATE orderdetails SET quantityOrdered = ?, priceEach = ? WHERE orderNumber = ? AND productCode = ?";
 
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        // Set the parameters for the prepared statement
+	        pstmt.setInt(1, orderDetails.getQuantityOrdered());
+	        pstmt.setDouble(2, orderDetails.getPriceEach());
+	        pstmt.setInt(3, orderDetails.getOrderNumber());
+	        pstmt.setString(4, orderDetails.getProductCode());
+
+	        // Execute the update
+	        int rowsAffected = pstmt.executeUpdate();
+
+	        if (rowsAffected > 0) {
+	            // Update stock quantity
+	            return updateProductStock(orderDetails.getProductCode(), -orderDetails.getQuantityOrdered());
+	        }
+	    }
+	    return false;
+	}
+	
+	/**
+	 * Updates the quantity in stock for a given product in the database.
+	 *
+	 * This method adjusts the quantity in stock of a specified product. 
+	 * It can be used to increase or decrease the stock based on the quantityChange value.
+	 *
+	 * @param productCode The code of the product for which the stock is to be updated.
+	 * @param quantityChange The amount by which the stock quantity should be adjusted. 
+	 *                       This value can be negative (to decrease stock) or positive (to increase stock).
+	 * @return true if the update is successful (i.e., the stock quantity is updated in the database), false otherwise.
+	 * @throws SQLException If there is an error executing the SQL query.
+	 */
+	private boolean updateProductStock(String productCode, int quantityChange) throws SQLException {
+	    String sql = "UPDATE products SET quantityInStock = quantityInStock + ? WHERE productCode = ?";
+	    try (Connection conn = DataBaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        pstmt.setInt(1, quantityChange);
+	        pstmt.setString(2, productCode);
+
+	        int rowsAffected = pstmt.executeUpdate();
+	        return rowsAffected > 0;
+	    }
+	}
+	
+    /**
+     * Checks if the requested quantity of a product is available in stock.
+     * 
+     * This method queries the database to find the current stock quantity for a given product
+     * and compares it against the requested order quantity.
+     *
+     * @param productCode The product code for which stock availability is checked.
+     * @param quantityOrdered The quantity of the product being ordered.
+     * @return true if the requested quantity is less than or equal to the quantity in stock, false otherwise.
+     * @throws SQLException If a database access error occurs or the SQL query is incorrect.
+     */
+    public boolean isStockAvailable(String productCode, int quantityOrdered) throws SQLException {
+        String sql = "SELECT quantity_in_stock FROM products WHERE product_code = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Set the parameters for the prepared statement
-            pstmt.setInt(1, orderDetails.getQuantityOrdered());
-            pstmt.setDouble(2, orderDetails.getPriceEach());
-            pstmt.setInt(3, orderDetails.getOrderNumber());
-            pstmt.setString(4, orderDetails.getProductCode());
-
-            // Execute the update
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0;
+            pstmt.setString(1, productCode);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int quantityInStock = rs.getInt("quantity_in_stock");
+                return quantityOrdered <= quantityInStock;
+            }
         }
+        return false;
     }
-	
+
+
+    
 	/**
 	 * Inserts a list of orders into the database using batch processing.
 	 *
