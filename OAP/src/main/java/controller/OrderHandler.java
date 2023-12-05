@@ -20,6 +20,7 @@ import model.Order;
 import model.OrderDAO;
 import model.OrderDetails;
 import model.OrderInput;
+import view.OrderDetailsView;
 import view.OrderView;
 
 /**
@@ -119,6 +120,10 @@ public class OrderHandler {
      */
     public ActionListener getCheckStatusButtonListener() {
         return this::checkOrderStatus;
+    }
+    
+    public ActionListener getorderDetailsView() {
+        return this::orderDetailsView;
     }
 
     /**
@@ -252,7 +257,7 @@ public class OrderHandler {
      * @param e The action event that triggers the payment status check.
      */
 
-    private void checkPaymentStatus(ActionEvent e) {
+    public void checkPaymentStatus(ActionEvent e) {
         String customerNumberString = orderView.gatherInfoForPaymentCheck();
 
         if (customerNumberString != null && !customerNumberString.isEmpty()) {
@@ -385,8 +390,25 @@ public class OrderHandler {
         }
         return orders;
     }
+    
+    /**
+	 * ActionListener implementation for an "Order Details" button. It opens a new OrderDetailsView.
+	 */
+
+		
+		public void orderDetailsView(ActionEvent e) {
+			new OrderDetailsView(); 
+		
+	}
+		
+			
+
+}
+		
+	
+	
   
- }
+ 
     
     
 

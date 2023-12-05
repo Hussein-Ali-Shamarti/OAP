@@ -1,10 +1,11 @@
 package view;
 
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 
 import java.sql.Connection;
@@ -256,7 +257,7 @@ public class OrderView extends JFrame {
 	 * Configures event listeners to display product details when a product code is selected.
 	 */
 	
-	private void setupProductDropdowns() {
+	public void setupProductDropdowns() {
 		productNameDropdown = new JComboBox<>();
 		productCodeDropdown = new JComboBox<>();
 
@@ -298,7 +299,7 @@ public class OrderView extends JFrame {
 	 * @return The corresponding product name, or null if not found.
 	 */
 	
-	private String findProductNameByCode(String code) {
+	public String findProductNameByCode(String code) {
 		return ProductDAO.getProductNameByCode(code); 
 	}
 	
@@ -306,7 +307,7 @@ public class OrderView extends JFrame {
 	 * Initializes the user interface components and its layout.
 	 */
 
-	private void initializeUI() {
+	public void initializeUI() {
 		JPanel titlePanel = new JPanel();
 		titlePanel.setBackground(new Color(84, 11, 131));
 		JLabel titleLabel = new JLabel("Order Management");
@@ -348,7 +349,7 @@ public class OrderView extends JFrame {
 	 * Sets up the control panel with buttons for various actions.
 	 */
 	
-	private void setupControlPanel() {
+	public void setupControlPanel() {
 		JPanel controlPanel = new JPanel(new GridLayout(1, 4, 10, 10));
 		controlPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		controlPanel.setBackground(new Color(90, 23, 139));
@@ -357,7 +358,7 @@ public class OrderView extends JFrame {
 		JButton editButton = createButton("Edit", orderHandler.getUpdateOrderButtonListener());
 		JButton deleteButton = createButton("Delete", orderHandler.getDeleteOrderButtonListener());
 		JButton saveOrderButton = createButton("Save to File", orderHandler.getSaveOrderButtonListener());
-		JButton orderDetailsButton = createButton("Order Details", new OrderDetailsButtonListener());
+		JButton orderDetailsButton = createButton("Order Details", orderHandler.getorderDetailsView());
 
 		controlPanel.add(searchButton);
 		controlPanel.add(addButton);
@@ -369,8 +370,8 @@ public class OrderView extends JFrame {
 		JPanel statusPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 		statusPanel.setBorder(new EmptyBorder(15, 25, 15, 25));
 		statusPanel.setBackground(new Color(100, 25, 150));
-		JButton checkStatusButton = createButton("Check Shipping Status", new CheckStatusButtonListener());
-		JButton paymentButton = createButton("Check Payment Status", new PaymentButtonListener());
+		JButton checkStatusButton = createButton("Check Shipping Status", e -> orderHandler.checkOrderStatus(e));
+		JButton paymentButton = createButton("Check Payment Status", e -> orderHandler.checkPaymentStatus(e));
 		statusPanel.add(checkStatusButton);
 		statusPanel.add(paymentButton);
 
@@ -703,84 +704,9 @@ public class OrderView extends JFrame {
         return JOptionPane.showInputDialog(OrderView.this, "Enter Order Number to check status:");
     }
 
-	/**
-	 * ActionListener implementation for the "Check Status" button. It prompts the user for an order number and
-	 * displays the order status.
-	 */
-
-	public class CheckStatusButtonListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-			String orderNumberString = JOptionPane.showInputDialog(OrderView.this,
-					"Enter Order Number to check status:");
-
-			if (orderNumberString != null && !orderNumberString.isEmpty()) {
-				try {
-					int orderNumber = Integer.parseInt(orderNumberString);
-
-					String status = OrderDAO.getOrderStatus(orderNumber);
-
-					if (status != null) {
-						JOptionPane.showMessageDialog(OrderView.this,
-								"Order Status for Order Number " + orderNumber + ": " + status);
-					} else {
-						JOptionPane.showMessageDialog(OrderView.this,
-								"No order found for Order Number: " + orderNumber);
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(OrderView.this, "Invalid Order Number format.");
-				}
-			}
-		}
-	}
 	
-	/**
-	 * ActionListener implementation for the "Payment" button. It prompts the user for a customer number and
-	 * displays the payment status.
-	 */
-
-	private class PaymentButtonListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String customerNumberString = JOptionPane.showInputDialog(OrderView.this,
-					"Enter Customer Number to check payment status:");
-
-			if (customerNumberString != null && !customerNumberString.isEmpty()) {
-				try {
-					int customerNumber = Integer.parseInt(customerNumberString);
-
-					if (OrderDAO.customerExists(customerNumber)) {
-						boolean paid = OrderDAO.checkPaymentStatus(customerNumber);
-
-						if (paid) {
-							JOptionPane.showMessageDialog(OrderView.this,
-									"Payment Status for Customer Number " + customerNumber + ": Paid");
-						} else {
-							JOptionPane.showMessageDialog(OrderView.this,
-									"Payment Status for Customer Number " + customerNumber + ": Not Paid");
-						}
-					} else {
-						JOptionPane.showMessageDialog(OrderView.this,
-								"Customer with Customer Number " + customerNumber + " does not exist.");
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(OrderView.this, "Invalid Customer Number format.");
-				}
-			}
-		}
-	}
 	
-	/**
-	 * ActionListener implementation for an "Order Details" button. It opens a new OrderDetailsView.
-	 */
-
-	private class OrderDetailsButtonListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			new OrderDetailsView(); 
-		}
-	}
+	
 	/**
 	 * Fetches and displays orders in the table.
 	 *
