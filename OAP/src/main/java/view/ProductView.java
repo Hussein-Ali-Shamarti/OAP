@@ -305,25 +305,7 @@ public class ProductView extends JFrame {
 
         return null;
     }
-
-    /**
-     * Retrieves product codes from selected rows in the table.
-     *
-     * @param selectedRows The array of selected row indices.
-     * @return The list of product codes corresponding to the selected rows.
-     */
-    public List<String> getProductCodesFromRows(int[] selectedRows) {
-       
-        List<String> productCodes = new ArrayList<>();
-
-        for (int rowIndex : selectedRows) {
-            String productCode = (String) table.getValueAt(rowIndex, 0);
-            productCodes.add(productCode);
-        }
-
-        return productCodes;
-    }
-
+    
     /**
      * Gathers user input for searching products through a dialog.
      *
@@ -344,18 +326,7 @@ public class ProductView extends JFrame {
         }
     }
 
-    /**
-     * Performs a search based on user input and updates the table with the search results.
-     *
-     * @param searchCriteria The search criteria entered by the user.
-     * @return A list of Products representing the search results.
-     */
-    public List<Products> performSearch(String searchCriteria) {
-        ProductDAO productHandler = new ProductDAO();
-        List<Products> searchResults = productHandler.searchProducts(searchCriteria);
-
-        return searchResults;
-    }
+    
     
     /**
      * Updates the table with the provided search results.
@@ -382,6 +353,26 @@ public class ProductView extends JFrame {
         }
         
     }
+
+    /**
+     * Retrieves product codes from selected rows in the table.
+     *
+     * @param selectedRows The array of selected row indices.
+     * @return The list of product codes corresponding to the selected rows.
+     */
+    public List<String> getProductCodesFromRows(int[] selectedRows) {
+       
+        List<String> productCodes = new ArrayList<>();
+
+        for (int rowIndex : selectedRows) {
+            String productCode = (String) table.getValueAt(rowIndex, 0);
+            productCodes.add(productCode);
+        }
+
+        return productCodes;
+    }
+
+    
 
     /**
      * Updates the table with the provided list of product details.
