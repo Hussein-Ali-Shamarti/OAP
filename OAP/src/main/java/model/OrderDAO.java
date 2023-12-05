@@ -75,7 +75,7 @@ public class OrderDAO {
     }
 	
 	
-	//CRUD-methods
+	//CRUD- + search-methods 
 	
 	/**
 	 * Adds a new order along with its details to the database.

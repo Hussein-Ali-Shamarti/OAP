@@ -90,7 +90,7 @@ public class MenuBar {
         menuBar = new JMenuBar();
 
        
-        fileMenu = new JMenu("file");
+        fileMenu = new JMenu("File");
 
   
         testDatabaseConnectionItem = new JMenuItem("Test Database Connection");

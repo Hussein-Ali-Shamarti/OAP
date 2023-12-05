@@ -8,11 +8,10 @@ import java.util.Map;
 import javax.swing.JTextField;
 
 /**
- * Represents an order entity with information such as order number, dates, status, comments,
- * customer number, and associated order date.
- * 
- * Orders may also contain order details, which are not implemented in this version.
- * 
+ * /**
+ * SQL query for searching orders in the database.
+ * It searches across various fields like OrderNumber, orderDate, requiredDate, shippedDate, status, and comments.
+ * The query uses LIKE clauses for each field to support partial matching.
  * @author 7088
  */
 

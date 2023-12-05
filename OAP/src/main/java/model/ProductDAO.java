@@ -25,6 +25,14 @@ import database.DataBaseConnection;
  */
 
 public class ProductDAO {
+	
+	
+	
+
+    
+	//CRUD- + search-methods 
+    
+    
 
     /**
      * Adds a new product to the database.
@@ -56,6 +64,65 @@ public class ProductDAO {
             return false;
         }
     }
+    
+    /**
+     * Updates an existing product's information in the database.
+     * @param product The updated product information.
+     * @return True if the product is updated successfully, false otherwise.
+     */
+    public boolean updateProduct(Products product) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "UPDATE products SET productName = ?, productLine = ?, productScale = ?, productVendor = ?, " +
+                             "productDescription = ?, quantityInStock = ?, buyPrice = ?, MSRP = ? WHERE productCode = ?")) {
+
+            preparedStatement.setString(1, product.getProductName());
+            preparedStatement.setString(2, product.getProductLine());
+            preparedStatement.setString(3, product.getProductScale());
+            preparedStatement.setString(4, product.getProductVendor());
+            preparedStatement.setString(5, product.getProductDescription());
+            preparedStatement.setInt(6, product.getQuantityInStock());
+            preparedStatement.setDouble(7, product.getBuyPrice());
+            preparedStatement.setDouble(8, product.getMsrp());
+            preparedStatement.setString(9, product.getProductCode());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a product from the database based on the product code.
+     * @param productCodes The product code of the product to be deleted.
+     * @return True if the product is deleted successfully, false otherwise.
+     */
+    public boolean deleteProducts(List<String> productCodes) {
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE productCode = ?")) {
+
+            for (String productCode : productCodes) {
+                pstmt.setString(1, productCode);
+                pstmt.addBatch();
+            }
+
+            int[] deleteCounts = pstmt.executeBatch();
+            for (int count : deleteCounts) {
+                if (count != 1) {
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 
     /**
      * Searches for products in the database based on the provided search criteria.
@@ -97,12 +164,85 @@ public class ProductDAO {
     }
     
     /**
+     * Fetches a single product's details from the database based on its product code.
+     * This method executes a SQL query to retrieve all attributes of a product with the specified code.
+     * If found, it maps the result set to a Products object.
+     *
+     * @param productCode The unique code of the product to be retrieved.
+     * @return A Products object containing the details of the product, or null if the product is not found.
+     */
+    
+    public Products fetchProductFromDatabase(String productCode) {
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM products WHERE productCode = ?")) {
+
+            preparedStatement.setString(1, productCode);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToProduct(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    /**
+     * Maps a ResultSet to a Products object.
+     * @param resultSet The ResultSet containing product information.
+     * @return The Products object created from the ResultSet.
+     * @throws SQLException If a SQL exception occurs.
+     */
+    private Products mapResultSetToProduct(ResultSet resultSet) throws SQLException {
+        return new Products(
+                resultSet.getString("productCode"),
+                resultSet.getString("productName"),
+                resultSet.getString("productLine"),
+                resultSet.getString("productScale"),
+                resultSet.getString("productVendor"),
+                resultSet.getString("productDescription"),
+                resultSet.getInt("quantityInStock"),
+                resultSet.getDouble("buyPrice"),
+                resultSet.getDouble("msrp")
+        );
+    }
+
+    /**
+     * Retrieves a mapping of product names to product codes.
+     * @return A map where the key is the product name and the value is the product code.
+     */
+    public Map<String, String> getProducts() {
+        Map<String, String> products = new HashMap<>();
+        String query = "SELECT productName, productCode FROM products";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String productName = rs.getString("productName");
+                String productCode = rs.getString("productCode");
+                products.put(productName, productCode);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    
+    
+    /**
      * Fetches all product details from the database.
      * This method retrieves various attributes of each product, including code, name, line, scale, vendor, 
      * description, quantity in stock, buy price, and MSRP. The data for each product is stored in a string array.
      *
      * @return A list of string arrays, where each array represents a product and its details.
      */
+    
     
     public List<String[]> fetchProducts() {
         List<String[]> products = new ArrayList<>();
@@ -132,94 +272,58 @@ public class ProductDAO {
 
         return products;
     }
-
-
-    /**
-     * Updates an existing product's information in the database.
-     * @param product The updated product information.
-     * @return True if the product is updated successfully, false otherwise.
-     */
-    public boolean updateProduct(Products product) {
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE products SET productName = ?, productLine = ?, productScale = ?, productVendor = ?, " +
-                             "productDescription = ?, quantityInStock = ?, buyPrice = ?, MSRP = ? WHERE productCode = ?")) {
-
-            preparedStatement.setString(1, product.getProductName());
-            preparedStatement.setString(2, product.getProductLine());
-            preparedStatement.setString(3, product.getProductScale());
-            preparedStatement.setString(4, product.getProductVendor());
-            preparedStatement.setString(5, product.getProductDescription());
-            preparedStatement.setInt(6, product.getQuantityInStock());
-            preparedStatement.setDouble(7, product.getBuyPrice());
-            preparedStatement.setDouble(8, product.getMsrp());
-            preparedStatement.setString(9, product.getProductCode());
-
-            int affectedRows = preparedStatement.executeUpdate();
-
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     
     /**
-     * Fetches a single product's details from the database based on its product code.
-     * This method executes a SQL query to retrieve all attributes of a product with the specified code.
-     * If found, it maps the result set to a Products object.
+     * Retrieves all product details from the database.
+     * This method returns a map where each key is a product name and the corresponding value is the product code.
      *
-     * @param productCode The unique code of the product to be retrieved.
-     * @return A Products object containing the details of the product, or null if the product is not found.
+     * @return A map containing product names as keys and product codes as values.
      */
     
-    public Products fetchProductFromDatabase(String productCode) {
+    public Map<String, String> getAllProductDetails() {
+        Map<String, String> productDetails = new HashMap<>();
+
         try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT * FROM products WHERE productCode = ?")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT productName, productCode FROM products");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
-            preparedStatement.setString(1, productCode);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapResultSetToProduct(resultSet);
-                }
+            while (resultSet.next()) {
+                String productName = resultSet.getString("productName"); 
+                String productCode = resultSet.getString("productCode"); 
+                productDetails.put(productName, productCode);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return productDetails;
     }
-
+    
+    
     /**
-     * Deletes a product from the database based on the product code.
-     * @param productCodes The product code of the product to be deleted.
-     * @return True if the product is deleted successfully, false otherwise.
+     * Retrieves all product names from the database.
+     * @return A list of all product names.
      */
-    public boolean deleteProducts(List<String> productCodes) {
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE productCode = ?")) {
+    public List<String> getAllProductNames() {
+        List<String> productNames = new ArrayList<>();
+        String query = "SELECT productName FROM products";
 
-            for (String productCode : productCodes) {
-                pstmt.setString(1, productCode);
-                pstmt.addBatch();
+        try (Connection connection = DataBaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                productNames.add(resultSet.getString("productName"));
             }
-
-            int[] deleteCounts = pstmt.executeBatch();
-            for (int count : deleteCounts) {
-                if (count != 1) {
-                    return false;
-                }
-            }
-
-            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            e.printStackTrace(); 
         }
+
+        return productNames;
     }
 
+    
+   
     /**
      * Retrieves the product code for a given product name.
      * @param productName The name of the product.
@@ -269,48 +373,7 @@ public class ProductDAO {
         return null; 
     }
 
-    /**
-     * Maps a ResultSet to a Products object.
-     * @param resultSet The ResultSet containing product information.
-     * @return The Products object created from the ResultSet.
-     * @throws SQLException If a SQL exception occurs.
-     */
-    private Products mapResultSetToProduct(ResultSet resultSet) throws SQLException {
-        return new Products(
-                resultSet.getString("productCode"),
-                resultSet.getString("productName"),
-                resultSet.getString("productLine"),
-                resultSet.getString("productScale"),
-                resultSet.getString("productVendor"),
-                resultSet.getString("productDescription"),
-                resultSet.getInt("quantityInStock"),
-                resultSet.getDouble("buyPrice"),
-                resultSet.getDouble("msrp")
-        );
-    }
-
-    /**
-     * Retrieves a mapping of product names to product codes.
-     * @return A map where the key is the product name and the value is the product code.
-     */
-    public Map<String, String> getProducts() {
-        Map<String, String> products = new HashMap<>();
-        String query = "SELECT productName, productCode FROM products";
-        try (Connection conn = DataBaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                String productName = rs.getString("productName");
-                String productCode = rs.getString("productCode");
-                products.put(productName, productCode);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return products;
-    }
-
+   
     /**
      * Retrieves detailed information for a given product name.
      * @param productName The name of the product.
@@ -343,75 +406,9 @@ public class ProductDAO {
      * @param productLine The product line to check.
      * @return true if the product line exists; false otherwise.
      */
-    public boolean isProductLineExists(String productLine) {
-        try {
-            // create a PreparedStatement
-            try (PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?")) {
-                preparedStatement.setString(1, productLine);
+   
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {               
-                    if (resultSet.next() && resultSet.getInt(1) > 0) {
-                        return true; 
-                    }
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-
-            String errorMessage = "Error checking product line existence. Please try again later or contact support.";
-            throw new RuntimeException(errorMessage, ex);
-        }
-
-        return false; 
-    }
-
-    /**
-     * Retrieves all product names from the database.
-     * @return A list of all product names.
-     */
-    public List<String> getAllProductNames() {
-        List<String> productNames = new ArrayList<>();
-        String query = "SELECT productName FROM products";
-
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                productNames.add(resultSet.getString("productName"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-        }
-
-        return productNames;
-    }
-
-    /**
-     * Retrieves all product details from the database.
-     * This method returns a map where each key is a product name and the corresponding value is the product code.
-     *
-     * @return A map containing product names as keys and product codes as values.
-     */
     
-    public Map<String, String> getAllProductDetails() {
-        Map<String, String> productDetails = new HashMap<>();
-
-        try (Connection connection = DataBaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT productName, productCode FROM products");
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String productName = resultSet.getString("productName"); 
-                String productCode = resultSet.getString("productCode"); 
-                productDetails.put(productName, productCode);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return productDetails;
-    }
     
     /**
      * Retrieves detailed information for a product identified by its product code.
@@ -479,6 +476,28 @@ public class ProductDAO {
         }
 
         return productNamesToCodes;
+    }
+    
+    public boolean isProductLineExists(String productLine) {
+        try {
+            // create a PreparedStatement
+            try (PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?")) {
+                preparedStatement.setString(1, productLine);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {               
+                    if (resultSet.next() && resultSet.getInt(1) > 0) {
+                        return true; 
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+
+            String errorMessage = "Error checking product line existence. Please try again later or contact support.";
+            throw new RuntimeException(errorMessage, ex);
+        }
+
+        return false; 
     }
     
     /**
