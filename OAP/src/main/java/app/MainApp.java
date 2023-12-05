@@ -1,4 +1,4 @@
-package App;
+package app;
 
 import javax.swing.SwingUtilities;
 import view.MainView;
