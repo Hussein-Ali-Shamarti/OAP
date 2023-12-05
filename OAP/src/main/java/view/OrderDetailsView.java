@@ -732,6 +732,7 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 
+	
 	/**
 	 * Retrieves the order line number field.
 	 *

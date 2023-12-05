@@ -3,6 +3,9 @@ package model;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JTextField;
 
 /**
  * Represents an order entity with information such as order number, dates, status, comments,
@@ -243,5 +246,75 @@ public class Order {
     public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
         this.orderDetailsList = orderDetailsList;
     }
+	/**
+	 * Retrieves the order line number field.
+	 *
+	 * @return the JTextField that represents the order line number field.
+	 */
+	public JTextField getOrderLineNumberField() {
+	    return orderLineNumberField;
+	}
 
+	/**
+	 * Sets the order line number field.
+	 *
+	 * @param orderLineNumberField the JTextField to set as the order line number field.
+	 */
+	public void setOrderLineNumberField(JTextField orderLineNumberField) {
+	    this.orderLineNumberField = orderLineNumberField;
+	}
+
+	/**
+	 * Retrieves the product code field.
+	 *
+	 * @return the JTextField that represents the product code field.
+	 */
+	public JTextField getProductCodeField() {
+	    return productCodeField;
+	}
+
+	/**
+	 * Sets the product code field.
+	 *
+	 * @param productCodeField the JTextField to set as the product code field.
+	 */
+	public void setProductCodeField(JTextField productCodeField) {
+	    this.productCodeField = productCodeField;
+	}
+
+	/**
+	 * Retrieves the quantity ordered field.
+	 *
+	 * @return the JTextField that represents the quantity ordered field.
+	 */
+	public JTextField getQuantityOrderedField() {
+	    return quantityOrderedField;
+	}
+
+	/**
+	 * Sets the quantity ordered field.
+	 *
+	 * @param quantityOrderedField the JTextField to set as the quantity ordered field.
+	 */
+	public void setQuantityOrderedField(JTextField quantityOrderedField) {
+	    this.quantityOrderedField = quantityOrderedField;
+	}
+
+	/**
+	 * Retrieves the map of products.
+	 *
+	 * @return the Map representing the product codes and their descriptions.
+	 */
+	public Map<String, String> getProducts() {
+	    return products;
+	}
+
+	/**
+	 * Sets the map of products.
+	 *
+	 * @param products the Map containing product codes and their descriptions to be used.
+	 */
+	public void setProducts(Map<String, String> products) {
+	    this.products = products;
+	}
 }
