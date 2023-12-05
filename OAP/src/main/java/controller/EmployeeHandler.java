@@ -85,6 +85,9 @@ public class EmployeeHandler {
         return this::saveEmployeesToFile;
     }
     
+    
+  //Controller for CRUD-methods + search
+    
     /**
      * Handles the addition of a new employee. Gathers user input from the EmployeeView
      * and adds the new employee through EmployeeDAO.

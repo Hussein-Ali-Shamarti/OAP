@@ -99,6 +99,11 @@ public class ProductHandler {
      * @param e The action event triggering the addition of a new product.
      */
     
+    
+  //Controller for CRUD-methods + search
+    
+    
+    
     public void addProduct(ActionEvent e) {
         Products product = productView.gatherUserInputForAddProduct();
 
@@ -232,6 +237,6 @@ public class ProductHandler {
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Error saving file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
+        } 
     }
 }

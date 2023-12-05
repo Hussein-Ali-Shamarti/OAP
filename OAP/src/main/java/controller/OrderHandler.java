@@ -126,7 +126,7 @@ public class OrderHandler {
         return this::orderDetailsView;
     }
     
-    
+    //Controller for CRUD-methods + search
 
     /**
      * Handles the addition of a new order. Gathers user input for order details
@@ -251,6 +251,8 @@ public class OrderHandler {
             }
         }
     }
+    
+    //Controller for other order related methods
     
     /**
      * Checks the payment status of a customer. Verifies if the specified customer

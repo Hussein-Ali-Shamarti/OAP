@@ -86,6 +86,9 @@ public class CustomerHandler {
     public ActionListener getSaveCustomerButtonListener() {
         return new SaveCustomerButtonListener();
     }
+    
+    
+  //Controller for CRUD-methods + search
 
 
     /**
