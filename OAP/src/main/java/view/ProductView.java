@@ -58,14 +58,7 @@ public class ProductView extends JFrame {
 	 */
 	private ProductHandler productHandler;
 
-    /**
-     * Gets the JTable component.
-     *
-     * @return The JTable component.
-     */
-    public JTable getTable() {
-        return table;
-    }
+   
 
     /**
      * Constructor for the ProductView class.
@@ -296,7 +289,7 @@ public class ProductView extends JFrame {
      * @return The list of product codes to be deleted, or null if the user cancels the operation.
      */
     public List<String> gatherUserInputForDelete() {
-        JTable table = getTable();
+      
         int[] selectedRows = table.getSelectedRows();
 
         if (selectedRows.length == 0) {
@@ -320,7 +313,7 @@ public class ProductView extends JFrame {
      * @return The list of product codes corresponding to the selected rows.
      */
     public List<String> getProductCodesFromRows(int[] selectedRows) {
-        JTable table = getTable();
+       
         List<String> productCodes = new ArrayList<>();
 
         for (int rowIndex : selectedRows) {
