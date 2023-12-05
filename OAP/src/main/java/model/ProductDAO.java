@@ -27,7 +27,6 @@ import database.DataBaseConnection;
 public class ProductDAO {
 	
 	
-	
 
     
 	//CRUD- + search-methods 

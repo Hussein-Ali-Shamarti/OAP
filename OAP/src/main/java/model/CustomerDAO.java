@@ -47,8 +47,6 @@ private static final String SEARCH_CUSTOMERS_SQL = "SELECT * FROM customers WHER
 
 
 
-		
-
 
 		
 		//CRUD- + search-methods 
