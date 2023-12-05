@@ -102,10 +102,11 @@ public class CustomerHandler {
 
         if (customer != null) {
             boolean success = customerDAO.addCustomer(customer);
-            customerView.fetchAndDisplayCustomers();
+            
 
             if (success) {
                 JOptionPane.showMessageDialog(customerView, "Customer added successfully!");
+                customerView.fetchAndDisplayCustomers();
             } else {
                 JOptionPane.showMessageDialog(customerView, "Failed to add customer.");
             }
@@ -130,9 +131,10 @@ public class CustomerHandler {
 
                 if (customer != null) {
                     customerView.gatherUserInputForUpdateCustomer(customer);
-                    customerView.fetchAndDisplayCustomers();
+                   
                 } else {
                     JOptionPane.showMessageDialog(customerView, "Customer not found.");
+                    customerView.fetchAndDisplayCustomers();
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(customerView, "Invalid customer number format.");
