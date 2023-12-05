@@ -555,14 +555,14 @@ public class OrderDAO {
      * @throws SQLException If a database access error occurs or the SQL query is incorrect.
      */
     public boolean isStockAvailable(String productCode, int quantityOrdered) throws SQLException {
-        String sql = "SELECT quantity_in_stock FROM products WHERE product_code = ?";
+        String sql = "SELECT quantityInStock FROM products WHERE productCode = ?";
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, productCode);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                int quantityInStock = rs.getInt("quantity_in_stock");
+                int quantityInStock = rs.getInt("quantityInStock");
                 return quantityOrdered <= quantityInStock;
             }
         }

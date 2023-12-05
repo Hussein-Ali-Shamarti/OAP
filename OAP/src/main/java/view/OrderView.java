@@ -504,54 +504,57 @@ public class OrderView extends JFrame {
 	        }
 	    });
 
-        int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
-       OrderInput orderInput= null;
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date orderDate = dateFormat.parse(orderDateField.getText());
-                Date requiredDate = dateFormat.parse(requiredDateField.getText());
-                Date shippedDate = dateFormat.parse(shippedDateField.getText());
-                String status = statusField.getText();
-                String comments = commentsField.getText();
-                int customerNumber = customerNumberField.getText().isEmpty() ? 0 : Integer.parseInt(customerNumberField.getText());
+	    int result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter New Order Details", JOptionPane.OK_CANCEL_OPTION);
+	    OrderInput orderInput = null;
+	    if (result == JOptionPane.OK_OPTION) {
+	        try {
+	            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	            Date orderDate = dateFormat.parse(orderDateField.getText());
+	            Date requiredDate = dateFormat.parse(requiredDateField.getText());
+	            Date shippedDate = dateFormat.parse(shippedDateField.getText());
+	            String status = statusField.getText();
+	            String comments = commentsField.getText();
+	            int customerNumber = customerNumberField.getText().isEmpty() ? 0 : Integer.parseInt(customerNumberField.getText());
 
-                List<OrderDetails> orderDetailsList = new ArrayList<>();
-
-				String productCode = productCodeField.getText();
+	            String productCode = productCodeField.getText();
 	            int quantityOrdered = quantityOrderedField.getText().isEmpty() ? 0 : Integer.parseInt(quantityOrderedField.getText());
-	            int orderLineNumber = orderLineNumberField.getText().isEmpty() ? 0 : Integer.parseInt(orderLineNumberField.getText());
-	            double buyPrice = buyPriceField.getText().isEmpty() ? 0.0 : Double.parseDouble(buyPriceField.getText());
 	            
-	            
-                OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
-                orderDetailsList.add(orderDetails);    
-                Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
-                orderInput= new OrderInput(order, orderDetailsList);
-             
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-            }
-            
-        }
-        
-        if(result == JOptionPane.CANCEL_OPTION) {
-        	panel.remove(productCodeField);
-        	panel.remove(productCodeLabel);
-        	panel.remove(buyPriceField);
-        	panel.remove(buyPriceLabel);
-        	panel.remove(quantityOrderedField);
-        	panel.remove(quantityOrderedLabel);
-        	panel.remove(orderDateLabel);
-        	panel.remove(orderDateField);
-        	panel.remove(requiredDateField);
-        	panel.remove(requiredDateLabel);
-        	panel.remove(shippedDateField);
+	            if (ProductDAO.isStockAvailable(productCode, quantityOrdered)) {
+	                int orderLineNumber = orderLineNumberField.getText().isEmpty() ? 0 : Integer.parseInt(orderLineNumberField.getText());
+	                double buyPrice = buyPriceField.getText().isEmpty() ? 0.0 : Double.parseDouble(buyPriceField.getText());
+	                
+	                OrderDetails orderDetails = new OrderDetails(quantityOrdered, buyPrice, productCode, orderLineNumber);
+	                List<OrderDetails> orderDetailsList = new ArrayList<>();
+	                orderDetailsList.add(orderDetails);    
+	                Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
+	                orderInput = new OrderInput(order, orderDetailsList);
 
+	                // Update stock quantity
+	                ProductDAO.updateProductStock(productCode, -quantityOrdered);
+	            } else {
+	                JOptionPane.showMessageDialog(null, "Not enough stock available.");
+	            }
+	        } catch (Exception ex) {
+	            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+	        }
+	    }
 
-        }	
-        return orderInput;
-    }
+	    if(result == JOptionPane.CANCEL_OPTION) {
+	        // Clearing fields if cancel is clicked
+	        panel.remove(productCodeField);
+	        panel.remove(productCodeLabel);
+	        panel.remove(buyPriceField);
+	        panel.remove(buyPriceLabel);
+	        panel.remove(quantityOrderedField);
+	        panel.remove(quantityOrderedLabel);
+	        panel.remove(orderDateLabel);
+	        panel.remove(orderDateField);
+	        panel.remove(requiredDateField);
+	        panel.remove(requiredDateLabel);
+	        panel.remove(shippedDateField);
+	    }
+	    return orderInput;
+	}
     
     /**
      * Makes the specified JTextField read-only by disabling editing and setting its background color.

@@ -480,4 +480,49 @@ public class ProductDAO {
 
         return productNamesToCodes;
     }
+    
+    /**
+     * Checks if the requested quantity of a product is available in stock.
+     * 
+     * @param productCode The code of the product to check.
+     * @param quantityOrdered The quantity of the product being ordered.
+     * @return true if the requested quantity is available, false otherwise.
+     */
+    public boolean isStockAvailable(String productCode, int quantityOrdered) throws SQLException {
+        String sql = "SELECT quantityInStock FROM products WHERE productCode = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, productCode);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int quantityInStock = rs.getInt("quantityInStock");
+                    return quantityOrdered <= quantityInStock;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Updates the stock quantity for a given product.
+     *
+     * @param productCode The code of the product.
+     * @param quantityChange The amount to adjust the stock by. This can be negative or positive.
+     * @return true if the update was successful, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean updateProductStock(String productCode, int quantityChange) throws SQLException {
+        String sql = "UPDATE products SET quantityInStock = quantityInStock + ? WHERE productCode = ?";
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, quantityChange);
+            pstmt.setString(2, productCode);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+    
  }

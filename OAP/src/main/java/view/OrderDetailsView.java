@@ -455,7 +455,7 @@ public class OrderDetailsView extends JFrame {
 	     *
 	     * @param e The ActionEvent associated with the button click.
 	     */
-		
+	
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
@@ -528,13 +528,11 @@ public class OrderDetailsView extends JFrame {
 		                if (result == JOptionPane.OK_OPTION) {
 		                    int newQuantityOrdered = Integer.parseInt(quantityOrderedField.getText());
 		                    if (orderDAO.isStockAvailable(orderDetails.getProductCode(), newQuantityOrdered)) {
-		                        // Update the order details based on user input
 		                        orderDetails.setOrderLineNumber(Integer.parseInt(orderLineNumberField.getText()));
 		                        orderDetails.setProductCode(productCodeField.getText());
 		                        orderDetails.setQuantityOrdered(newQuantityOrdered);
 		                        orderDetails.setPriceEach(Double.parseDouble(buyPriceField.getText()));
 
-		                        // Call OrderDAO to update the database
 		                        boolean updateSuccess = orderDAO.updateOrderDetails(orderDetails);
 		                        if (updateSuccess) {
 		                            JOptionPane.showMessageDialog(null, "Order details updated successfully.");
