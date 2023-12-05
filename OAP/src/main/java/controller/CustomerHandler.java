@@ -134,10 +134,11 @@ public class CustomerHandler {
 
                 if (customer != null) {
                     customerView.gatherUserInputForUpdateCustomer(customer);
+                    customerView.fetchAndDisplayCustomers();
                    
                 } else {
                     JOptionPane.showMessageDialog(customerView, "Customer not found.");
-                    customerView.fetchAndDisplayCustomers();
+                  
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(customerView, "Invalid customer number format.");
@@ -157,7 +158,7 @@ public class CustomerHandler {
 
         if (customerNumberToDelete != null) {
             boolean success = customerDAO.deleteCustomer(customerNumberToDelete);
-            customerView.fetchAndDisplayCustomers();
+           
 
             if (success) {
                 JOptionPane.showMessageDialog(customerView, "Customer deleted successfully.");
