@@ -17,17 +17,17 @@ public class DataBaseConnection {
     /**
      * The URL of the database.
      */
-    protected static String dbUrl = "jdbc:mysql://sql11.freesqldatabase.com:3306/sql11665772";
+    protected static String dbUrl = "jdbc:mysql://127.0.0.1:3306/classicmodels";
 
     /**
      * The username used to connect to the database.
      */
-    protected static String user = "sql11665772";
+    protected static String user = "student";
 
     /**
      * The password used to connect to the database.
      */
-    protected static String password = "m5kZbc2aMA";
+    protected static String password = "student";
 
     /**
      * Establishes and returns a connection to the database.
@@ -79,7 +79,7 @@ public class DataBaseConnection {
      */
     
     public static PreparedStatement prepareStatement(String sql) throws SQLException {
-        Connection connection = getConnection(); 
+        Connection connection = getConnection(); // Implement this method to obtain the database connection
         return connection.prepareStatement(sql);
     }
 }
