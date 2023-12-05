@@ -12,7 +12,7 @@ import database.DataBaseConnection;
  * Interacts with the database to check and update the status of shipments based on order numbers.
  * This class is part of the model layer and interfaces directly with the database for order-related operations.
  * 
- * @author Albert
+ * @author 7080
  */
 
 public class DeliveryDAO {

@@ -37,6 +37,98 @@ public class EmployeeDAO {
 	        "officeCode LIKE ? OR " +
 	        "CAST(reportsTo AS CHAR) LIKE ? OR " +
 	        "jobTitle LIKE ?";
+	
+	
+	
+	 /**
+     * Adds a new employee to the database.
+     *
+     * @param employee The Employee object to be added.
+     * @return true if the operation was successful, false otherwise.
+     */
+	
+	public boolean addEmployee(Employee employee) {
+	    String employeesTable = "employees"; 
+	    try (Connection connection = DataBaseConnection.getConnection();
+	         PreparedStatement pstm = connection.prepareStatement(
+	                "INSERT INTO " + employeesTable + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+
+	        pstm.setInt(1, employee.getEmployeeNumber());
+	        pstm.setString(2, employee.getFirstName());
+	        pstm.setString(3, employee.getLastName());
+	        pstm.setString(4, employee.getExtension());
+	        pstm.setString(5, employee.getEmail());
+	        pstm.setString(6, employee.getOfficeCode());
+	        pstm.setInt(7, employee.getReportsTo());
+	        pstm.setString(8, employee.getJobTitle());
+
+	        int affectedRows = pstm.executeUpdate();
+
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	/**
+     * Edits an existing employee's details in the database.
+     *
+     * @param employees Table name where the employee data is stored.
+     * @param employeeNumber The unique identifier of the employee to be edited.
+     * @param firstName The new first name of the employee.
+     * @param lastName The new last name of the employee.
+     * @param extension The new extension number of the employee.
+     * @param email The new email address of the employee.
+     * @param officeCode The new office code associated with the employee.
+     * @param reportsTo The employee number of the manager to whom this employee reports.
+     * @param jobTitle The new job title of the employee.
+     * @return true if the operation was successful, false otherwise.
+     */
+
+	public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
+	    try (Connection connection = DataBaseConnection.getConnection();
+	         PreparedStatement pstm = connection.prepareStatement(
+	                "UPDATE " + employees + " SET firstName = ?, lastName = ?, extension = ?, email = ?, officeCode = ?, reportsTo = ?, jobTitle = ? WHERE employeeNumber = ?")) {
+
+	        pstm.setString(1, firstName);
+	        pstm.setString(2, lastName);
+	        pstm.setString(3, extension);
+	        pstm.setString(4, email);
+	        pstm.setString(5, officeCode);
+	        pstm.setInt(6, reportsTo);
+	        pstm.setString(7, jobTitle);
+	        pstm.setInt(8, employeeNumber);
+
+	        int affectedRows = pstm.executeUpdate();
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	/**
+	 * Deletes an employee from the database based on their employee number.
+	 *
+	 * @param employees      The name of the table or collection where the employee should be deleted from.
+	 * @param employeeNumber The unique identifier of the employee to be deleted.
+	 * @return true if the operation was successful, false otherwise.
+	 */
+	
+	public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
+	    try (Connection connection = DataBaseConnection.getConnection();
+	         PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNumber = ?")) {
+	        pstm.setInt(1, employeeNumber);
+
+	        int affectedRows = pstm.executeUpdate();
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;  
+	    }
+	}
+
 
 	 /**
      * Searches for employees in the database based on the provided search criteria.
@@ -91,73 +183,8 @@ public class EmployeeDAO {
 	    );
 	}
 
-	 /**
-     * Adds a new employee to the database.
-     *
-     * @param employee The Employee object to be added.
-     * @return true if the operation was successful, false otherwise.
-     */
 	
-	public boolean addEmployee(Employee employee) {
-	    String employeesTable = "employees"; 
-	    try (Connection connection = DataBaseConnection.getConnection();
-	         PreparedStatement pstm = connection.prepareStatement(
-	                "INSERT INTO " + employeesTable + " (employeeNumber, firstName, lastName, extension, email, officeCode, reportsTo, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-
-	        pstm.setInt(1, employee.getEmployeeNumber());
-	        pstm.setString(2, employee.getFirstName());
-	        pstm.setString(3, employee.getLastName());
-	        pstm.setString(4, employee.getExtension());
-	        pstm.setString(5, employee.getEmail());
-	        pstm.setString(6, employee.getOfficeCode());
-	        pstm.setInt(7, employee.getReportsTo());
-	        pstm.setString(8, employee.getJobTitle());
-
-	        int affectedRows = pstm.executeUpdate();
-
-	        return affectedRows > 0;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
-
-     /**
-     * Edits an existing employee's details in the database.
-     *
-     * @param employees Table name where the employee data is stored.
-     * @param employeeNumber The unique identifier of the employee to be edited.
-     * @param firstName The new first name of the employee.
-     * @param lastName The new last name of the employee.
-     * @param extension The new extension number of the employee.
-     * @param email The new email address of the employee.
-     * @param officeCode The new office code associated with the employee.
-     * @param reportsTo The employee number of the manager to whom this employee reports.
-     * @param jobTitle The new job title of the employee.
-     * @return true if the operation was successful, false otherwise.
-     */
-
-	public boolean editEmployeeInDatabase(String employees, int employeeNumber, String firstName, String lastName, String extension, String email, String officeCode, int reportsTo, String jobTitle) {
-	    try (Connection connection = DataBaseConnection.getConnection();
-	         PreparedStatement pstm = connection.prepareStatement(
-	                "UPDATE " + employees + " SET firstName = ?, lastName = ?, extension = ?, email = ?, officeCode = ?, reportsTo = ?, jobTitle = ? WHERE employeeNumber = ?")) {
-
-	        pstm.setString(1, firstName);
-	        pstm.setString(2, lastName);
-	        pstm.setString(3, extension);
-	        pstm.setString(4, email);
-	        pstm.setString(5, officeCode);
-	        pstm.setInt(6, reportsTo);
-	        pstm.setString(7, jobTitle);
-	        pstm.setInt(8, employeeNumber);
-
-	        int affectedRows = pstm.executeUpdate();
-	        return affectedRows > 0;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
+     
 
 	 /**
      * Fetches the details of a single employee from the database.
@@ -192,26 +219,7 @@ public class EmployeeDAO {
 	    return null; 
 	}
 
-	/**
-	 * Deletes an employee from the database based on their employee number.
-	 *
-	 * @param employees      The name of the table or collection where the employee should be deleted from.
-	 * @param employeeNumber The unique identifier of the employee to be deleted.
-	 * @return true if the operation was successful, false otherwise.
-	 */
 	
-	public boolean removeEmployeeFromDatabase(String employees, int employeeNumber) {
-	    try (Connection connection = DataBaseConnection.getConnection();
-	         PreparedStatement pstm = connection.prepareStatement("DELETE FROM " + employees + " WHERE employeeNumber = ?")) {
-	        pstm.setInt(1, employeeNumber);
-
-	        int affectedRows = pstm.executeUpdate();
-	        return affectedRows > 0;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;  
-	    }
-	}
 
 	 /**
      * Retrieves a list of all employees from the database.

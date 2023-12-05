@@ -37,43 +37,6 @@ public class OrderDAO {
 
 	
 	
-	/**
-	 * Fetches orders from the database and returns them as a list of string arrays.
-	 *
-	 * @return A list of string arrays representing the fetched orders. Each array contains
-	 *         order details such as OrderNumber, orderDate, requiredDate, shippedDate, status,
-	 *         comments, and customerNumber.
-	 * @throws SQLException If there is an error while interacting with the database.
-	 */
-    
-	
-	
-	public List<String[]> fetchOrders() {
-        List<String[]> orders = new ArrayList<>();
-
-        try (Connection conn = database.DataBaseConnection.getConnection();
-             Statement statement = conn.createStatement()) {
-            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber "
-                    + "FROM orders o ";
-            ResultSet ordersResultSet = statement.executeQuery(ordersSql);
-            while (ordersResultSet.next()) {
-                String[] order = { ordersResultSet.getString("OrderNumber"),
-                        ordersResultSet.getDate("orderDate").toString(),
-                        ordersResultSet.getDate("requiredDate").toString(),
-                        ordersResultSet.getDate("shippedDate") != null
-                                ? ordersResultSet.getDate("shippedDate").toString()
-                                : "N/A",
-                        ordersResultSet.getString("status"), ordersResultSet.getString("comments"),
-                        String.valueOf(ordersResultSet.getInt("customerNumber")) };
-                orders.add(order);
-            }
-        } catch (SQLException e) {
-            // Handle exceptions or log errors
-        }
-
-        return orders;
-    }
-	
 	
 	//CRUD- + search-methods 
 	
@@ -277,16 +240,58 @@ public class OrderDAO {
 		return searchResults;
 	}
 	
+	
+	
+	//Other order related methods
+	
+	
+	
+	/**
+	 * Fetches orders from the database and returns them as a list of string arrays.
+	 *
+	 * @return A list of string arrays representing the fetched orders. Each array contains
+	 *         order details such as OrderNumber, orderDate, requiredDate, shippedDate, status,
+	 *         comments, and customerNumber.
+	 * @throws SQLException If there is an error while interacting with the database.
+	 */
+    
+	
+	
+	public List<String[]> fetchOrders() {
+        List<String[]> orders = new ArrayList<>();
+
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber "
+                    + "FROM orders o ";
+            ResultSet ordersResultSet = statement.executeQuery(ordersSql);
+            while (ordersResultSet.next()) {
+                String[] order = { ordersResultSet.getString("OrderNumber"),
+                        ordersResultSet.getDate("orderDate").toString(),
+                        ordersResultSet.getDate("requiredDate").toString(),
+                        ordersResultSet.getDate("shippedDate") != null
+                                ? ordersResultSet.getDate("shippedDate").toString()
+                                : "N/A",
+                        ordersResultSet.getString("status"), ordersResultSet.getString("comments"),
+                        String.valueOf(ordersResultSet.getInt("customerNumber")) };
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            // Handle exceptions or log errors
+        }
+
+        return orders;
+    }
+	
+	
+	
 	/**
 	 * Retrieves an order from the database based on the order number.
 	 *
 	 * @param OrderNumber The unique identifier of the order to be retrieved.
 	 * @return An Order object if found, null otherwise.
 	 */
-	
-	
-	//Other order related methods
-	
+
 
 	public Order getOrder(int OrderNumber) {
 		String selectOrderSQL = "SELECT * FROM orders WHERE OrderNumber = ?";
