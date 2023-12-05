@@ -144,6 +144,7 @@ public class OrderHandler {
             boolean success = orderDAO.addOrder(order, orderDetailsList);
             if (success) {
                 JOptionPane.showMessageDialog(orderView, "New order added successfully!");
+                orderView.fetchAndDisplayOrders();
             } else {
                 JOptionPane.showMessageDialog(orderView, "Failed to add new order.");
             }
@@ -170,6 +171,7 @@ public class OrderHandler {
                         boolean success = orderDAO.editOrder(updatedOrder, orderNumber);
                         if (success) {
                             JOptionPane.showMessageDialog(orderView, "Order updated successfully!");
+                            orderView.fetchAndDisplayOrders();
                         } else {
                             JOptionPane.showMessageDialog(orderView, "Failed to update order.");
                         }
@@ -197,6 +199,7 @@ public class OrderHandler {
 
             if (success) {
                 JOptionPane.showMessageDialog(orderView, "Order deleted successfully.");
+                orderView.fetchAndDisplayOrders();
             } else {
                 JOptionPane.showMessageDialog(orderView, "Failed to delete order.");
             }
