@@ -125,6 +125,8 @@ public class OrderHandler {
     public ActionListener getorderDetailsView() {
         return this::orderDetailsView;
     }
+    
+    
 
     /**
      * Handles the addition of a new order. Gathers user input for order details
@@ -133,7 +135,7 @@ public class OrderHandler {
      * @param e The action event that triggers the add operation.
      */
 
-    private void addOrder(ActionEvent e) {
+    public void addOrder(ActionEvent e) {
         OrderInput orderAndDetails = orderView.gatherUserInputForAddOrder();
         if (orderAndDetails != null) {
             Order order = orderAndDetails.getOrder();
@@ -156,7 +158,7 @@ public class OrderHandler {
      * @param e The action event that triggers the update operation.
      */
 
-    private void updateOrder(ActionEvent e) {
+    public void updateOrder(ActionEvent e) {
         String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
         if (orderNumberString != null && !orderNumberString.isEmpty()) {
             try {
@@ -187,7 +189,7 @@ public class OrderHandler {
      * @param e The action event that triggers the delete operation.
      */
     
-    private void deleteOrder(ActionEvent e) {
+    public void deleteOrder(ActionEvent e) {
         Integer orderNumberToDelete = orderView.gatherUserInputForDeleteOrder();
 
         if (orderNumberToDelete != null) {
@@ -207,7 +209,7 @@ public class OrderHandler {
      * @param e The action event that triggers the search operation.
      */
 
-    private void searchOrder(ActionEvent e) {
+    public void searchOrder(ActionEvent e) {
         String searchCriteria = orderView.gatherUserInputForSearch();
         if (searchCriteria != null && !searchCriteria.isEmpty()) {
             List<Order> searchResults = orderDAO.searchOrder(searchCriteria);

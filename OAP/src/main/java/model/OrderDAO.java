@@ -34,6 +34,33 @@ public class OrderDAO {
      * @return A list of Order objects that match the search criteria.
      */
 	
+	
+	public List<String[]> fetchOrders() {
+        List<String[]> orders = new ArrayList<>();
+
+        try (Connection conn = database.DataBaseConnection.getConnection();
+             Statement statement = conn.createStatement()) {
+            String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber "
+                    + "FROM orders o ";
+            ResultSet ordersResultSet = statement.executeQuery(ordersSql);
+            while (ordersResultSet.next()) {
+                String[] order = { ordersResultSet.getString("OrderNumber"),
+                        ordersResultSet.getDate("orderDate").toString(),
+                        ordersResultSet.getDate("requiredDate").toString(),
+                        ordersResultSet.getDate("shippedDate") != null
+                                ? ordersResultSet.getDate("shippedDate").toString()
+                                : "N/A",
+                        ordersResultSet.getString("status"), ordersResultSet.getString("comments"),
+                        String.valueOf(ordersResultSet.getInt("customerNumber")) };
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            // Handle exceptions or log errors
+        }
+
+        return orders;
+    }
+	
 	public List<Order> searchOrder(String searchCriteria) {
 		List<Order> searchResults = new ArrayList<>();
 

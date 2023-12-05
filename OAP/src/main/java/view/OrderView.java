@@ -713,34 +713,27 @@ public class OrderView extends JFrame {
 	 * @return A list of String arrays representing the fetched orders.
 	 */
 
+	 
+	
 	public List<String[]> fetchAndDisplayOrders() {
-		List<String[]> orders = new ArrayList<>();
-		tableModel.setRowCount(0);
+		List<String[]> orders = OrderDAO.fetchOrders(); // Fetch data using DAO
+        updateTableWithOrders(orders);
 
-		try (Connection conn = database.DataBaseConnection.getConnection();
-				Statement statement = conn.createStatement()) {
-			String ordersSql = "SELECT o.OrderNumber, o.orderDate, o.requiredDate, o.shippedDate, o.status, o.comments, o.customerNumber "
-					+ "FROM orders o ";
-			ResultSet ordersResultSet = statement.executeQuery(ordersSql);
-			while (ordersResultSet.next()) {
-				String[] order = { ordersResultSet.getString("OrderNumber"),
-						ordersResultSet.getDate("orderDate").toString(),
-						ordersResultSet.getDate("requiredDate").toString(),
-						ordersResultSet.getDate("shippedDate") != null
-								? ordersResultSet.getDate("shippedDate").toString()
-								: "N/A",
-						ordersResultSet.getString("status"), ordersResultSet.getString("comments"),
-						String.valueOf(ordersResultSet.getInt("customerNumber")) };
-				tableModel.addRow(order);
-				orders.add(order);
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Error fetching order data: " + e.getMessage(), "Database Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		return orders;
-	}
+        return orders; // If you need to use the orders elsewhere in your class
+    }
+	
+	private List<String[]> updateTableWithOrders(List<String[]> orders) {
+        // Clear the existing table data
+        tableModel.setRowCount(0);
 
+        // Update UI by adding orders to the table
+        for (String[] order : orders) {
+            tableModel.addRow(order);
+        }
 
+        return orders; 
+
+}
+	
 }
 
