@@ -26,20 +26,11 @@ import database.DataBaseConnection;
 
 public class ProductDAO {
 	
-	
-
-    
-	//CRUD- + search-methods 
-    
-    
-
     /**
      * Adds a new product to the database.
      * @param product The product to be added.
      * @return True if the product is added successfully, false otherwise.
      */
-	
-	
 	
     public boolean addProduct(Products product) {
         try (Connection connection = DataBaseConnection.getConnection();
@@ -507,7 +498,6 @@ public class ProductDAO {
     
     public boolean isProductLineExists(String productLine) {
         try {
-            // create a PreparedStatement
             try (PreparedStatement preparedStatement = DataBaseConnection.prepareStatement("SELECT COUNT(*) FROM productlines WHERE productLine = ?")) {
                 preparedStatement.setString(1, productLine);
 
@@ -529,12 +519,14 @@ public class ProductDAO {
     
     
     /**
-     * Checks if the requested quantity of a product is available in stock.
-     * 
-     * @param productCode The code of the product to check.
-     * @param quantityOrdered The quantity of the product being ordered.
-     * @return true if the requested quantity is available, false otherwise.
+     * Checks if the specified product is available in stock in the required quantity.
+     *
+     * @param productCode     The product code to check availability for.
+     * @param quantityOrdered The quantity of the product ordered.
+     * @return True if the product is available in the required quantity, false otherwise.
+     * @throws SQLException If a database access error occurs.
      */
+    
     public boolean isStockAvailable(String productCode, int quantityOrdered) throws SQLException {
         String sql = "SELECT quantityInStock FROM products WHERE productCode = ?";
         try (Connection conn = DataBaseConnection.getConnection();

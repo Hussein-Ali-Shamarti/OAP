@@ -122,11 +122,16 @@ public class OrderHandler {
         return this::checkOrderStatus;
     }
     
+    /**
+     * Returns an ActionListener that opens an Order Details View.
+     *
+     * @return An ActionListener for opening the Order Details View.
+     */
+    
     public ActionListener getorderDetailsView() {
         return this::orderDetailsView;
     }
     
-    //Controller for CRUD-methods + search
 
     /**
      * Handles the addition of a new order. Gathers user input for order details
@@ -399,10 +404,11 @@ public class OrderHandler {
     }
     
     /**
-	 * ActionListener implementation for an "Order Details" button. It opens a new OrderDetailsView.
-	 */
-
-		
+     * Opens a new Order Details View.
+     *
+     * @param e The ActionEvent triggering the method.
+     */
+    
 		public void orderDetailsView(ActionEvent e) {
 			new OrderDetailsView(); 
 		

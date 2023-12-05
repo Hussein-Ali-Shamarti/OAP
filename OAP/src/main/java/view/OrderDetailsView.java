@@ -549,13 +549,6 @@ public class OrderDetailsView extends JFrame {
 	 * This listener is used to handle updating order details.
 	 */
 	
-	/**
-     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
-     *
-     * @param orderDAO    The OrderDAO instance for accessing order data.
-     * @param productDAO  The ProductDAO instance for accessing product data.
-     */
-	
 	
 	public class UpdateButtonListener implements ActionListener {
 		
@@ -570,11 +563,13 @@ public class OrderDetailsView extends JFrame {
 	     */
 		
 		private ProductDAO productDAO;
-		
-		 
-		
-		
-		
+	
+		/**
+		 * Initializes an UpdateButtonListener with the specified OrderDAO and ProductDAO instances.
+		 *
+		 * @param orderDAO   The OrderDAO to use for updating orders.
+		 * @param productDAO The ProductDAO to use for updating products.
+		 */
 
 		public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
 			this.orderDAO = orderDAO;

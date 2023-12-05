@@ -186,8 +186,9 @@ public class CustomerHandler {
 
 
     /**
-     * Handles saving the current customer data to a CSV file. Prompts the user
-     * to choose a file destination and writes the data in CSV format.
+     * Saves a list of customers to a CSV file as specified by the user.
+     *
+     * @param e The ActionEvent triggering the method.
      */
     
     public void saveCustomersToFile(ActionEvent e) {

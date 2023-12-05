@@ -34,12 +34,6 @@ public class OrderDAO {
 			+ "CAST(requiredDate AS CHAR) LIKE ? OR " + "CAST(shippedDate AS CHAR )LIKE ? OR " + "status LIKE ? OR "
 			+ "comments LIKE ? OR " + "CAST(customerNumber AS CHAR) LIKE ?  ";
 
-
-	
-	
-	
-	//CRUD- + search-methods 
-	
 	/**
 	 * Adds a new order along with its details to the database.
 	 *
@@ -240,23 +234,14 @@ public class OrderDAO {
 		return searchResults;
 	}
 	
-	
-	
-	//Other order related methods
-	
-	
-	
 	/**
 	 * Fetches orders from the database and returns them as a list of string arrays.
 	 *
 	 * @return A list of string arrays representing the fetched orders. Each array contains
 	 *         order details such as OrderNumber, orderDate, requiredDate, shippedDate, status,
 	 *         comments, and customerNumber.
-	 * @throws SQLException If there is an error while interacting with the database.
 	 */
     
-	
-	
 	public List<String[]> fetchOrders() {
         List<String[]> orders = new ArrayList<>();
 
@@ -277,7 +262,6 @@ public class OrderDAO {
                 orders.add(order);
             }
         } catch (SQLException e) {
-            // Handle exceptions or log errors
         }
 
         return orders;
@@ -433,17 +417,16 @@ public class OrderDAO {
 		    try (Connection conn = DataBaseConnection.getConnection();
 		         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-		        // Set the parameters for the prepared statement
 		        pstmt.setInt(1, orderDetails.getQuantityOrdered());
 		        pstmt.setDouble(2, orderDetails.getPriceEach());
 		        pstmt.setInt(3, orderDetails.getOrderNumber());
 		        pstmt.setString(4, orderDetails.getProductCode());
 
-		        // Execute the update
+		  
 		        int rowsAffected = pstmt.executeUpdate();
 
 		        if (rowsAffected > 0) {
-		            // Update stock quantity
+		          
 		            return updateProductStock(orderDetails.getProductCode(), -orderDetails.getQuantityOrdered());
 		        }
 		    }

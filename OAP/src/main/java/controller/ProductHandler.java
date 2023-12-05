@@ -98,12 +98,7 @@ public class ProductHandler {
      *
      * @param e The action event triggering the addition of a new product.
      */
-    
-    
-  //Controller for CRUD-methods + search
-    
-    
-    
+        
     public void addProduct(ActionEvent e) {
         Products product = productView.gatherUserInputForAddProduct();
 
@@ -194,9 +189,9 @@ public class ProductHandler {
 
  
     /**
-     * Saves the product data to a CSV file chosen by the user. It writes details such as product
-     * code, name, line, etc. Alerts the user upon successful save or error.
+     * Saves a list of products to a CSV file as specified by the user.
      *
+     * @param e The ActionEvent triggering the method.
      */
     
     public void saveProductsToFile(ActionEvent e) {

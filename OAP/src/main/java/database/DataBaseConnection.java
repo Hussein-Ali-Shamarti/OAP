@@ -79,7 +79,7 @@ public class DataBaseConnection {
      */
     
     public static PreparedStatement prepareStatement(String sql) throws SQLException {
-        Connection connection = getConnection(); // Implement this method to obtain the database connection
+        Connection connection = getConnection(); 
         return connection.prepareStatement(sql);
     }
 }

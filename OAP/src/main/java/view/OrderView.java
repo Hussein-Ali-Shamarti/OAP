@@ -526,7 +526,6 @@ public class OrderView extends JFrame {
 	                Order order = new Order(requiredDate, shippedDate, status, comments, customerNumber, orderDate);
 	                orderInput = new OrderInput(order, orderDetailsList);
 
-	                // Update stock quantity
 	                ProductDAO.updateProductStock(productCode, -quantityOrdered);
 	            } else {
 	                JOptionPane.showMessageDialog(null, "Not enough stock available.");
@@ -537,7 +536,6 @@ public class OrderView extends JFrame {
 	    }
 
 	    if(result == JOptionPane.CANCEL_OPTION) {
-	        // Clearing fields if cancel is clicked
 	        panel.remove(productCodeField);
 	        panel.remove(productCodeLabel);
 	        panel.remove(buyPriceField);
@@ -712,27 +710,27 @@ public class OrderView extends JFrame {
 		List<String[]> orders = OrderDAO.fetchOrders(); // Fetch data using DAO
         updateTableWithOrders(orders);
 
-        return orders; // If you need to use the orders elsewhere in your class
+        return orders; 
     }
 	
 	/**
-	 * Updates the UI table with the provided list of orders.
+	 * Updates the table with a list of orders and returns the same list.
 	 *
-	 * @param orders The list of orders to be displayed in the UI table.
+	 * @param orders A list of String arrays representing orders to update the table with.
+	 * @return The same list of orders passed as a parameter.
 	 */
 	
 	public List<String[]> updateTableWithOrders(List<String[]> orders) {
-        // Clear the existing table data
+
         tableModel.setRowCount(0);
 
-        // Update UI by adding orders to the table
         for (String[] order : orders) {
             tableModel.addRow(order);
         }
 
         return orders; 
 
-}
+	}
 	
 }
 

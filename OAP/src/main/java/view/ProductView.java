@@ -76,8 +76,8 @@ public class ProductView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
-        pack(); // Adjusts the frame to fit the components
-        setVisible(true); // Make sure the frame is visible
+        pack(); 
+        setVisible(true); 
     }
 
     /**
@@ -98,10 +98,10 @@ public class ProductView extends JFrame {
         add(titlePanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Set frame properties
+      
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Center on screen
+        setLocationRelativeTo(null); 
     }
 
     /**
@@ -322,7 +322,7 @@ public class ProductView extends JFrame {
         if (result == JOptionPane.OK_OPTION) {
             return searchField.getText().trim();
         } else {
-            return null; // User canceled the operation
+            return null; 
         }
     }
     
@@ -365,9 +365,8 @@ public class ProductView extends JFrame {
     
     
     public List<String[]> updateTableWithProducts(List<String[]> products) {
-        tableModel.setRowCount(0); // Clear existing rows from the table
+        tableModel.setRowCount(0); 
 
-        // Populate the table with the product details
         for (String[] product : products) {
             tableModel.addRow(product);
         }
@@ -401,10 +400,10 @@ public class ProductView extends JFrame {
      * @return The list of product details fetched from the database.
      */
     public List<String[]> fetchAndDisplayProducts() {
-        List<String[]> products = productDAO.fetchProducts(); // Fetch data using DAO
+        List<String[]> products = productDAO.fetchProducts(); 
         updateTableWithProducts(products);
 
-        return products; // If you need to use the products elsewhere in your class
+        return products; 
     }
 }
 
