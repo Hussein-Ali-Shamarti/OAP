@@ -266,23 +266,6 @@ public class OrderDAO {
 	}
 	
 	/**
-     * Maps a row from a ResultSet to an Order object.
-     *
-     * @param resultSet The ResultSet from a SQL query.
-     * @return An Order object populated with data from the ResultSet.
-     * @throws SQLException If there is an issue accessing the ResultSet data.
-     */
-
-	private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
-		return new Order(resultSet.getInt("orderNumber"), resultSet.getDate("requiredDate"),
-				resultSet.getDate("shippedDate"), resultSet.getString("status"), resultSet.getString("comments"),
-				resultSet.getInt("customerNumber"), resultSet.getDate("orderDate")
-
-		);
-	}
-
-	
-	/**
 	 * Retrieves an order from the database based on the order number.
 	 *
 	 * @param OrderNumber The unique identifier of the order to be retrieved.
@@ -319,7 +302,23 @@ public class OrderDAO {
 
 	
 	
-	
+	/**
+     * Maps a row from a ResultSet to an Order object.
+     *
+     * @param resultSet The ResultSet from a SQL query.
+     * @return An Order object populated with data from the ResultSet.
+     * @throws SQLException If there is an issue accessing the ResultSet data.
+     */
+
+	private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
+		return new Order(resultSet.getInt("orderNumber"), resultSet.getDate("requiredDate"),
+				resultSet.getDate("shippedDate"), resultSet.getString("status"), resultSet.getString("comments"),
+				resultSet.getInt("customerNumber"), resultSet.getDate("orderDate")
+
+		);
+	}
+
+
     
 	/**
 	 * Inserts a list of orders into the database using batch processing.

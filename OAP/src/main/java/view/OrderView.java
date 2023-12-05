@@ -8,10 +8,6 @@ import java.awt.GridLayout;
 
 import java.awt.event.ActionListener;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -705,15 +701,12 @@ public class OrderView extends JFrame {
     }
 
 	
-	
-	
 	/**
 	 * Fetches and displays orders in the table.
 	 *
 	 * @return A list of String arrays representing the fetched orders.
 	 */
 
-	 
 	
 	public List<String[]> fetchAndDisplayOrders() {
 		List<String[]> orders = OrderDAO.fetchOrders(); // Fetch data using DAO
@@ -722,7 +715,13 @@ public class OrderView extends JFrame {
         return orders; // If you need to use the orders elsewhere in your class
     }
 	
-	private List<String[]> updateTableWithOrders(List<String[]> orders) {
+	/**
+	 * Updates the UI table with the provided list of orders.
+	 *
+	 * @param orders The list of orders to be displayed in the UI table.
+	 */
+	
+	public List<String[]> updateTableWithOrders(List<String[]> orders) {
         // Clear the existing table data
         tableModel.setRowCount(0);
 
