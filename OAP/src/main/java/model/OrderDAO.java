@@ -488,6 +488,31 @@ public class OrderDAO {
 	    return searchResults;
 	}
 	
+	   /**
+     * Updates order details in the database.
+     *
+     * @param orderDetails The OrderDetails object containing the updated information.
+     * @return true if the update is successful, false otherwise.
+     * @throws SQLException If there is an error executing the SQL query.
+     */
+    public boolean updateOrderDetails(OrderDetails orderDetails) throws SQLException {
+        String sql = "UPDATE orderdetails SET quantityOrdered = ?, priceEach = ? WHERE orderNumber = ? AND productCode = ?";
+
+        try (Connection conn = DataBaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set the parameters for the prepared statement
+            pstmt.setInt(1, orderDetails.getQuantityOrdered());
+            pstmt.setDouble(2, orderDetails.getPriceEach());
+            pstmt.setInt(3, orderDetails.getOrderNumber());
+            pstmt.setString(4, orderDetails.getProductCode());
+
+            // Execute the update
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+	
 	/**
 	 * Inserts a list of orders into the database using batch processing.
 	 *
