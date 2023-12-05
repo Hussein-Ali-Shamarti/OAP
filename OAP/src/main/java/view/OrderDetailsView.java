@@ -210,80 +210,8 @@ public class OrderDetailsView extends JFrame {
 		});
 
 	}
-
-	/**
-	 * Updates the quantity in stock, buy price, and MSRP fields with the provided product details.
-	 * If the product details map is null or empty, clears the fields.
-	 *
-	 * @param productDetails A map containing product details with keys "quantityInStock," "buyPrice," and "MSRP."
-	 */
 	
-	public void updateProductDetailsFields(Map<String, Object> productDetails) {
-		if (productDetails != null && !productDetails.isEmpty()) {
-			quantityInStockField.setText(productDetails.get("quantityInStock").toString());
-			buyPriceField.setText(productDetails.get("buyPrice").toString());
-			msrpField.setText(productDetails.get("MSRP").toString());
-		} else {
-			quantityInStockField.setText("");
-			buyPriceField.setText("");
-			msrpField.setText("");
-		}
-	}
-
-	/**
-	 * Finds and returns the product code associated with the given product name.
-	 *
-	 * @param code The product name for which to find the product code.
-	 * @return The product code, or null if not found.
-	 */
 	
-	public String findProductCodeByName(String code) {
-		return productHandler.getProductNameByCode(code); 
-	}
-
-	/**
-	 * Searches for order details matching the given search criteria and updates the display table with the results.
-	 */
-
-	
-	public void searchOrderDetails() {
-		String searchCriteria = searchField.getText();
-		List<OrderDetails> searchResults = orderDAO.searchOrderDetails(searchCriteria);
-
-		if (searchResults == null || searchResults.isEmpty()) {
-			System.out.println("No results found for: " + searchCriteria);
-		} else {
-			updateOrderDetailsTable(searchResults);
-
-			System.out.println("Found " + searchResults.size() + " results for: " + searchCriteria);
-		}
-
-	}
-
-	/**
-	 * Updates the order details table with the provided list of order details.
-	 * 
-	 * @param searchResults A list of OrderDetails objects to populate the table with.
-	 */
-	
-	public void updateOrderDetailsTable(List<OrderDetails> searchResults) {
-		tableModel = (DefaultTableModel) orderDetailsTable.getModel();
-		tableModel.setRowCount(0);
-		for (OrderDetails orderDetail : searchResults) {
-			Object[] rowData = { orderDetail.getOrderNumber(), orderDetail.getProductCode(),
-					orderDetail.getQuantityOrdered(), orderDetail.getPriceEach(), orderDetail.getOrderLineNr() };
-			System.out.println(orderDetail.getOrderLineNr());
-			tableModel.addRow(rowData);
-		}
-
-		for (int i = 0; i < tableModel.getRowCount(); i++) {
-			for (int j = 0; j < tableModel.getColumnCount(); j++) {
-				System.out.print(tableModel.getValueAt(i, j) + " ");
-			}
-			System.out.println();
-		}
-	}
-
 	/**
 	 * Sets up the top panel of the Order Details view, which includes the title label and search functionality.
 	 * 
@@ -419,7 +347,80 @@ public class OrderDetailsView extends JFrame {
 		orderDetailsTable.setFillsViewportHeight(true);
 	}
 
+
+	/**
+	 * Updates the quantity in stock, buy price, and MSRP fields with the provided product details.
+	 * If the product details map is null or empty, clears the fields.
+	 *
+	 * @param productDetails A map containing product details with keys "quantityInStock," "buyPrice," and "MSRP."
+	 */
 	
+	public void updateProductDetailsFields(Map<String, Object> productDetails) {
+		if (productDetails != null && !productDetails.isEmpty()) {
+			quantityInStockField.setText(productDetails.get("quantityInStock").toString());
+			buyPriceField.setText(productDetails.get("buyPrice").toString());
+			msrpField.setText(productDetails.get("MSRP").toString());
+		} else {
+			quantityInStockField.setText("");
+			buyPriceField.setText("");
+			msrpField.setText("");
+		}
+	}
+
+	/**
+	 * Finds and returns the product code associated with the given product name.
+	 *
+	 * @param code The product name for which to find the product code.
+	 * @return The product code, or null if not found.
+	 */
+	
+	public String findProductCodeByName(String code) {
+		return productHandler.getProductNameByCode(code); 
+	}
+
+	/**
+	 * Searches for order details matching the given search criteria and updates the display table with the results.
+	 */
+
+	
+	public void searchOrderDetails() {
+		String searchCriteria = searchField.getText();
+		List<OrderDetails> searchResults = orderDAO.searchOrderDetails(searchCriteria);
+
+		if (searchResults == null || searchResults.isEmpty()) {
+			System.out.println("No results found for: " + searchCriteria);
+		} else {
+			updateOrderDetailsTable(searchResults);
+
+			System.out.println("Found " + searchResults.size() + " results for: " + searchCriteria);
+		}
+
+	}
+
+	/**
+	 * Updates the order details table with the provided list of order details.
+	 * 
+	 * @param searchResults A list of OrderDetails objects to populate the table with.
+	 */
+	
+	public void updateOrderDetailsTable(List<OrderDetails> searchResults) {
+		tableModel = (DefaultTableModel) orderDetailsTable.getModel();
+		tableModel.setRowCount(0);
+		for (OrderDetails orderDetail : searchResults) {
+			Object[] rowData = { orderDetail.getOrderNumber(), orderDetail.getProductCode(),
+					orderDetail.getQuantityOrdered(), orderDetail.getPriceEach(), orderDetail.getOrderLineNr() };
+			System.out.println(orderDetail.getOrderLineNr());
+			tableModel.addRow(rowData);
+		}
+
+		for (int i = 0; i < tableModel.getRowCount(); i++) {
+			for (int j = 0; j < tableModel.getColumnCount(); j++) {
+				System.out.print(tableModel.getValueAt(i, j) + " ");
+			}
+			System.out.println();
+		}
+	}
+
 	
 	/**
 	 * Calculates and displays the total order amount for the specified order number.
@@ -542,6 +543,20 @@ public class OrderDetailsView extends JFrame {
 		}
 	}
 	
+	
+	/**
+	 * ActionListener implementation for the "Update" button in the Order Details view.
+	 * This listener is used to handle updating order details.
+	 */
+	
+	/**
+     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
+     *
+     * @param orderDAO    The OrderDAO instance for accessing order data.
+     * @param productDAO  The ProductDAO instance for accessing product data.
+     */
+	
+	
 	public class UpdateButtonListener implements ActionListener {
 		
 		 /**
@@ -556,17 +571,9 @@ public class OrderDetailsView extends JFrame {
 		
 		private ProductDAO productDAO;
 		
-		 /**
-	     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
-	     *
-	     * @param orderDAO    The OrderDAO instance for accessing order data.
-	     * @param productDAO  The ProductDAO instance for accessing product data.
-	     */
+		 
 		
-		/**
-		 * ActionListener implementation for the "Update" button in the Order Details view.
-		 * This listener is used to handle updating order details.
-		 */
+		
 		
 
 		public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
