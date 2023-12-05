@@ -325,8 +325,9 @@ public class ProductView extends JFrame {
             return null; // User canceled the operation
         }
     }
-
     
+   
+
     
     /**
      * Updates the table with the provided search results.
@@ -353,6 +354,26 @@ public class ProductView extends JFrame {
         }
         
     }
+    
+    
+    /**
+     * Updates the table with the provided list of product details.
+     *
+     * @param products The list of product details to update the table.
+     * @return The list of product details if needed elsewhere in the class.
+     */
+    
+    
+    public List<String[]> updateTableWithProducts(List<String[]> products) {
+        tableModel.setRowCount(0); // Clear existing rows from the table
+
+        // Populate the table with the product details
+        for (String[] product : products) {
+            tableModel.addRow(product);
+        }
+
+        return products; 
+    }
 
     /**
      * Retrieves product codes from selected rows in the table.
@@ -373,23 +394,6 @@ public class ProductView extends JFrame {
     }
 
     
-
-    /**
-     * Updates the table with the provided list of product details.
-     *
-     * @param products The list of product details to update the table.
-     * @return The list of product details if needed elsewhere in the class.
-     */
-    public List<String[]> updateTableWithProducts(List<String[]> products) {
-        tableModel.setRowCount(0); // Clear existing rows from the table
-
-        // Populate the table with the product details
-        for (String[] product : products) {
-            tableModel.addRow(product);
-        }
-
-        return products; // If you need to use the products elsewhere in your class
-    }
 
     /**
      * Fetches and displays products in the table.
