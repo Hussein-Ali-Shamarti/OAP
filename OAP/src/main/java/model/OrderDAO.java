@@ -19,6 +19,15 @@ import database.DataBaseConnection;
  */
 
 public class OrderDAO {
+	
+	
+	/**
+	 * 
+     * SQL query for searching orders in the database.
+     * It searches across various fields like OrderNumber, orderDate, requiredDate, shippedDate, status, and comments.
+     * The query uses LIKE clauses for each field to support partial matching.
+     */
+	 
 
 	private static final String SEARCH_ORDER_SQL = "SELECT * FROM orders WHERE "
 			+ "CAST(orderNumber AS CHAR) LIKE ? OR " + "CAST(orderDate AS CHAR) LIKE ? OR "
@@ -64,6 +73,9 @@ public class OrderDAO {
 
         return orders;
     }
+	
+	
+	//CRUD-methods
 	
 	/**
 	 * Adds a new order along with its details to the database.
@@ -271,6 +283,10 @@ public class OrderDAO {
 	 * @param OrderNumber The unique identifier of the order to be retrieved.
 	 * @return An Order object if found, null otherwise.
 	 */
+	
+	
+	//Other order related methods
+	
 
 	public Order getOrder(int OrderNumber) {
 		String selectOrderSQL = "SELECT * FROM orders WHERE OrderNumber = ?";
