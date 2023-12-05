@@ -167,21 +167,7 @@ public class EmployeeView extends JFrame {
         return button;
     }
 	
-    /**
-     * Fetches and displays employee data from the database in the table.
-     *
-     * @return A list of employee data as String arrays.
-     */
-	
-	public List<String[]> fetchAndDisplayEmployees() {
-	    List<String[]> employees = employeeDAO.fetchEmployees(); 
-	    tableModel.setRowCount(0); 
-
-	    for (String[] employee : employees) {
-	        tableModel.addRow(employee); 
-	    }
-		return employees;
-	}
+   
 	
     /**
      * Gathers user input for adding a new employee. Presents a form to the user to enter new employee details.
@@ -363,6 +349,23 @@ public class EmployeeView extends JFrame {
 	        };
 	        tableModel.addRow(row);
 	    }
+	}
+	
+	 /**
+     * Fetches and displays employee data from the database in the table.
+     *
+     * @return A list of employee data as String arrays.
+     */
+	
+	public List<String[]> fetchAndDisplayEmployees() {
+	    List<String[]> employees = employeeDAO.fetchEmployees(); 
+	    tableModel.setRowCount(0); 
+
+	    for (String[] employee : employees) {
+	        tableModel.addRow(employee); 
+	    }
+		return employees;
+		
 	}
 }
 

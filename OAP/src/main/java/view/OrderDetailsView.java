@@ -419,197 +419,7 @@ public class OrderDetailsView extends JFrame {
 		orderDetailsTable.setFillsViewportHeight(true);
 	}
 
-	/**
-	 * ActionListener implementation for the "Update" button in the Order Details view.
-	 * This listener is used to handle updating order details.
-	 */
 	
-	public class UpdateButtonListener implements ActionListener {
-		
-		 /**
-	     * The OrderDAO instance for accessing order data.
-	     */
-		
-		private OrderDAO orderDAO;
-		
-		/**
-	     * The ProductDAO instance for accessing product data.
-	     */
-		
-		private ProductDAO productDAO;
-		
-		 /**
-	     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
-	     *
-	     * @param orderDAO    The OrderDAO instance for accessing order data.
-	     * @param productDAO  The ProductDAO instance for accessing product data.
-	     */
-
-		public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
-			this.orderDAO = orderDAO;
-			this.productDAO = productDAO;
-		}
-
-		 /**
-	     * Called when the "Update" button is clicked.
-	     *
-	     * @param e The ActionEvent associated with the button click.
-	     */
-	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
-		    String orderLineNumberString = JOptionPane.showInputDialog("Enter Order Line Number:");
-
-		    if (orderNumberString != null && !orderNumberString.isEmpty() && orderLineNumberString != null
-		            && !orderLineNumberString.isEmpty()) {
-		        try {
-		            int orderNumber = Integer.parseInt(orderNumberString);
-		            int orderLineNumber = Integer.parseInt(orderLineNumberString);
-
-		            OrderDetails orderDetails = orderDAO.getOrderDetails(orderNumber, orderLineNumber);
-		            if (orderDetails != null) {
-		                JPanel panel = new JPanel(new GridLayout(0, 2));
-
-		                JComboBox<String> productDropdown = new JComboBox<>();
-		                Map<String, String> productNamesToCodes = productDAO.getProductNamesToCodes(); 
-		                for (String productName : productNamesToCodes.keySet()) {
-		                    productDropdown.addItem(productName);
-		                }
-		                String selectedProductName = productDAO.getProductNameByCode(orderDetails.getProductCode());
-		                productDropdown.setSelectedItem(selectedProductName);
-
-		                JTextField productCodeField = new JTextField(orderDetails.getProductCode(), 10);
-		                productCodeField.setEditable(false);
-		                productCodeField.setFocusable(false);
-		                productCodeField.setBackground(new Color(240, 240, 240));
-
-		                JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNr()), 10);
-		                JTextField quantityOrderedField = new JTextField(String.valueOf(orderDetails.getQuantityOrdered()), 10);
-		                JTextField quantityInStockField = new JTextField("", 10);
-		                JTextField buyPriceField = new JTextField("", 10);
-		                JTextField msrpField = new JTextField("", 10);
-
-		                productDropdown.addActionListener(new ActionListener() {
-		                    @Override
-		                    public void actionPerformed(ActionEvent e) {
-		                        String selectedProductName = (String) productDropdown.getSelectedItem();
-		                        String productCode = productNamesToCodes.get(selectedProductName);
-		                        productCodeField.setText(productCode);
-		                    }
-		                });
-
-		                if (productNamesToCodes != null && !productNamesToCodes.isEmpty()) {
-		                    selectedProductName = (String) productDropdown.getSelectedItem();
-		                    String productCode = productNamesToCodes.get(selectedProductName);
-		                    Map<String, Object> specificProductDetails = productDAO.getProductDetailsByCode(productCode);
-		                    quantityInStockField.setText(String.valueOf(specificProductDetails.get("quantityInStock")));
-		                    buyPriceField.setText(specificProductDetails.get("buyPrice").toString());
-		                    msrpField.setText(specificProductDetails.get("MSRP").toString());
-		                }
-
-		                panel.add(new JLabel("Product Name:"));
-		                panel.add(productDropdown);
-		                panel.add(new JLabel("Product Code:"));
-		                panel.add(productCodeField);
-		                panel.add(new JLabel("Order Line Number:"));
-		                panel.add(orderLineNumberField);
-		                panel.add(new JLabel("Quantity Ordered:"));
-		                panel.add(quantityOrderedField);
-		                panel.add(new JLabel("Quantity in Stock:"));
-		                panel.add(quantityInStockField);
-		                panel.add(new JLabel("Buy Price:"));
-		                panel.add(buyPriceField);
-		                panel.add(new JLabel("MSRP:"));
-		                panel.add(msrpField);
-
-		                int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
-		                        JOptionPane.OK_CANCEL_OPTION);
-		                if (result == JOptionPane.OK_OPTION) {
-		                    int newQuantityOrdered = Integer.parseInt(quantityOrderedField.getText());
-		                    if (orderDAO.isStockAvailable(orderDetails.getProductCode(), newQuantityOrdered)) {
-		                        orderDetails.setOrderLineNumber(Integer.parseInt(orderLineNumberField.getText()));
-		                        orderDetails.setProductCode(productCodeField.getText());
-		                        orderDetails.setQuantityOrdered(newQuantityOrdered);
-		                        orderDetails.setPriceEach(Double.parseDouble(buyPriceField.getText()));
-
-		                        boolean updateSuccess = orderDAO.updateOrderDetails(orderDetails);
-		                        if (updateSuccess) {
-		                            JOptionPane.showMessageDialog(null, "Order details updated successfully.");
-		                        } else {
-		                            JOptionPane.showMessageDialog(null, "Failed to update order details.");
-		                        }
-		                    } else {
-		                        JOptionPane.showMessageDialog(null, "Not enough stock available.");
-		                    }
-		                }
-		            } else {
-		                JOptionPane.showMessageDialog(null,
-		                        "Order details not found for the given Order Number and Order Line Number.");
-		            }
-		        } catch (NumberFormatException ex) {
-		            JOptionPane.showMessageDialog(null, "Invalid input format. Please enter numeric values.");
-		        } catch (SQLException ex) {
-		            JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
-		        }
-		    }
-		}
-	}
-	
-	/**
-	 * ActionListener implementation for the "Delete" button in the Order Details view.
-	 * This listener is used to handle deleting order details.
-	 */
-	
-	public class DeleteButtonListener implements ActionListener {
-		
-	    /**
-	     * Called when the "Delete" button is clicked.
-	     *
-	     * @param e The ActionEvent associated with the button click.
-	     */
-
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JPanel panel = new JPanel(new GridLayout(0, 1));
-			JTextField orderNumberField = new JTextField(5);
-			JTextField orderLineNumberField = new JTextField(5);
-
-			panel.add(new JLabel("Order Number:"));
-			panel.add(orderNumberField);
-			panel.add(new JLabel("Order Line Number:"));
-			panel.add(orderLineNumberField);
-
-			int result = JOptionPane.showConfirmDialog(OrderDetailsView.this, panel,
-					"Enter Order Number and Order Line Number", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-
-			if (result == JOptionPane.OK_OPTION) {
-				try {
-					int orderNumber = Integer.parseInt(orderNumberField.getText().trim());
-					int orderLine = Integer.parseInt(orderLineNumberField.getText().trim());
-
-					int confirm = JOptionPane.showConfirmDialog(
-							OrderDetailsView.this, "Are you sure you want to delete order number " + orderNumber
-									+ " and order line number " + orderLine + "?",
-							"Confirm Deletion", JOptionPane.YES_NO_OPTION);
-
-					if (confirm == JOptionPane.YES_OPTION) {
-						boolean success = orderDAO.deleteOrderDetail(orderNumber, orderLine);
-						if (success) {
-							JOptionPane.showMessageDialog(OrderDetailsView.this, "Order detail deleted successfully.");
-						} else {
-							JOptionPane.showMessageDialog(OrderDetailsView.this, "Error deleting order detail.");
-						}
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(OrderDetailsView.this,
-							"Please enter valid numbers for Order Number and Order Line Number.");
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Calculates and displays the total order amount for the specified order number.
@@ -731,6 +541,203 @@ public class OrderDetailsView extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public class UpdateButtonListener implements ActionListener {
+		
+		 /**
+	     * The OrderDAO instance for accessing order data.
+	     */
+		
+		private OrderDAO orderDAO;
+		
+		/**
+	     * The ProductDAO instance for accessing product data.
+	     */
+		
+		private ProductDAO productDAO;
+		
+		 /**
+	     * Constructs a new UpdateButtonListener with the provided OrderDAO and ProductDAO instances.
+	     *
+	     * @param orderDAO    The OrderDAO instance for accessing order data.
+	     * @param productDAO  The ProductDAO instance for accessing product data.
+	     */
+		
+		/**
+		 * ActionListener implementation for the "Update" button in the Order Details view.
+		 * This listener is used to handle updating order details.
+		 */
+		
+
+		public UpdateButtonListener(OrderDAO orderDAO, ProductDAO productDAO) {
+			this.orderDAO = orderDAO;
+			this.productDAO = productDAO;
+		}
+
+		 /**
+	     * Called when the "Update" button is clicked.
+	     *
+	     * @param e The ActionEvent associated with the button click.
+	     */
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    String orderNumberString = JOptionPane.showInputDialog("Enter Order Number to update:");
+		    String orderLineNumberString = JOptionPane.showInputDialog("Enter Order Line Number:");
+
+		    if (orderNumberString != null && !orderNumberString.isEmpty() && orderLineNumberString != null
+		            && !orderLineNumberString.isEmpty()) {
+		        try {
+		            int orderNumber = Integer.parseInt(orderNumberString);
+		            int orderLineNumber = Integer.parseInt(orderLineNumberString);
+
+		            OrderDetails orderDetails = orderDAO.getOrderDetails(orderNumber, orderLineNumber);
+		            if (orderDetails != null) {
+		                JPanel panel = new JPanel(new GridLayout(0, 2));
+
+		                JComboBox<String> productDropdown = new JComboBox<>();
+		                Map<String, String> productNamesToCodes = productDAO.getProductNamesToCodes(); 
+		                for (String productName : productNamesToCodes.keySet()) {
+		                    productDropdown.addItem(productName);
+		                }
+		                String selectedProductName = productDAO.getProductNameByCode(orderDetails.getProductCode());
+		                productDropdown.setSelectedItem(selectedProductName);
+
+		                JTextField productCodeField = new JTextField(orderDetails.getProductCode(), 10);
+		                productCodeField.setEditable(false);
+		                productCodeField.setFocusable(false);
+		                productCodeField.setBackground(new Color(240, 240, 240));
+
+		                JTextField orderLineNumberField = new JTextField(String.valueOf(orderDetails.getOrderLineNr()), 10);
+		                JTextField quantityOrderedField = new JTextField(String.valueOf(orderDetails.getQuantityOrdered()), 10);
+		                JTextField quantityInStockField = new JTextField("", 10);
+		                JTextField buyPriceField = new JTextField("", 10);
+		                JTextField msrpField = new JTextField("", 10);
+
+		                productDropdown.addActionListener(new ActionListener() {
+		                    @Override
+		                    public void actionPerformed(ActionEvent e) {
+		                        String selectedProductName = (String) productDropdown.getSelectedItem();
+		                        String productCode = productNamesToCodes.get(selectedProductName);
+		                        productCodeField.setText(productCode);
+		                    }
+		                });
+
+		                if (productNamesToCodes != null && !productNamesToCodes.isEmpty()) {
+		                    selectedProductName = (String) productDropdown.getSelectedItem();
+		                    String productCode = productNamesToCodes.get(selectedProductName);
+		                    Map<String, Object> specificProductDetails = productDAO.getProductDetailsByCode(productCode);
+		                    quantityInStockField.setText(String.valueOf(specificProductDetails.get("quantityInStock")));
+		                    buyPriceField.setText(specificProductDetails.get("buyPrice").toString());
+		                    msrpField.setText(specificProductDetails.get("MSRP").toString());
+		                }
+
+		                panel.add(new JLabel("Product Name:"));
+		                panel.add(productDropdown);
+		                panel.add(new JLabel("Product Code:"));
+		                panel.add(productCodeField);
+		                panel.add(new JLabel("Order Line Number:"));
+		                panel.add(orderLineNumberField);
+		                panel.add(new JLabel("Quantity Ordered:"));
+		                panel.add(quantityOrderedField);
+		                panel.add(new JLabel("Quantity in Stock:"));
+		                panel.add(quantityInStockField);
+		                panel.add(new JLabel("Buy Price:"));
+		                panel.add(buyPriceField);
+		                panel.add(new JLabel("MSRP:"));
+		                panel.add(msrpField);
+
+		                int result = JOptionPane.showConfirmDialog(null, panel, "Update Order Details",
+		                        JOptionPane.OK_CANCEL_OPTION);
+		                if (result == JOptionPane.OK_OPTION) {
+		                    int newQuantityOrdered = Integer.parseInt(quantityOrderedField.getText());
+		                    if (orderDAO.isStockAvailable(orderDetails.getProductCode(), newQuantityOrdered)) {
+		                        orderDetails.setOrderLineNumber(Integer.parseInt(orderLineNumberField.getText()));
+		                        orderDetails.setProductCode(productCodeField.getText());
+		                        orderDetails.setQuantityOrdered(newQuantityOrdered);
+		                        orderDetails.setPriceEach(Double.parseDouble(buyPriceField.getText()));
+
+		                        boolean updateSuccess = orderDAO.updateOrderDetails(orderDetails);
+		                        if (updateSuccess) {
+		                            JOptionPane.showMessageDialog(null, "Order details updated successfully.");
+		                        } else {
+		                            JOptionPane.showMessageDialog(null, "Failed to update order details.");
+		                        }
+		                    } else {
+		                        JOptionPane.showMessageDialog(null, "Not enough stock available.");
+		                    }
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(null,
+		                        "Order details not found for the given Order Number and Order Line Number.");
+		            }
+		        } catch (NumberFormatException ex) {
+		            JOptionPane.showMessageDialog(null, "Invalid input format. Please enter numeric values.");
+		        } catch (SQLException ex) {
+		            JOptionPane.showMessageDialog(null, "SQL Error: " + ex.getMessage());
+		        }
+		    }
+		}
+	}
+	
+
+	/**
+	 * ActionListener implementation for the "Delete" button in the Order Details view.
+	 * This listener is used to handle deleting order details.
+	 */
+	
+	
+	
+	public class DeleteButtonListener implements ActionListener {
+		
+	    /**
+	     * Called when the "Delete" button is clicked.
+	     *
+	     * @param e The ActionEvent associated with the button click.
+	     */
+
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JPanel panel = new JPanel(new GridLayout(0, 1));
+			JTextField orderNumberField = new JTextField(5);
+			JTextField orderLineNumberField = new JTextField(5);
+
+			panel.add(new JLabel("Order Number:"));
+			panel.add(orderNumberField);
+			panel.add(new JLabel("Order Line Number:"));
+			panel.add(orderLineNumberField);
+
+			int result = JOptionPane.showConfirmDialog(OrderDetailsView.this, panel,
+					"Enter Order Number and Order Line Number", JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+
+			if (result == JOptionPane.OK_OPTION) {
+				try {
+					int orderNumber = Integer.parseInt(orderNumberField.getText().trim());
+					int orderLine = Integer.parseInt(orderLineNumberField.getText().trim());
+
+					int confirm = JOptionPane.showConfirmDialog(
+							OrderDetailsView.this, "Are you sure you want to delete order number " + orderNumber
+									+ " and order line number " + orderLine + "?",
+							"Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+					if (confirm == JOptionPane.YES_OPTION) {
+						boolean success = orderDAO.deleteOrderDetail(orderNumber, orderLine);
+						if (success) {
+							JOptionPane.showMessageDialog(OrderDetailsView.this, "Order detail deleted successfully.");
+						} else {
+							JOptionPane.showMessageDialog(OrderDetailsView.this, "Error deleting order detail.");
+						}
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(OrderDetailsView.this,
+							"Please enter valid numbers for Order Number and Order Line Number.");
+				}
+			}
+		}
+	}
+	
 
 	
 	/**
