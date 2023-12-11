@@ -10,7 +10,7 @@
 
   <name>OAP</name>
   
-  <url>http://www.example.com</url>
+  <url></url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
